@@ -1,0 +1,5 @@
+include *.txt
+include ez_setup.py
+recursive-include docs *.html
+recursive-include examples *.txt *.py *.js
+prune examples/sample?/build

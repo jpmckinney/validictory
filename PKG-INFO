@@ -1,0 +1,21 @@
+Metadata-Version: 1.0
+Name: jsonschema
+Version: 0.2a
+Summary: json-schema validator for Python
+Home-page: http://hg.monologista.jp/json-schema
+Author: Ian Lewis
+Author-email: IanLewis@member.fsf.org
+License: MIT License
+Description: 
+        jsonschema is a complete, full featured validator for json-schema
+        adhering to the json-schema proposal second draft.
+        <http://groups.google.com/group/json-schema/web/json-schema-proposal---second-draft>.
+        
+        jsonschema is written in pure python and currently has no dependencies.
+        
+        Validators may be subclassed much like simplejson encoders to provide
+        special functionality or extensions.
+        
+        jsonschema currently supports ascii and utf-8 json and schema documents.
+        
+Platform: any
