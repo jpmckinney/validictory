@@ -103,7 +103,7 @@ class JSONSchemaValidator:
           except ValueError:
             pass
         if not datavalid:
-          raise ValueError("Value %r for field '%s' is not of type %r" % (value, fieldname, fieldtype))
+          raise ValueError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
       elif type(converted_fieldtype) == types.DictType:
         try:
           self.__validate(fieldname, x, converted_fieldtype)
@@ -111,7 +111,7 @@ class JSONSchemaValidator:
           raise e
       else:
         if type(value) != converted_fieldtype:
-          raise ValueError("Value %r for field '%s' is not of type %r" % (value, fieldname, fieldtype))
+          raise ValueError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
     return x
   
   def validate_properties(self, x, fieldname, schema, properties=None):
@@ -145,7 +145,7 @@ class JSONSchemaValidator:
                 try:
                   self.validate(value[itemIndex], items[itemIndex])
                 except ValueError, e:
-                  raise ValueError("Failed to validate field '%s' list schema: %r" % (fieldname, e.message))
+                  raise ValueError("Failed to validate field '%s' list schema: %s" % (fieldname, e))
             else:
               raise ValueError("Length of list %r for field '%s' is not equal to length of schema list" % (value, fieldname))
           elif type(items) == types.DictType:
@@ -153,7 +153,7 @@ class JSONSchemaValidator:
                 try:
                   self._validate(eachItem, items)
                 except ValueError, e:
-                  raise ValueError("Failed to validate field '%s' list schema: %r" % (fieldname, e.message))
+                  raise ValueError("Failed to validate field '%s' list schema: %s" % (fieldname, e))
           else:
             raise ValueError("Properties definition of field '%s' is not a list or an object" % fieldname)
     return x
