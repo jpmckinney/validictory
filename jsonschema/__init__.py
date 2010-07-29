@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 #:coding=utf-8:
-#:tabSize=2:indentSize=2:noTabs=true:
-#:folding=explicit:collapseFolds=1:
 
 '''
 A complete, full-featured validator for JSON Schema
@@ -74,7 +72,7 @@ Running from the command line
 from jsonschema.validator import JSONSchemaValidator
 
 __all__ = [ 'validate', 'JSONSchemaValidator' ]
-__version__ = '0.1a'
+__version__ = '0.3'
 
 def validate(data, schema, validator_cls=None):
   '''

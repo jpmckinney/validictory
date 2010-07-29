@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 #:coding=utf-8:
-#:tabSize=2:indentSize=2:noTabs=true:
-#:folding=explicit:collapseFolds=1:
 
 from ez_setup import use_setuptools
 import sys
@@ -21,7 +19,7 @@ if sys.version < '2.3':
 
 from setuptools import setup, find_packages
 
-VERSION = "0.2a"
+VERSION = "0.3"
 DESCRIPTION = "json-schema validator for Python"
 LONG_DESCRIPTION = """
 jsonschema is a complete, full featured validator for json-schema
@@ -37,7 +35,7 @@ jsonschema currently supports ascii and utf-8 json and schema documents.
 """
 
 CLASSIFIERS = filter(None, map(str.strip,
-"""                 
+"""
 Intended Audience :: Developers
 License :: OSI Approved :: MIT License
 Programming Language :: Python
@@ -48,12 +46,12 @@ setup(name='jsonschema',
       version=VERSION,
       description=DESCRIPTION,
       long_description=LONG_DESCRIPTION,
-      author='Ian Lewis',
-      author_email='IanLewis@member.fsf.org',
-      url='http://hg.monologista.jp/json-schema',
+      author='James Turk',
+      author_email='james.p.turk@gmail.com',
+      url='http://github.com/jamesturk/jsonschema',
       license="MIT License",
       platforms=["any"],
       packages=find_packages(exclude=['ez_setup']),
       test_suite="jsonschema.tests",
-      zip_safe=True
+      zip_safe=False
      )
