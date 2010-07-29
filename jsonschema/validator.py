@@ -16,14 +16,14 @@ class JSONSchemaValidator(object):
 
     # Map of schema types to their equivalent in the python types module
     _typesmap = {
-        "string": [str, unicode],
-        "integer": int,
-        "number": [int, float],
-        "boolean": bool,
-        "object": dict,
-        "array": list,
-        "null": type(None),
-        "any": None,
+        "string": lambda x: isinstance(x, basestring),
+        "integer": lambda x: type(x) == int,
+        "number": lambda x: type(x) in (int, float),
+        "boolean": lambda x: type(x) == bool,
+        "object": lambda x: isinstance(x, dict),
+        "array": lambda x: isinstance(x, list),
+        "null": lambda x: x is None,
+        "any": lambda x: True,
     }
 
     _ignored = ('identity', 'options', 'readonly', 'transient', 'hidden')
@@ -78,8 +78,6 @@ class JSONSchemaValidator(object):
         data
         '''
 
-        converted_fieldtype = self._convert_type(fieldtype)
-
         # We need to know if the field exists or if it's just Null
         fieldexists = True
         try:
@@ -89,11 +87,11 @@ class JSONSchemaValidator(object):
         finally:
             value = x.get(fieldname)
 
-        if converted_fieldtype is not None and fieldexists:
-            if isinstance(converted_fieldtype, list):
+        if fieldtype and fieldexists:
+            if isinstance(fieldtype, list):
                 # Match if type matches any one of the types in the list
                 datavalid = False
-                for eachtype in converted_fieldtype:
+                for eachtype in fieldtype:
                     try:
                         self.validate_type(x, fieldname, eachtype, eachtype)
                         datavalid = True
@@ -102,13 +100,20 @@ class JSONSchemaValidator(object):
                         pass
                 if not datavalid:
                     raise ValueError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
-            elif isinstance(converted_fieldtype, dict):
+            elif isinstance(fieldtype, dict):
                 try:
-                    self.__validate(fieldname, x, converted_fieldtype)
+                    self.__validate(fieldname, x, fieldtype)
                 except ValueError, e:
                     raise e
             else:
-                if type(value) != converted_fieldtype:
+                fieldtype = str(fieldtype)
+                if fieldtype in self._typesmap.keys():
+                    type_checker = self._typesmap[fieldtype]
+                else:
+                    raise ValueError("Field type '%s' is not supported." %
+                                     fieldtype)
+
+                if not type_checker(value):
                     raise ValueError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
         return x
 
@@ -359,24 +364,6 @@ class JSONSchemaValidator(object):
             raise ValueError("Value %r of type %s is disallowed for field '%s'"
                              % (x.get(fieldname), disallow, fieldname))
         return x
-
-    def _convert_type(self, fieldtype):
-        if isinstance(fieldtype, (type, dict)):
-            return fieldtype
-        elif isinstance(fieldtype, list):
-            converted_fields = []
-            for subfieldtype in fieldtype:
-                converted_fields.append(self._convert_type(subfieldtype))
-            return converted_fields
-        elif fieldtype is None:
-            return None
-        else:
-            fieldtype = str(fieldtype)
-            if fieldtype in self._typesmap.keys():
-                return self._typesmap[fieldtype]
-            else:
-                raise ValueError("Field type '%s' is not supported." %
-                                 fieldtype)
 
     def validate(self, data, schema):
         '''
