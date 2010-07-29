@@ -12,17 +12,29 @@ class JSONSchemaValidator(object):
     JSON Schema Proposal 2nd Draft.
     '''
 
-    # Map of schema types to their equivalent in the python types module
-    _typesmap = {
-        "string": lambda x: isinstance(x, basestring),
-        "integer": lambda x: type(x) == int,
-        "number": lambda x: type(x) in (int, float),
-        "boolean": lambda x: type(x) == bool,
-        "object": lambda x: isinstance(x, dict),
-        "array": lambda x: isinstance(x, list),
-        "null": lambda x: x is None,
-        "any": lambda x: True,
-    }
+    def validate_type_string(self, val):
+        return isinstance(val, basestring)
+
+    def validate_type_integer(self, val):
+        return type(val) == int
+
+    def validate_type_number(self, val):
+        return type(val) in (int, float)
+
+    def validate_type_boolean(self, val):
+        return type(val) == bool
+
+    def validate_type_object(self, val):
+        return isinstance(val, dict)
+
+    def validate_type_array(self, val):
+        return isinstance(val, list)
+
+    def validate_type_null(self, val):
+        return val is None
+
+    def validate_type_any(self, val):
+        return True
 
     def _error(self, desc, value, fieldname, **params):
         params['value'] = value
@@ -64,12 +76,11 @@ class JSONSchemaValidator(object):
                 except ValueError, e:
                     raise e
             else:
-                fieldtype = str(fieldtype)
-                if fieldtype in self._typesmap.keys():
-                    type_checker = self._typesmap[fieldtype]
-                else:
+                try:
+                    type_checker = getattr(self, 'validate_type_%s' % fieldtype)
+                except AttributeError:
                     raise SchemaError("Field type '%s' is not supported." %
-                                     fieldtype)
+                                      fieldtype)
 
                 if not type_checker(value):
                     self._error("Value %(value)r for field '%(fieldname)s' is not of type %(fieldtype)s",
