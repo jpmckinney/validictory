@@ -51,7 +51,7 @@ ValueErrors are thrown when validation errors occur.
 >>> try:
 ...     jsonschema.validate("simplejson", {"type":"string","minLength":15})
 ... except ValueError, e:
-...     print e.message
+...     print str(e)
 ... 
 Length of value 'simplejson' for field '_data' must be more than or equal to 15.000000
 
@@ -76,7 +76,7 @@ from jsonschema.validator import JSONSchemaValidator
 __all__ = [ 'validate', 'JSONSchemaValidator' ]
 __version__ = '0.1a'
 
-def validate(data, schema, validator_cls=None, interactive_mode=True):
+def validate(data, schema, validator_cls=None):
   '''
   Validates a parsed json document against the provided schema. If an
   error is found a ValueError is raised.
@@ -88,16 +88,10 @@ def validate(data, schema, validator_cls=None, interactive_mode=True):
   If ``validator_cls`` is provided that class will be used to validate
   the given ``schema`` against the given ``data``. The given class should
   be a subclass of the JSONSchemaValidator class.
-  
-  ``interactive_mode`` is a boolean value specifying if the data should
-  be validated in interactive mode. Validating in interactive mode will
-  allow the validator to make changes to the given json ``data`` object
-  to put in place default values specified in the given ``schema``
-  object.
   '''
   if validator_cls == None:
     validator_cls = JSONSchemaValidator
-  v = validator_cls(interactive_mode)
+  v = validator_cls()
   return v.validate(data,schema)
 
 if __name__ == '__main__':
