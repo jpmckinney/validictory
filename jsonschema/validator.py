@@ -24,6 +24,11 @@ class JSONSchemaValidator(object):
         "any": lambda x: True,
     }
 
+    def _error(self, desc, value, fieldname, **params):
+        params['value'] = value
+        params['fieldname'] = fieldname
+        raise ValidationError(desc % params)
+
     def validate_type(self, x, fieldname, schema, fieldtype=None):
         '''
         Validates that the fieldtype specified is correct for the given
@@ -51,7 +56,8 @@ class JSONSchemaValidator(object):
                     except ValidationError:
                         pass
                 if not datavalid:
-                    raise ValidationError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
+                    self._error("Value %(value)r for field '%(fieldname)s' is not of type %(fieldtype)s",
+                                value, fieldname, fieldtype=fieldtype)
             elif isinstance(fieldtype, dict):
                 try:
                     self.__validate(fieldname, x, fieldtype)
@@ -66,7 +72,8 @@ class JSONSchemaValidator(object):
                                      fieldtype)
 
                 if not type_checker(value):
-                    raise ValidationError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
+                    self._error("Value %(value)r for field '%(fieldname)s' is not of type %(fieldtype)s",
+                                value, fieldname, fieldtype=fieldtype)
 
     def validate_properties(self, x, fieldname, schema, properties=None):
         '''
@@ -99,7 +106,8 @@ class JSONSchemaValidator(object):
                             except ValueError, e:
                                 raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
                     else:
-                        raise ValidationError("Length of list %r for field '%s' is not equal to length of schema list" % (value, fieldname))
+                        self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
+                                    value, fieldname)
                 elif isinstance(items, dict):
                     for eachItem in value:
                             try:
@@ -115,7 +123,8 @@ class JSONSchemaValidator(object):
         '''
         # Make sure the field is present
         if fieldname not in x.keys() and not optional:
-            raise ValidationError("Required field '%s' is missing" % fieldname)
+            self._error("Required field '%(fieldname)s' is missing",
+                        None, fieldname)
 
     def validate_additionalProperties(self, x, fieldname, schema,
                                       additionalProperties=None):
@@ -139,7 +148,8 @@ class JSONSchemaValidator(object):
                     # then we don't accept any additional properties.
                     if (isinstance(additionalProperties, bool) and
                         not additionalProperties):
-                        raise ValidationError("Additional properties not defined by 'properties' are not allowed in field '%s'" % fieldname)
+                        self._error("additional properties not defined by 'properties' are not allowed in field '%(fieldname)s'",
+                                    None, fieldname)
                     self.__validate(eachProperty, value,
                                     additionalProperties)
         else:
@@ -148,8 +158,8 @@ class JSONSchemaValidator(object):
     def validate_requires(self, x, fieldname, schema, requires=None):
         if x.get(fieldname) is not None:
             if x.get(requires) is None:
-                raise ValidationError("Field '%s' is required by field '%s'" %
-                                 (requires, fieldname))
+                self._error("Field '%(requires)s' is required by field '%(fieldname)s'",
+                            None, fieldname, requires=requires)
 
     def validate_minimum(self, x, fieldname, schema, minimum=None):
         '''
@@ -160,9 +170,11 @@ class JSONSchemaValidator(object):
             value = x.get(fieldname)
             if value is not None:
                 if type(value) in (int, float) and value < minimum:
-                    raise ValidationError("Value %r for field '%s' is less than minimum value: %f" % (value, fieldname, minimum))
+                    self._error("Value %(value)r for field '%(fieldname)s' is less than minimum value: %(minimum)f",
+                                value, fieldname, minimum=minimum)
                 elif isinstance(value, list) and len(value) < minimum:
-                    raise ValidationError("Value %r for field '%s' has fewer values than the minimum: %f" % (value, fieldname, minimum))
+                    self._error("Value %(value)r for field '%(fieldname)s' has fewer values than the minimum: %(minimum)f",
+                                value, fieldname, minimum=minimum)
 
     def validate_maximum(self, x, fieldname, schema, maximum=None):
         '''
@@ -173,9 +185,11 @@ class JSONSchemaValidator(object):
             value = x.get(fieldname)
             if value is not None:
                 if type(value) in (int, float) and value > maximum:
-                    raise ValidationError("Value %r for field '%s' is greater than maximum value: %f" % (value, fieldname, maximum))
+                    self._error("Value %(value)r for field '%(fieldname)s' is greater than maximum value: %(maximum)f",
+                                value, fieldname, maximum=maximum)
                 elif isinstance(value, list) and len(value) > maximum:
-                    raise ValidationError("Value %r for field '%s' has more values than the maximum: %f" % (value, fieldname, maximum))
+                    self._error("Value %(value)r for field '%(fieldname)s' has more values than the maximum: %(maximum)f",
+                                value, fieldname, maximum=maximum)
 
     def validate_minItems(self, x, fieldname, schema, minitems=None):
         '''
@@ -208,7 +222,8 @@ class JSONSchemaValidator(object):
         if isinstance(value, basestring):
             p = re.compile(pattern)
             if not p.match(value):
-                raise ValidationError("Value %r for field '%s' does not match regular expression '%s'" % (value, fieldname, pattern))
+                self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
+                            value, fieldname, pattern=pattern)
 
     def validate_maxLength(self, x, fieldname, schema, length=None):
         '''
@@ -238,7 +253,8 @@ class JSONSchemaValidator(object):
             if not isinstance(options, list):
                 raise SchemaError("Enumeration %r for field '%s' is not a list type", (options, fieldname))
             if value not in options:
-                raise ValidationError("Value %r for field '%s' is not in the enumeration: %r" % (value, fieldname, options))
+                self._error("Value %(value)r for field '%(fieldname)s' is not in the enumeration: %(options)r",
+                            value, fieldname, options=options)
 
     def validate_title(self, x, fieldname, schema, title=None):
         if not isinstance(title, (basestring, type(None))):
@@ -259,8 +275,8 @@ class JSONSchemaValidator(object):
             self.validate_type(x, fieldname, schema, disallow)
         except ValidationError:
             return
-        raise ValidationError("Value %r of type %s is disallowed for field '%s'"
-                              % (x.get(fieldname), disallow, fieldname))
+        self._error("Value %(value)r of type %(disallow)s is disallowed for field '%(fieldname)s'",
+                    x.get(fieldname), fieldname, disallow=disallow)
 
     def validate(self, data, schema):
         '''
