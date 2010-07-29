@@ -35,7 +35,6 @@ class JSONSchemaValidator:
     "optional": False,
     "additionalProperties": None,
     "requires": None,
-    "identity": None,
     "minimum": None,
     "maximum": None,
     "minItems": None,
@@ -44,13 +43,10 @@ class JSONSchemaValidator:
     "maxLength": None,
     "minLength": None,
     "enum": None,
-    "options": None,
-    "readonly": None,
     "title": None,
     "description": None,
     "format": None,
     "default": None,
-    "transient": None,
     "maxDecimal": None,
     "hidden": None,
     "disallow": None,
@@ -201,9 +197,6 @@ class JSONSchemaValidator:
         raise ValueError("Field '%s' is required by field '%s'" % (requires, fieldname))
     return x
   
-  def validate_identity(self, x, fieldname, schema, unique=False):
-    return x
-  
   def validate_minimum(self, x, fieldname, schema, minimum=None):
     '''
     Validates that the field is longer than or equal to the minimum
@@ -309,12 +302,6 @@ class JSONSchemaValidator:
         raise ValueError("Value %r for field '%s' is not in the enumeration: %r" % (value, fieldname, options))
     return x
   
-  def validate_options(self, x, fieldname, schema, options=None):
-    return x
-  
-  def validate_readonly(self, x, fieldname, schema, readonly=False):
-    return x
-  
   def validate_title(self, x, fieldname, schema, title=None):
     if title is not None and \
        not self._is_string_type(title):
@@ -343,9 +330,6 @@ class JSONSchemaValidator:
     if self._interactive_mode and fieldname not in x.keys() and default is not None:
       if not schema.get("readonly"):
         x[fieldname] = default
-    return x
-  
-  def validate_transient(self, x, fieldname, schema, transient=False):
     return x
   
   def validate_maxDecimal(self, x, fieldname, schema, maxdecimal=None):
@@ -438,7 +422,9 @@ class JSONSchemaValidator:
           # copy in order to validate default values.
           validator(data, fieldname, schema, new_schema.get(schemaprop))
         except AttributeError, e:
-          raise ValueError("Schema property '%s' is not supported" % schemaprop)
+          if schemaprop not in ('identity', 'options', 'readonly', 'transient'):
+            raise ValueError("Schema property '%s' is not supported" % 
+                             schemaprop)
       
     return data
   
