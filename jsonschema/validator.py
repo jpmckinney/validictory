@@ -213,18 +213,6 @@ class JSONSchemaValidator(object):
                 if isinstance(value, list) and len(value) > maxitems:
                     raise ValidationError("Value %r for field '%s' must have a maximum of %d items" % (value, fieldname, maxitems))
 
-    def validate_pattern(self, x, fieldname, schema, pattern=None):
-        '''
-        Validates that the given field, if a string, matches the given
-        regular expression.
-        '''
-        value = x.get(fieldname)
-        if isinstance(value, basestring):
-            p = re.compile(pattern)
-            if not p.match(value):
-                self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
-                            value, fieldname, pattern=pattern)
-
     def validate_maxLength(self, x, fieldname, schema, length=None):
         '''
         Validates that the value of the given field is shorter than or equal
@@ -242,6 +230,18 @@ class JSONSchemaValidator(object):
         value = x.get(fieldname)
         if isinstance(value, basestring) and len(value) < length:
             raise ValidationError("Length of value %r for field '%s' must be more than or equal to %f" % (value, fieldname, length))
+
+    def validate_pattern(self, x, fieldname, schema, pattern=None):
+        '''
+        Validates that the given field, if a string, matches the given
+        regular expression.
+        '''
+        value = x.get(fieldname)
+        if isinstance(value, basestring):
+            p = re.compile(pattern)
+            if not p.match(value):
+                self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
+                            value, fieldname, pattern=pattern)
 
     def validate_enum(self, x, fieldname, schema, options=None):
         '''
