@@ -22,7 +22,7 @@ class TestAdditionalProperties(TestCase):
       for x in [1.2, "bad", {"test":"blah"}, [32, 49], None, True]:
         try:
           data = {"prop": x}
-          jsonschema.validate(x, schema)
+          jsonschema.validate(data, schema)
         except ValueError:
           pass
         else:

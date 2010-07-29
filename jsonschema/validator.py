@@ -24,9 +24,6 @@ class JSONSchemaValidator(object):
         "any": lambda x: True,
     }
 
-    _ignored = ('identity', 'options', 'readonly', 'transient', 'hidden')
-    # extends & format raise unimplemented error
-
     _refmap = {}
 
     def validate_id(self, x, fieldname, schema, ID=None):
@@ -302,14 +299,9 @@ class JSONSchemaValidator(object):
 
                 validatorname = "validate_" + schemaprop
 
-                try:
-                    validator = getattr(self, validatorname)
-                    # all validators take data,fieldname,schema,schemaprop
+                validator = getattr(self, validatorname, None)
+                if validator:
                     validator(data, fieldname, schema, schema.get(schemaprop))
-                except AttributeError, e:
-                    if schemaprop not in self._ignored:
-                        raise ValueError("Schema property '%s' is not supported"
-                                         % schemaprop)
 
         return data
 
