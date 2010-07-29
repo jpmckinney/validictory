@@ -16,13 +16,13 @@ class JSONSchemaValidator:
   
   # Map of schema types to their equivalent in the python types module
   _typesmap = {
-    "string": [types.StringType, types.UnicodeType],
-    "integer": types.IntType,
-    "number": [types.IntType, types.FloatType],
-    "boolean": types.BooleanType,
-    "object": types.DictType,
-    "array": types.ListType,
-    "null": types.NoneType,
+    "string": [str, unicode],
+    "integer": int,
+    "number": [int, float],
+    "boolean": bool,
+    "object": dict,
+    "array": list,
+    "null": type(None),
     "any": None
   }
   
@@ -88,7 +88,7 @@ class JSONSchemaValidator:
       value = x.get(fieldname)
     
     if converted_fieldtype is not None and fieldexists:
-      if type(converted_fieldtype) == types.ListType:
+      if isinstance(converted_fieldtype, list):
         # Match if type matches any one of the types in the list
         datavalid = False
         for eachtype in converted_fieldtype:
@@ -100,7 +100,7 @@ class JSONSchemaValidator:
             pass
         if not datavalid:
           raise ValueError("Value %r for field '%s' is not of type %s" % (value, fieldname, fieldtype))
-      elif type(converted_fieldtype) == types.DictType:
+      elif isinstance(converted_fieldtype, dict):
         try:
           self.__validate(fieldname, x, converted_fieldtype)
         except ValueError,e:
@@ -117,13 +117,12 @@ class JSONSchemaValidator:
     '''
     if properties is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
-      if value is not None:
-        if type(value) == types.DictType:
-          if type(properties) == types.DictType:
-            for eachProp in properties.keys():
-              self.__validate(eachProp, value, properties.get(eachProp))
-          else:
-            raise ValueError("Properties definition of field '%s' is not an object" % fieldname)
+      if isinstance(value, dict):
+        if isinstance(properties, dict):
+          for eachProp in properties.keys():
+            self.__validate(eachProp, value, properties.get(eachProp))
+        else:
+          raise ValueError("Properties definition of field '%s' is not an object" % fieldname)
     return x
   
   def validate_items(self, x, fieldname, schema, items=None):
@@ -133,25 +132,24 @@ class JSONSchemaValidator:
     '''
     if items is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
-      if value is not None:
-        if type(value) == types.ListType:
-          if type(items) == types.ListType:
-            if len(items) == len(value):
-              for itemIndex in range(len(items)):
-                try:
-                  self.validate(value[itemIndex], items[itemIndex])
-                except ValueError, e:
-                  raise ValueError("Failed to validate field '%s' list schema: %s" % (fieldname, e))
-            else:
-              raise ValueError("Length of list %r for field '%s' is not equal to length of schema list" % (value, fieldname))
-          elif type(items) == types.DictType:
-            for eachItem in value:
-                try:
-                  self._validate(eachItem, items)
-                except ValueError, e:
-                  raise ValueError("Failed to validate field '%s' list schema: %s" % (fieldname, e))
+      if isinstance(value, list):
+        if isinstance(items, list):
+          if len(items) == len(value):
+            for itemIndex in range(len(items)):
+              try:
+                self.validate(value[itemIndex], items[itemIndex])
+              except ValueError, e:
+                raise ValueError("Failed to validate field '%s' list schema: %s" % (fieldname, e))
           else:
-            raise ValueError("Properties definition of field '%s' is not a list or an object" % fieldname)
+            raise ValueError("Length of list %r for field '%s' is not equal to length of schema list" % (value, fieldname))
+        elif isinstance(items, dict):
+          for eachItem in value:
+              try:
+                self._validate(eachItem, items)
+              except ValueError, e:
+                raise ValueError("Failed to validate field '%s' list schema: %s" % (fieldname, e))
+        else:
+          raise ValueError("Properties definition of field '%s' is not a list or an object" % fieldname)
     return x
   
   def validate_optional(self, x, fieldname, schema, optional=False):
@@ -171,12 +169,11 @@ class JSONSchemaValidator:
     if additionalProperties is not None:
       # If additionalProperties is the boolean value True then we accept any
       # additional properties.
-      if type(additionalProperties) == types.BooleanType and additionalProperties == True:
+      if isinstance(additionalProperties, bool) and additionalProperties:
         return x
       
       value = x.get(fieldname)
-      if type(additionalProperties) == types.DictType \
-       or type(additionalProperties) == types.BooleanType:
+      if isinstance(additionalProperties, (dict, bool)):
         properties = schema.get("properties")
         if properties is None:
           properties = {}
@@ -184,7 +181,7 @@ class JSONSchemaValidator:
           if eachProperty not in properties:
             # If additionalProperties is the boolean value False then we 
             # don't accept any additional properties.
-            if type(additionalProperties) == types.BooleanType and additionalProperties == False:
+            if isinstance(additionalProperties, bool) and not additionalProperties:
               raise ValueError("Additional properties not defined by 'properties' are not allowed in field '%s'" % fieldname)
             self.__validate(eachProperty, value, additionalProperties)
       else:
@@ -205,9 +202,9 @@ class JSONSchemaValidator:
     if minimum is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
-        if type(value) in (types.IntType,types.FloatType) and value < minimum:
+        if type(value) in (int, float) and value < minimum:
           raise ValueError("Value %r for field '%s' is less than minimum value: %f" % (value, fieldname, minimum))
-        elif type(value) == types.ListType and len(value) < minimum:
+        elif isinstance(value, list) and len(value) < minimum:
           raise ValueError("Value %r for field '%s' has fewer values than the minimum: %f" % (value, fieldname, minimum))
     return x
   
@@ -219,9 +216,9 @@ class JSONSchemaValidator:
     if maximum is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
-        if type(value) in (types.IntType, types.FloatType) and value > maximum:
+        if type(value) in (int, float) and value > maximum:
           raise ValueError("Value %r for field '%s' is greater than maximum value: %f" % (value, fieldname, maximum))
-        elif type(value) == types.ListType and len(value) > maximum:
+        elif isinstance(value, list) and len(value) > maximum:
           raise ValueError("Value %r for field '%s' has more values than the maximum: %f" % (value, fieldname, maximum))
     return x
   
@@ -233,7 +230,7 @@ class JSONSchemaValidator:
     if minitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
-        if type(value) == types.ListType and len(value) < minitems:
+        if isinstance(value, list) and len(value) < minitems:
           raise ValueError("Value %r for field '%s' must have a minimum of %d items" % (fieldname, fieldname, minitems))
     return x
   
@@ -245,7 +242,7 @@ class JSONSchemaValidator:
     if maxitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
-        if type(value) == types.ListType and len(value) > maxitems:
+        if isinstance(value, list) and len(value) > maxitems:
           raise ValueError("Value %r for field '%s' must have a maximum of %d items" % (value, fieldname, maxitems))
     return x
   
@@ -256,7 +253,6 @@ class JSONSchemaValidator:
     '''
     value = x.get(fieldname)
     if pattern is not None and \
-       value is not None and \
        self._is_string_type(value):
       p = re.compile(pattern)
       if not p.match(value):
@@ -270,7 +266,6 @@ class JSONSchemaValidator:
     '''
     value = x.get(fieldname)
     if length is not None and \
-       value is not None and \
        self._is_string_type(value) and \
        len(value) > length:
       raise ValueError("Length of value %r for field '%s' must be less than or equal to %f" % (value, fieldname, length))
@@ -283,7 +278,6 @@ class JSONSchemaValidator:
     '''
     value = x.get(fieldname)
     if length is not None and \
-       value is not None and \
        self._is_string_type(value) and \
        len(value) < length:
       raise ValueError("Length of value %r for field '%s' must be more than or equal to %f" % (value, fieldname, length))
@@ -296,21 +290,19 @@ class JSONSchemaValidator:
     '''
     value = x.get(fieldname)
     if options is not None and value is not None:
-      if not type(options) == types.ListType:
+      if not isinstance(options, list):
         raise ValueError("Enumeration %r for field '%s' is not a list type", (options, fieldname))
       if value not in options:
         raise ValueError("Value %r for field '%s' is not in the enumeration: %r" % (value, fieldname, options))
     return x
   
   def validate_title(self, x, fieldname, schema, title=None):
-    if title is not None and \
-       not self._is_string_type(title):
+    if not self._is_string_type(title):
       raise ValueError("The title for field '%s' must be a string" % fieldname);
     return x
   
   def validate_description(self, x, fieldname, schema, description=None):
-    if description is not None and \
-       not self._is_string_type(description):
+    if not self._is_string_type(description):
       raise ValueError("The description for field '%s' must be a string." % fieldname);
     return x
   
@@ -364,9 +356,9 @@ class JSONSchemaValidator:
     return x
   
   def _convert_type(self, fieldtype):
-    if type(fieldtype) in (types.TypeType, types.DictType):
+    if isinstance(fieldtype, (type, dict)):
       return fieldtype
-    elif type(fieldtype) == types.ListType:
+    elif isinstance(fieldtype, list):
       converted_fields = []
       for subfieldtype in fieldtype:
         converted_fields.append(self._convert_type(subfieldtype))
@@ -399,7 +391,7 @@ class JSONSchemaValidator:
   def __validate(self, fieldname, data, schema):
     
     if schema is not None:
-      if not type(schema) == types.DictType:
+      if not isinstance(schema, dict):
         raise ValueError("Schema structure is invalid.");
       
       # Produce a copy of the schema object since we will make changes to
@@ -429,6 +421,6 @@ class JSONSchemaValidator:
     return data
   
   def _is_string_type(self, value):
-    return type(value) in (types.StringType, types.UnicodeType)
+    return value is None or isinstance(value, basestring)
   
 __all__ = [ 'JSONSchemaValidator' ]
