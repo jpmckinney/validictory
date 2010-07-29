@@ -172,9 +172,6 @@ class JSONSchemaValidator(object):
                 if type(value) in (int, float) and value < minimum:
                     self._error("Value %(value)r for field '%(fieldname)s' is less than minimum value: %(minimum)f",
                                 value, fieldname, minimum=minimum)
-                elif isinstance(value, list) and len(value) < minimum:
-                    self._error("Value %(value)r for field '%(fieldname)s' has fewer values than the minimum: %(minimum)f",
-                                value, fieldname, minimum=minimum)
 
     def validate_maximum(self, x, fieldname, schema, maximum=None):
         '''
@@ -187,49 +184,28 @@ class JSONSchemaValidator(object):
                 if type(value) in (int, float) and value > maximum:
                     self._error("Value %(value)r for field '%(fieldname)s' is greater than maximum value: %(maximum)f",
                                 value, fieldname, maximum=maximum)
-                elif isinstance(value, list) and len(value) > maximum:
-                    self._error("Value %(value)r for field '%(fieldname)s' has more values than the maximum: %(maximum)f",
-                                value, fieldname, maximum=maximum)
 
-    def validate_minItems(self, x, fieldname, schema, minitems=None):
-        '''
-        Validates that the number of items in the given field is equal to or
-        more than the minimum amount.
-        '''
-        if x.get(fieldname) is not None:
-            value = x.get(fieldname)
-            if value is not None:
-                if isinstance(value, list) and len(value) < minitems:
-                    raise ValidationError("Value %r for field '%s' must have a minimum of %d items" % (fieldname, fieldname, minitems))
-
-    def validate_maxItems(self, x, fieldname, schema, maxitems=None):
-        '''
-        Validates that the number of items in the given field is equal to or
-        less than the maximum amount.
-        '''
-        if x.get(fieldname) is not None:
-            value = x.get(fieldname)
-            if value is not None:
-                if isinstance(value, list) and len(value) > maxitems:
-                    raise ValidationError("Value %r for field '%s' must have a maximum of %d items" % (value, fieldname, maxitems))
 
     def validate_maxLength(self, x, fieldname, schema, length=None):
         '''
         Validates that the value of the given field is shorter than or equal
-        to the specified length if a string
+        to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, basestring) and len(value) > length:
+        if isinstance(value, (basestring, list)) and len(value) > length:
             raise ValidationError("Length of value %r for field '%s' must be less than or equal to %f" % (value, fieldname, length))
 
     def validate_minLength(self, x, fieldname, schema, length=None):
         '''
         Validates that the value of the given field is longer than or equal
-        to the specified length if a string
+        to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, basestring) and len(value) < length:
+        if isinstance(value, (basestring, list)) and len(value) < length:
             raise ValidationError("Length of value %r for field '%s' must be more than or equal to %f" % (value, fieldname, length))
+
+    validate_minItems = validate_minLength
+    validate_maxItems = validate_maxLength
 
     def validate_pattern(self, x, fieldname, schema, pattern=None):
         '''
