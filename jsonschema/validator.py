@@ -67,7 +67,8 @@ class JSONSchemaValidator(object):
         '''
         if ID is not None:
             if ID == "$":
-                raise ValueError("Reference id for field '%s' cannot equal '$'" % fieldname)
+                raise ValueError("Reference id for field '%s' cannot equal '$'"
+                                 % fieldname)
             self._refmap[ID] = schema
         return x
 
@@ -121,7 +122,8 @@ class JSONSchemaValidator(object):
             if isinstance(value, dict):
                 if isinstance(properties, dict):
                     for eachProp in properties.keys():
-                        self.__validate(eachProp, value, properties.get(eachProp))
+                        self.__validate(eachProp, value,
+                                        properties.get(eachProp))
                 else:
                     raise ValueError("Properties definition of field '%s' is not an object" % fieldname)
         return x
@@ -162,14 +164,15 @@ class JSONSchemaValidator(object):
             raise ValueError("Required field '%s' is missing" % fieldname)
         return x
 
-    def validate_additionalProperties(self, x, fieldname, schema, additionalProperties=None):
+    def validate_additionalProperties(self, x, fieldname, schema,
+                                      additionalProperties=None):
         '''
         Validates additional properties of a JSON object that were not
         specifically defined by the properties property
         '''
         if additionalProperties is not None:
-            # If additionalProperties is the boolean value True then we accept any
-            # additional properties.
+            # If additionalProperties is the boolean value True then we accept
+            # any additional properties.
             if isinstance(additionalProperties, bool) and additionalProperties:
                 return x
 
@@ -180,11 +183,13 @@ class JSONSchemaValidator(object):
                     properties = {}
                 for eachProperty in value.keys():
                     if eachProperty not in properties:
-                        # If additionalProperties is the boolean value False then we
-                        # don't accept any additional properties.
-                        if isinstance(additionalProperties, bool) and not additionalProperties:
+                        # If additionalProperties is the boolean value False
+                        # then we don't accept any additional properties.
+                        if (isinstance(additionalProperties, bool) and
+                            not additionalProperties):
                             raise ValueError("Additional properties not defined by 'properties' are not allowed in field '%s'" % fieldname)
-                        self.__validate(eachProperty, value, additionalProperties)
+                        self.__validate(eachProperty, value,
+                                        additionalProperties)
             else:
                 raise ValueError("additionalProperties schema definition for field '%s' is not an object" % fieldname)
         return x
@@ -192,7 +197,8 @@ class JSONSchemaValidator(object):
     def validate_requires(self, x, fieldname, schema, requires=None):
         if x.get(fieldname) is not None and requires is not None:
             if x.get(requires) is None:
-                raise ValueError("Field '%s' is required by field '%s'" % (requires, fieldname))
+                raise ValueError("Field '%s' is required by field '%s'" %
+                                 (requires, fieldname))
         return x
 
     def validate_minimum(self, x, fieldname, schema, minimum=None):
@@ -299,12 +305,14 @@ class JSONSchemaValidator(object):
 
     def validate_title(self, x, fieldname, schema, title=None):
         if not self._is_string_type(title):
-            raise ValueError("The title for field '%s' must be a string" % fieldname)
+            raise ValueError("The title for field '%s' must be a string" %
+                             fieldname)
         return x
 
     def validate_description(self, x, fieldname, schema, description=None):
         if not self._is_string_type(description):
-            raise ValueError("The description for field '%s' must be a string." % fieldname)
+            raise ValueError("The description for field '%s' must be a string."
+                             % fieldname)
         return x
 
     def validate_format(self, x, fieldname, schema, format=None):
@@ -320,7 +328,8 @@ class JSONSchemaValidator(object):
         Adds default data to the original json document if the document is
         not readonly
         '''
-        if self._interactive_mode and fieldname not in x.keys() and default is not None:
+        if (self._interactive_mode and fieldname not in x.keys() and
+            default is not None):
             if not schema.get("readonly"):
                 x[fieldname] = default
         return x
@@ -347,7 +356,8 @@ class JSONSchemaValidator(object):
                 self.validate_type(x, fieldname, schema, disallow)
             except ValueError:
                 return x
-            raise ValueError("Value %r of type %s is disallowed for field '%s'" % (x.get(fieldname), disallow, fieldname))
+            raise ValueError("Value %r of type %s is disallowed for field '%s'"
+                             % (x.get(fieldname), disallow, fieldname))
         return x
 
     def _convert_type(self, fieldtype):
@@ -365,7 +375,8 @@ class JSONSchemaValidator(object):
             if fieldtype in self._typesmap.keys():
                 return self._typesmap[fieldtype]
             else:
-                raise ValueError("Field type '%s' is not supported." % fieldtype)
+                raise ValueError("Field type '%s' is not supported." %
+                                 fieldtype)
 
     def validate(self, data, schema):
         '''
@@ -390,8 +401,8 @@ class JSONSchemaValidator(object):
                 raise ValueError("Schema structure is invalid.")
 
             # Produce a copy of the schema object since we will make changes to
-            # it to process default values. Deep copy is not necessary since we will
-            # produce a copy of sub items on the next recursive call.
+            # it to process default values. Deep copy is not necessary since we
+            # will produce a copy of sub items on the next recursive call.
 
             new_schema = copy.copy(schema)
             #Initialize defaults
@@ -405,13 +416,14 @@ class JSONSchemaValidator(object):
 
                 try:
                     validator = getattr(self, validatorname)
-                    # Pass the original schema object but the value of the property from
-                    # copy in order to validate default values.
-                    validator(data, fieldname, schema, new_schema.get(schemaprop))
+                    # Pass the original schema object but the value of the
+                    # property from copy in order to validate default values.
+                    validator(data, fieldname, schema,
+                              new_schema.get(schemaprop))
                 except AttributeError, e:
                     if schemaprop not in self._ignored:
-                        raise ValueError("Schema property '%s' is not supported" %
-                                                         schemaprop)
+                        raise ValueError("Schema property '%s' is not supported"
+                                         % schemaprop)
 
         return data
 
