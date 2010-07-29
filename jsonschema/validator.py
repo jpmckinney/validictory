@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-#:coding=utf-8:
-
-#TODO: Support references
-#TODO: Support inline schema
-
 import re
 
 class JSONSchemaValidator(object):
@@ -23,17 +17,6 @@ class JSONSchemaValidator(object):
         "null": lambda x: x is None,
         "any": lambda x: True,
     }
-
-    _refmap = {}
-
-    def validate_id(self, x, fieldname, schema, ID=None):
-        '''
-        Validates a schema id and adds it to the schema reference map
-        '''
-        if ID == "$":
-            raise ValueError("Reference id for field '%s' cannot equal '$'"
-                             % fieldname)
-        self._refmap[ID] = schema
 
     def validate_type(self, x, fieldname, schema, fieldtype=None):
         '''
@@ -277,13 +260,6 @@ class JSONSchemaValidator(object):
         '''
         Validates a piece of json data against the provided json-schema.
         '''
-
-        #TODO: Validate the schema object here.
-
-        self._refmap = {
-            '$': schema,
-        }
-        # Wrap the data in a dictionary
         self._validate(data, schema)
 
     def _validate(self, data, schema):
