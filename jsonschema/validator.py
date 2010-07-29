@@ -5,8 +5,6 @@
 #TODO: Support inline schema
 
 import re
-import copy
-
 
 class JSONSchemaValidator(object):
     '''
@@ -265,17 +263,6 @@ class JSONSchemaValidator(object):
         if not self._is_string_type(description):
             raise ValueError("The description for field '%s' must be a string."
                              % fieldname)
-
-    def validate_maxDecimal(self, x, fieldname, schema, maxdecimal=None):
-        '''
-        Validates that the value of the given field has less than or equal
-        to the maximum number of decimal places given
-        '''
-        value = x.get(fieldname)
-        if value is not None:
-            maxdecstring = str(value)
-            if len(maxdecstring[maxdecstring.find(".") + 1:]) > maxdecimal:
-                raise ValueError("Value %r for field '%s' must not have more than %d decimal places" % (value, fieldname, maxdecimal))
 
     def validate_disallow(self, x, fieldname, schema, disallow=None):
         '''
