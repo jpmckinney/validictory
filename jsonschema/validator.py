@@ -205,7 +205,7 @@ class JSONSchemaValidator(object):
         regular expression.
         '''
         value = x.get(fieldname)
-        if self._is_string_type(value):
+        if isinstance(value, basestring):
             p = re.compile(pattern)
             if not p.match(value):
                 raise ValidationError("Value %r for field '%s' does not match regular expression '%s'" % (value, fieldname, pattern))
@@ -216,7 +216,7 @@ class JSONSchemaValidator(object):
         to the specified length if a string
         '''
         value = x.get(fieldname)
-        if self._is_string_type(value) and len(value) > length:
+        if isinstance(value, basestring) and len(value) > length:
             raise ValidationError("Length of value %r for field '%s' must be less than or equal to %f" % (value, fieldname, length))
 
     def validate_minLength(self, x, fieldname, schema, length=None):
@@ -225,7 +225,7 @@ class JSONSchemaValidator(object):
         to the specified length if a string
         '''
         value = x.get(fieldname)
-        if self._is_string_type(value) and len(value) < length:
+        if isinstance(value, basestring) and len(value) < length:
             raise ValidationError("Length of value %r for field '%s' must be more than or equal to %f" % (value, fieldname, length))
 
     def validate_enum(self, x, fieldname, schema, options=None):
@@ -241,12 +241,12 @@ class JSONSchemaValidator(object):
                 raise ValidationError("Value %r for field '%s' is not in the enumeration: %r" % (value, fieldname, options))
 
     def validate_title(self, x, fieldname, schema, title=None):
-        if not self._is_string_type(title):
+        if not isinstance(title, (basestring, type(None))):
             raise SchemaError("The title for field '%s' must be a string" %
                              fieldname)
 
     def validate_description(self, x, fieldname, schema, description=None):
-        if not self._is_string_type(description):
+        if not isinstance(description, (basestring, type(None))):
             raise SchemaError("The description for field '%s' must be a string."
                              % fieldname)
 
@@ -286,8 +286,5 @@ class JSONSchemaValidator(object):
                     validator(data, fieldname, schema, schema.get(schemaprop))
 
         return data
-
-    def _is_string_type(self, value):
-        return value is None or isinstance(value, basestring)
 
 __all__ = ['JSONSchemaValidator']
