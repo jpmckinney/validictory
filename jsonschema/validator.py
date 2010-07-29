@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 #:coding=utf-8:
-#:tabSize=2:indentSize=2:noTabs=true:
-#:folding=explicit:collapseFolds=1:
 
 #TODO: Support references
 #TODO: Support inline schema
 
-import types, sys, re, copy
+import re, copy
 
 class JSONSchemaValidator:
   '''
@@ -25,7 +23,10 @@ class JSONSchemaValidator:
     "null": type(None),
     "any": None
   }
-  
+
+  _ignored = ('identity', 'options', 'readonly', 'transient', 'hidden')
+  # extends not in here b/c it should raise error
+
   # Default schema property values.
   _schemadefault = {
     "id": None,
@@ -48,9 +49,7 @@ class JSONSchemaValidator:
     "format": None,
     "default": None,
     "maxDecimal": None,
-    "hidden": None,
     "disallow": None,
-    "extends": None
   }
   
   _refmap = {}
@@ -336,9 +335,6 @@ class JSONSchemaValidator:
         raise ValueError("Value %r for field '%s' must not have more than %d decimal places" % (value, fieldname, maxdecimal))
     return x
   
-  def validate_hidden(self, x, fieldname, schema, hidden=False):
-    return x
-  
   def validate_disallow(self, x, fieldname, schema, disallow=None):
     '''
     Validates that the value of the given field does not match the
@@ -352,9 +348,7 @@ class JSONSchemaValidator:
       raise ValueError("Value %r of type %s is disallowed for field '%s'" % (x.get(fieldname), disallow, fieldname))
     return x
   
-  def validate_extends(self, x, fieldname, schema, extends=None):
-    return x
-  
+
   def _convert_type(self, fieldtype):
     if isinstance(fieldtype, (type, dict)):
       return fieldtype
@@ -414,7 +408,7 @@ class JSONSchemaValidator:
           # copy in order to validate default values.
           validator(data, fieldname, schema, new_schema.get(schemaprop))
         except AttributeError, e:
-          if schemaprop not in ('identity', 'options', 'readonly', 'transient'):
+          if schemaprop not in self._ignored:
             raise ValueError("Schema property '%s' is not supported" % 
                              schemaprop)
       
