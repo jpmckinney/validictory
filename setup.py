@@ -2,8 +2,8 @@
 
 from setuptools import setup, find_packages
 
-VERSION = "0.4"
-DESCRIPTION = "general purpose validator for data in python dictionaries"
+from validictory import __version__
+DESCRIPTION = "general purpose python data validator"
 LONG_DESCRIPTION = open('README.rst').read()
 
 CLASSIFIERS = filter(None, map(str.strip,
@@ -15,7 +15,7 @@ Topic :: Software Development :: Libraries :: Python Modules
 """.splitlines()))
 
 setup(name='validictory',
-      version=VERSION,
+      version=__version__,
       description=DESCRIPTION,
       long_description=LONG_DESCRIPTION,
       author='James Turk',
