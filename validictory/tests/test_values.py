@@ -4,7 +4,7 @@
 
 from unittest import TestCase
 
-import jsonschema
+import validictory
 
 
 class TestEnum(TestCase):
@@ -14,14 +14,14 @@ class TestEnum(TestCase):
         data = ["test", True, 123, ["???"]]
         try:
             for item in data:
-                jsonschema.validate(item, self.schema)
+                validictory.validate(item, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_enum_fail(self):
         data = "unknown"
 
-        self.assertRaises(ValueError, jsonschema.validate, data, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
 
 class TestPattern(TestCase):
@@ -34,7 +34,7 @@ class TestPattern(TestCase):
         data = "my.email01@gmail.com"
 
         try:
-            jsonschema.validate(data, self.schema)
+            validictory.validate(data, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -42,14 +42,14 @@ class TestPattern(TestCase):
         data = 123
 
         try:
-            jsonschema.validate(data, self.schema)
+            validictory.validate(data, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_pattern_fail(self):
         data = "whatever"
 
-        self.assertRaises(ValueError, jsonschema.validate, data, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
 
 class TestMaximum(TestCase):
@@ -66,8 +66,8 @@ class TestMaximum(TestCase):
         data2 = { "prop01": 10, "prop02": 20 }
 
         try:
-            jsonschema.validate(data1, self.schema)
-            jsonschema.validate(data2, self.schema)
+            validictory.validate(data1, self.schema)
+            validictory.validate(data2, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -77,8 +77,8 @@ class TestMaximum(TestCase):
         #Test integer
         data2 = { "prop01": 9, "prop02": 21 }
 
-        self.assertRaises(ValueError, jsonschema.validate, data1, self.schema)
-        self.assertRaises(ValueError, jsonschema.validate, data2, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data1, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data2, self.schema)
 
 
 class TestMinimum(TestCase):
@@ -95,8 +95,8 @@ class TestMinimum(TestCase):
         data2 = { "prop01": 10, "prop02": 20 }
 
         try:
-            jsonschema.validate(data1, self.schema)
-            jsonschema.validate(data2, self.schema)
+            validictory.validate(data1, self.schema)
+            validictory.validate(data2, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -106,8 +106,8 @@ class TestMinimum(TestCase):
         #Test integer
         data2 = { "prop01": 10, "prop02": 19 }
 
-        self.assertRaises(ValueError, jsonschema.validate, data1, self.schema)
-        self.assertRaises(ValueError, jsonschema.validate, data2, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data1, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data2, self.schema)
 
 
 class TestMinLength(TestCase):
@@ -119,7 +119,7 @@ class TestMinLength(TestCase):
 
         try:
             for item in data:
-                jsonschema.validate(item, self.schema)
+                validictory.validate(item, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -128,7 +128,7 @@ class TestMinLength(TestCase):
         data1 = 123
 
         try:
-            jsonschema.validate(data1, self.schema)
+            validictory.validate(data1, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -137,7 +137,7 @@ class TestMinLength(TestCase):
         data = ["car", [1,2,3]]
 
         for item in data:
-            self.assertRaises(ValueError, jsonschema.validate, data,
+            self.assertRaises(ValueError, validictory.validate, data,
                               self.schema)
 
 
@@ -149,7 +149,7 @@ class TestMaxLength(TestCase):
         data = ["test", "car", [1,2,3,4], [0,0,0]]
         try:
             for item in data:
-                jsonschema.validate(item, self.schema)
+                validictory.validate(item, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -158,12 +158,12 @@ class TestMaxLength(TestCase):
         data1 = 12345
 
         try:
-            jsonschema.validate(data1, self.schema)
+            validictory.validate(data1, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_maxLength_fail(self):
         data = ["string", [1,2,3,4,5]]
         for item in data:
-            self.assertRaises(ValueError, jsonschema.validate, item,
+            self.assertRaises(ValueError, validictory.validate, item,
                               self.schema)

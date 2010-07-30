@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import jsonschema
+import validictory
 
 class TestProperties(TestCase):
     props = {
@@ -33,7 +33,7 @@ class TestProperties(TestCase):
         }
 
         try:
-            jsonschema.validate(data, self.schema)
+            validictory.validate(data, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -47,7 +47,7 @@ class TestProperties(TestCase):
         }
 
         try:
-            jsonschema.validate(data, self.schema)
+            validictory.validate(data, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -59,7 +59,7 @@ class TestProperties(TestCase):
             }
         }
 
-        self.assertRaises(ValueError, jsonschema.validate, data, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
 
 class TestAdditionalProperties(TestCase):
@@ -69,13 +69,13 @@ class TestAdditionalProperties(TestCase):
         for x in [1, 89, 48, 32, 49, 42]:
             try:
                 data = {"prop": x}
-                jsonschema.validate(data, schema)
+                validictory.validate(data, schema)
             except ValueError,e:
                 self.fail("Unexpected failure: %s" % e)
 
         #failures
         for x in [1.2, "bad", {"test":"blah"}, [32, 49], None, True]:
-            self.assertRaises(ValueError, jsonschema.validate, {"prop": x},
+            self.assertRaises(ValueError, validictory.validate, {"prop": x},
                               schema)
 
     def test_with_properties(self):
@@ -94,7 +94,7 @@ class TestAdditionalProperties(TestCase):
                     "prop2":"this is prop2",
                     "prop3": x
                 }
-                jsonschema.validate(data, schema)
+                validictory.validate(data, schema)
             except ValueError,e:
                 self.fail("Unexpected failure: %s" % e)
 
@@ -105,14 +105,14 @@ class TestAdditionalProperties(TestCase):
                 "prop2":"this is prop2",
                 "prop3": x
             }
-            self.assertRaises(ValueError, jsonschema.validate, data, schema)
+            self.assertRaises(ValueError, validictory.validate, data, schema)
 
     def test_true(self):
         schema = {"additionalProperties":True}
 
         for x in [1.2, 1, {"test":"blah"}, [32, 49], None, True, "blah"]:
             try:
-                jsonschema.validate({"prop": x}, schema)
+                validictory.validate({"prop": x}, schema)
             except ValueError, e:
                 self.fail("Unexpected failure: %s" % e)
 
@@ -120,7 +120,7 @@ class TestAdditionalProperties(TestCase):
         schema = {"additionalProperties":False}
 
         for x in ["bad", {"test":"blah"}, [32.42, 494242], None, True, 1.34]:
-            self.assertRaises(ValueError, jsonschema.validate, {"prop":x},
+            self.assertRaises(ValueError, validictory.validate, {"prop":x},
                               schema)
 
 
@@ -137,16 +137,16 @@ class TestRequires(TestCase):
         data3 = { "prop01": "test", "prop02": 2 }
 
         try:
-            jsonschema.validate(data1, self.schema)
-            jsonschema.validate(data2, self.schema)
-            jsonschema.validate(data3, self.schema)
+            validictory.validate(data1, self.schema)
+            validictory.validate(data2, self.schema)
+            validictory.validate(data3, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_requires_fail(self):
         data = { "prop02": 2 }
 
-        self.assertRaises(ValueError, jsonschema.validate, data, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
 
 class TestOptional(TestCase):
@@ -166,7 +166,7 @@ class TestOptional(TestCase):
         }
 
         try:
-            jsonschema.validate(x, self.schema)
+            validictory.validate(x, self.schema)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
@@ -175,4 +175,4 @@ class TestOptional(TestCase):
             "prop02":"blah"
         }
 
-        self.assertRaises(ValueError, jsonschema.validate, x, self.schema)
+        self.assertRaises(ValueError, validictory.validate, x, self.schema)

@@ -6,10 +6,9 @@ class SchemaError(ValueError):
 class ValidationError(ValueError):
     """validation errors encountered during validate"""
 
-class JSONSchemaValidator(object):
+class SchemaValidator(object):
     '''
-    Implementation of the json-schema validator that adheres to the
-    JSON Schema Proposal 2nd Draft.
+    Validator based on JSON Schema Proposal 2nd Draft.
     '''
 
     def validate_type_string(self, val):

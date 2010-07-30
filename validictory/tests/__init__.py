@@ -7,9 +7,9 @@ import unittest
 import doctest
 
 def additional_tests():
-    import jsonschema
+    import validictory
     suite = unittest.TestSuite()
-    suite.addTest(doctest.DocTestSuite(jsonschema))
+    suite.addTest(doctest.DocTestSuite(validictory))
     return suite
 
 def main():

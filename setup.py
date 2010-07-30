@@ -19,8 +19,8 @@ if sys.version < '2.3':
 
 from setuptools import setup, find_packages
 
-VERSION = "0.3"
-DESCRIPTION = "json-schema validator for Python"
+VERSION = "0.4"
+DESCRIPTION = "schema validator for Python"
 LONG_DESCRIPTION = """
 jsonschema is a complete, full featured validator for json-schema
 adhering to the json-schema proposal second draft.
@@ -42,16 +42,16 @@ Programming Language :: Python
 Topic :: Software Development :: Libraries :: Python Modules
 """.splitlines()))
 
-setup(name='jsonschema',
+setup(name='validictory',
       version=VERSION,
       description=DESCRIPTION,
       long_description=LONG_DESCRIPTION,
       author='James Turk',
       author_email='james.p.turk@gmail.com',
-      url='http://github.com/jamesturk/jsonschema',
+      url='http://github.com/jamesturk/validictory',
       license="MIT License",
       platforms=["any"],
       packages=find_packages(exclude=['ez_setup']),
-      test_suite="jsonschema.tests",
+      test_suite="validictory.tests",
       zip_safe=False
      )

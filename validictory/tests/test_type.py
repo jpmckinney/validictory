@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import jsonschema
+import validictory
 
 class TestType(TestCase):
     def test_schema(self):
@@ -17,21 +17,21 @@ class TestType(TestCase):
 
         for x in [data1, data2]:
             try:
-                jsonschema.validate(x, schema)
+                validictory.validate(x, schema)
             except ValueError, e:
                 self.fail("Unexpected failure: %s" % e)
 
-        self.assertRaises(ValueError, jsonschema.validate, data3, schema)
+        self.assertRaises(ValueError, validictory.validate, data3, schema)
 
     def _test_type(self, typename, valids, invalids):
         for x in valids:
             try:
-                jsonschema.validate(x, {"type":typename})
+                validictory.validate(x, {"type":typename})
             except ValueError, e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:
-            self.assertRaises(ValueError, jsonschema.validate, x,
+            self.assertRaises(ValueError, validictory.validate, x,
                               {"type":typename})
 
     def test_integer(self):
@@ -78,7 +78,7 @@ class TestType(TestCase):
         valids = [1.2, "bad", {"test":"blah"}, [32, 49], None, 1284, True]
         for x in valids:
             try:
-                jsonschema.validate(x, {})
+                validictory.validate(x, {})
             except ValueError:
                 self.fail("Unexpected failure: %s" % e)
 
@@ -93,11 +93,11 @@ class TestDisallow(TestType):
     def _test_type(self, typename, valids, invalids):
         for x in invalids:
             try:
-                jsonschema.validate(x, {"disallow":typename})
+                validictory.validate(x, {"disallow":typename})
             except ValueError, e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in valids:
-            self.assertRaises(ValueError, jsonschema.validate, x,
+            self.assertRaises(ValueError, validictory.validate, x,
                               {"disallow":typename})
 
