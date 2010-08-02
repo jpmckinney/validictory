@@ -1,6 +1,8 @@
 from unittest import TestCase
+import datetime
 
 import validictory
+
 
 class TestType(TestCase):
     def test_schema(self):
@@ -101,3 +103,38 @@ class TestDisallow(TestType):
             self.assertRaises(ValueError, validictory.validate, x,
                               {"disallow":typename})
 
+
+class DateValidator(validictory.validator.SchemaValidator):
+
+    def validate_type_date(self, value):
+        return isinstance(value, datetime.date)
+
+    def validate_type_datetime(self, value):
+        return isinstance(value, datetime.datetime)
+
+
+class TestCustomType(TestCase):
+    def test_date(self):
+        self._test_type('date', [datetime.date.today()],
+                        [2010, '2010'])
+
+    def test_datetime(self):
+        self._test_type('datetime', [datetime.datetime.now()],
+                        [2010, '2010', datetime.date.today()])
+
+    def test_either(self):
+        self._test_type(['datetime', 'date'],
+                        [datetime.date.today(), datetime.datetime.now()],
+                        [2010, '2010'])
+
+    def _test_type(self, typename, valids, invalids):
+        validator = DateValidator()
+        for x in valids:
+            try:
+                validator.validate(x, {"type":typename})
+            except ValueError, e:
+                self.fail("Unexpected failure: %s" % e)
+
+        for x in invalids:
+            self.assertRaises(ValueError, validator.validate, x,
+                              {"type":typename})
