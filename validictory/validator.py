@@ -1,4 +1,5 @@
 import re
+import copy
 
 class SchemaError(ValueError):
     """errors relating to an invalid schema passed to validate"""
@@ -290,13 +291,19 @@ class SchemaValidator(object):
             if not isinstance(schema, dict):
                 raise SchemaError("Schema structure is invalid.")
 
-            for schemaprop in schema:
+            newschema = copy.copy(schema)
+
+            if 'optional' not in schema:
+                newschema['optional'] = False
+
+            for schemaprop in newschema:
 
                 validatorname = "validate_" + schemaprop
 
                 validator = getattr(self, validatorname, None)
                 if validator:
-                    validator(data, fieldname, schema, schema.get(schemaprop))
+                    validator(data, fieldname, schema,
+                              newschema.get(schemaprop))
 
         return data
 

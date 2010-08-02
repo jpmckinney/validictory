@@ -61,6 +61,20 @@ class TestProperties(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
+    def test_properties_nested_multitype(self):
+        schema = {
+         "type": "object",
+         "properties": {
+            "foo": {"type": "array", "items": {"type": "object", "properties": {
+                "bar": {"type": ["string", "number", ]},
+            }}},
+         }
+        }
+
+        data = { 'foo': [{'bar': 'test'}, {'bar':3}] }
+
+        validictory.validate(data, schema)
+
 
 class TestAdditionalProperties(TestCase):
     def test_no_properties(self):
@@ -171,8 +185,7 @@ class TestOptional(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_optional_fail(self):
-        x = {
-            "prop02":"blah"
-        }
-
+        x = { "prop02":"blah" }
+        self.assertRaises(ValueError, validictory.validate, x, self.schema)
+        x = { "prop04":True }  # should still fail
         self.assertRaises(ValueError, validictory.validate, x, self.schema)
