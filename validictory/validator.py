@@ -11,11 +11,6 @@ class SchemaValidator(object):
     '''
     Validator based on JSON Schema Proposal 2nd Draft.
     '''
-
-    def __init__(self, raise_errors=True):
-        self.raise_errors = raise_errors
-        self.errors = []
-
     def validate_type_string(self, val):
         return isinstance(val, basestring)
 
@@ -44,11 +39,7 @@ class SchemaValidator(object):
         params['value'] = value
         params['fieldname'] = fieldname
         message = desc % params
-        if self.raise_errors:
-            raise ValidationError(message)
-        else:
-            params['message'] = message
-            self.errors.append(params)
+        raise ValidationError(message)
 
     def validate_type(self, x, fieldname, schema, fieldtype=None):
         '''

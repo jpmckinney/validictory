@@ -61,20 +61,6 @@ class TestProperties(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
-    def test_properties_nested_multitype(self):
-        schema = {
-         "type": "object",
-         "properties": {
-            "foo": {"type": "array", "items": {"type": "object", "properties": {
-                "bar": {"type": ["string", "number", ]},
-            }}},
-         }
-        }
-
-        data = { 'foo': [{'bar': 'test'}, {'bar':3}] }
-
-        validictory.validate(data, schema)
-
 
 class TestAdditionalProperties(TestCase):
     def test_no_properties(self):
