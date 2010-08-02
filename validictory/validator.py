@@ -120,10 +120,10 @@ class SchemaValidator(object):
                                     value, fieldname)
                 elif isinstance(items, dict):
                     for eachItem in value:
-                            try:
-                                self._validate(eachItem, items)
-                            except ValueError, e:
-                                raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
+                        try:
+                            self._validate(eachItem, items)
+                        except ValueError, e:
+                            raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
                 else:
                     raise SchemaError("Properties definition of field '%s' is not a list or an object" % fieldname)
 
@@ -203,7 +203,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, (basestring, list)) and len(value) > length:
-            raise ValidationError("Length of value %r for field '%s' must be less than or equal to %f" % (value, fieldname, length))
+            self._error("Length of value %(value)r for field '%(fieldname)s' must be less than or equal to %(length)d",
+                        value, fieldname, length=length)
 
     def validate_minLength(self, x, fieldname, schema, length=None):
         '''
@@ -212,7 +213,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, (basestring, list)) and len(value) < length:
-            raise ValidationError("Length of value %r for field '%s' must be more than or equal to %f" % (value, fieldname, length))
+            self._error("Length of value %(value)r for field '%(fieldname)s' must be greater than or equal to %(length)d",
+                        value, fieldname, length=length)
 
     validate_minItems = validate_minLength
     validate_maxItems = validate_maxLength
