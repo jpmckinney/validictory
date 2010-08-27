@@ -153,6 +153,8 @@ class SchemaValidator(object):
             properties = schema.get("properties")
             if properties is None:
                 properties = {}
+            if value is None:
+                value = {}
             for eachProperty in value.keys():
                 if eachProperty not in properties:
                     # If additionalProperties is the boolean value False
@@ -227,8 +229,7 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, basestring):
-            p = re.compile(pattern)
-            if not p.match(value):
+            if not re.match(pattern, value):
                 self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
                             value, fieldname, pattern=pattern)
 
