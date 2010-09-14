@@ -167,3 +167,30 @@ class TestMaxLength(TestCase):
         for item in data:
             self.assertRaises(ValueError, validictory.validate, item,
                               self.schema)
+
+
+class TestBlank(TestCase):
+
+    def test_blank_default(self):
+        try:
+            validictory.validate("test", {})
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+        self.assertRaises(ValueError, validictory.validate, "", {})
+
+    def test_blank_false(self):
+        schema = {"blank":False}
+        try:
+            validictory.validate("test", schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+        self.assertRaises(ValueError, validictory.validate, "", schema)
+
+    def test_blank_true(self):
+        try:
+            validictory.validate("", {"blank":True})
+            validictory.validate("test", {"blank":True})
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)

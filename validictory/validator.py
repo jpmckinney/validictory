@@ -137,6 +137,15 @@ class SchemaValidator(object):
             self._error("Required field '%(fieldname)s' is missing",
                         None, fieldname)
 
+    def validate_blank(self, x, fieldname, schema, blank=False):
+        '''
+        Validates that the given field is not blank if blank=False
+        '''
+        value = x.get(fieldname)
+        if isinstance(value, basestring) and not blank and not value:
+            self._error("Value %(value)r for field '%(fieldname)s' cannot be blank'",
+                        value, fieldname)
+
     def validate_additionalProperties(self, x, fieldname, schema,
                                       additionalProperties=None):
         '''
@@ -287,6 +296,8 @@ class SchemaValidator(object):
 
             if 'optional' not in schema:
                 newschema['optional'] = False
+            if 'blank' not in schema:
+                newschema['blank'] = False
 
             for schemaprop in newschema:
 
