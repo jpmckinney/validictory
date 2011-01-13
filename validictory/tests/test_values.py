@@ -52,6 +52,68 @@ class TestPattern(TestCase):
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
 
+class TestUniqueItems(TestCase):
+
+    # match simplified regular expression for an e-mail address
+    schema = {"uniqueItems": True}
+
+    def test_uniqueitems_pass(self):
+        data = [1,2,3]
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_uniqueitems_pass_string(self):
+        data = ['1', '2', '3']
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_uniqueitems_pass_nested_array(self):
+        '''
+        uniqueItems only applies for the array it was specified on and not to
+        all datastructures nested within.
+        '''
+        data = [[1, [5, 5]], [2, [5, 5]]]
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_uniqueitems_pass_different_types(self):
+        data = [1, "1"]
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_uniqueitems_fail(self):
+        data = [1, 1, 1]
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+    def test_uniqueitems_fail_nested_arrays(self):
+        data = [[1,2,3], [1,2,3]]
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+    def test_uniqueitems_fail_nested_objects(self):
+        data = [{'one': 1, 'two': 2}, {'one': 1, 'two': 2}]
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+    def test_uniqueitems_fail_null(self):
+        data = [None, None]
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+
 class TestMaximum(TestCase):
     props = {
         "prop01": { "type":"number", "maximum":10 },
