@@ -242,11 +242,14 @@ class SchemaValidator(object):
                 self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
                             value, fieldname, pattern=pattern)
 
-    def validate_uniqueItems(self, x, fieldname, schema, options=None):
+    def validate_uniqueItems(self, x, fieldname, schema, unique=False):
         '''
         Validates that all items in an array instance MUST be unique
         (contains no two identical values).
         '''
+
+        if not unique:
+            return # nothing to validate
 
         values = x.get(fieldname)
 

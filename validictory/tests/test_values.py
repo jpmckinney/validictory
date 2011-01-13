@@ -57,6 +57,8 @@ class TestUniqueItems(TestCase):
     # match simplified regular expression for an e-mail address
     schema = {"uniqueItems": True}
 
+    schema_false = {"uniqueItems": False}
+
     def test_uniqueitems_pass(self):
         data = [1,2,3]
 
@@ -90,6 +92,14 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_uniqueitems_false_pass(self):
+        data = [1, 1, 1]
+
+        try:
+            validictory.validate(data, self.schema_false)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
