@@ -54,9 +54,7 @@ class TestPattern(TestCase):
 
 class TestUniqueItems(TestCase):
 
-    # match simplified regular expression for an e-mail address
     schema = {"uniqueItems": True}
-
     schema_false = {"uniqueItems": False}
 
     def test_uniqueitems_pass(self):
