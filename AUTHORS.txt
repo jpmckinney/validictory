@@ -1,0 +1,5 @@
+* James Turk
+* Silas Sewell - Cosmetic fixes
+* Filip Noetzel - format and uniqueItems validators
+
+Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
