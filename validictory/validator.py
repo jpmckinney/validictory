@@ -1,5 +1,6 @@
 import re
 import copy
+from datetime import datetime
 
 class SchemaError(ValueError):
     """errors relating to an invalid schema passed to validate"""
@@ -230,6 +231,37 @@ class SchemaValidator(object):
 
     validate_minItems = validate_minLength
     validate_maxItems = validate_maxLength
+
+    def validate_format(self, x, fieldname, schema, format_option=None):
+        '''
+        Validates the format of primitive data types
+        '''
+        value = x.get(fieldname)
+
+        date_formats = {
+            'date-time': '%Y-%m-%dT%H:%M:%SZ',
+            'date': '%Y-%m-%d',
+            'time': '%H:%M:%S',
+        }
+
+        if isinstance(value, str) and format_option in date_formats.keys():
+            try:
+                datetime.strptime(value, date_formats[format_option])
+            except ValueError, e:
+                self._error("Value %(value)r of field '%(fieldname)s' is not in '%(format_option)s' format",
+                            value, fieldname, format_option=format_option)
+
+        if format_option == 'utc-millisec':
+            if not isinstance(value, (int,float)):
+                self._error("Value %(value)r of field '%(fieldname)s' is not a number",
+                            value, fieldname)
+
+            if not value > 0:
+                self._error("Value %(value)r of field '%(fieldname)s' is not a positive number",
+                            value, fieldname)
+
+        # TODO: warn about unsupported format ?
+
 
     def validate_pattern(self, x, fieldname, schema, pattern=None):
         '''

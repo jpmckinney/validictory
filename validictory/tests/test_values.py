@@ -51,6 +51,81 @@ class TestPattern(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
+class TestFormat(TestCase):
+
+    schema_datetime =    {"format": "date-time"}
+    schema_date =        {"format": "date"}
+    schema_time =        {"format": "time"}
+    schema_utcmillisec = {"format": "utc-millisec"}
+
+    def test_format_datetime_pass(self):
+        data = "2011-01-13T10:56:53Z"
+
+        try:
+            validictory.validate(data, self.schema_datetime)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_date_pass(self):
+        data = "2011-01-13"
+
+        try:
+            validictory.validate(data, self.schema_date)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_time_pass(self):
+        data = "10:56:53"
+
+        try:
+            validictory.validate(data, self.schema_time)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_utcmillisec_pass(self):
+        data = 1294915735
+
+        try:
+            validictory.validate(data, self.schema_utcmillisec)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+
+    def test_format_datetime_nonexisting_day_fail(self):
+        data = "2013-13-13T00:00:00Z"
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+
+    def test_format_datetime_feb29_fail(self):
+        data = "2011-02-29T00:00:00Z"
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+
+    def test_format_datetime_notutc_fail(self):
+        data = "2011-01-13T10:56:53+01:00"
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+
+    def test_format_datetime_fail(self):
+        data = "whatever"
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+
+    def test_format_date_fail(self):
+        data = "whatever"
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_date)
+
+    def test_format_time_fail(self):
+        data = "whatever"
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_time)
+
+    def test_format_utcmillisec_fail(self):
+        data = "whatever"
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_utcmillisec)
+
+    def test_format_utcmillisec_negative_fail(self):
+        data = -1
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_utcmillisec)
+
 
 class TestMaximum(TestCase):
     props = {
