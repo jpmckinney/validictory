@@ -111,15 +111,15 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, list):
                 if isinstance(items, list):
-                    if len(items) == len(value):
+                    if not 'additionalItems' in schema.keys() and len(items) != len(value):
+                        self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
+                                    value, fieldname)
+                    else:
                         for itemIndex in range(len(items)):
                             try:
                                 self.validate(value[itemIndex], items[itemIndex])
                             except ValueError, e:
                                 raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
-                    else:
-                        self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
-                                    value, fieldname)
                 elif isinstance(items, dict):
                     for eachItem in value:
                         try:
@@ -146,6 +146,24 @@ class SchemaValidator(object):
         if isinstance(value, basestring) and not blank and not value:
             self._error("Value %(value)r for field '%(fieldname)s' cannot be blank'",
                         value, fieldname)
+
+    def validate_additionalItems(self, x, fieldname, schema, additionalItems=False):
+        value = x.get(fieldname)
+
+        if not isinstance(value, list):
+            return
+
+        if isinstance(additionalItems, bool):
+            if additionalItems or 'items' not in schema.keys():
+                return
+            elif len(value) != len(schema['items']):
+                #print locals(), value, len(value), len(schema['items'])
+                self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
+                             value, fieldname)
+
+        remaining = value[len(schema['items']):]
+        if len(remaining) > 0:
+            self._validate(remaining, {'items': additionalItems})
 
     def validate_additionalProperties(self, x, fieldname, schema,
                                       additionalProperties=None):
