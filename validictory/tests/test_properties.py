@@ -61,6 +61,45 @@ class TestProperties(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
+class TestPatternProperties(TestCase):
+    schema = { 'patternProperties': { '[abc]': { 'type': 'boolean' } } }
+
+    def test_patternproperties_pass(self):
+        data = { 'a': True }
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_patternproperties_nonmatch(self):
+        data = { 'a': True, 'd': 'foo' }
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_patternproperties_nested(self):
+        schema = { 'patternProperties': { '[abc]': {
+                     'patternProperties': { '[abc]': { 'type': 'boolean' } }
+                  } } }
+
+        data = { 'a': {'b': False }}
+
+        try:
+            validictory.validate(data, schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_patternproperties_fail_multiple(self):
+        data = { 'a': True, 'b': False, 'c': 'foo' }
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+    def test_patternproperties_fail(self):
+        data = { 'a': 12 }
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
 
 class TestAdditionalProperties(TestCase):
     def test_no_properties(self):

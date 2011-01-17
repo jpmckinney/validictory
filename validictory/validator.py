@@ -147,6 +147,18 @@ class SchemaValidator(object):
             self._error("Value %(value)r for field '%(fieldname)s' cannot be blank'",
                         value, fieldname)
 
+    def validate_patternProperties(self, x, fieldname, schema, patternproperties=None):
+
+        if patternproperties == None:
+            patternproperties = {}
+
+        value_obj = x.get(fieldname)
+
+        for pattern, schema in patternproperties.iteritems():
+            for key, value in value_obj.iteritems():
+                if re.match(pattern, key):
+                    self.validate(value, schema)
+
     def validate_additionalProperties(self, x, fieldname, schema,
                                       additionalProperties=None):
         '''
