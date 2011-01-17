@@ -245,7 +245,7 @@ class TestMinimum(TestCase):
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
-    def test_minumum_fail(self):
+    def test_minimum_fail(self):
         #Test number
         data1 = { "prop01": 9, "prop02": 21 }
         #Test integer
