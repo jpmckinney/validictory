@@ -189,10 +189,13 @@ class SchemaValidator(object):
         Validates that the field is longer than or equal to the minimum
         length if specified
         '''
+
+        exclusive = schema.get('exclusiveMinimum', False)
+
         if x.get(fieldname) is not None:
             value = x.get(fieldname)
             if value is not None:
-                if type(value) in (int, float) and value < minimum:
+                if type(value) in (int, float) and (not exclusive and value < minimum) or (exclusive and value <= minimum):
                     self._error("Value %(value)r for field '%(fieldname)s' is less than minimum value: %(minimum)f",
                                 value, fieldname, minimum=minimum)
 
@@ -201,10 +204,13 @@ class SchemaValidator(object):
         Validates that the field is shorter than or equal to the maximum
         length if specified.
         '''
+
+        exclusive = schema.get('exclusiveMaximum', False)
+
         if x.get(fieldname) is not None:
             value = x.get(fieldname)
             if value is not None:
-                if type(value) in (int, float) and value > maximum:
+                if type(value) in (int, float) and (not exclusive and value > maximum) or (exclusive and value >= maximum):
                     self._error("Value %(value)r for field '%(fieldname)s' is greater than maximum value: %(maximum)f",
                                 value, fieldname, maximum=maximum)
 
