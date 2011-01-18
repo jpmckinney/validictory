@@ -202,7 +202,11 @@ class TestMaximum(TestCase):
         "prop01": { "type":"number", "maximum":10 },
         "prop02": { "type":"integer", "maximum":20 }
     }
+    props_exclusive = {
+        "prop": { "type":"integer", "maximum":20, "exclusiveMaximum": True },
+    }
     schema = {"type": "object", "properties":props}
+    schema_exclusive = {"type": "object", "properties": props_exclusive}
 
     def test_maximum_pass(self):
         #Test less than
@@ -216,6 +220,15 @@ class TestMaximum(TestCase):
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
+    def test_maximum_exclusive_pass(self):
+        #Test less than
+        data = { "prop": 19 }
+
+        try:
+            validictory.validate(data, self.schema_exclusive)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
     def test_maximum_fail(self):
         #Test number
         data1 = { "prop01": 11, "prop02": 19 }
@@ -225,13 +238,23 @@ class TestMaximum(TestCase):
         self.assertRaises(ValueError, validictory.validate, data1, self.schema)
         self.assertRaises(ValueError, validictory.validate, data2, self.schema)
 
+    def test_maximum_exclusive_fail(self):
+        #Test equal
+        data = { "prop": 20 }
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_exclusive)
+
 
 class TestMinimum(TestCase):
     props = {
         "prop01": { "type":"number", "minimum":10 },
         "prop02": { "type":"integer", "minimum":20 }
     }
+    props_exclusive = {
+        "prop": { "type":"integer", "minimum":20, "exclusiveMinimum": True },
+    }
     schema = {"type": "object", "properties":props}
+    schema_exclusive = {"type": "object", "properties": props_exclusive}
 
     def test_minimum_pass(self):
         #Test greater than
@@ -245,7 +268,16 @@ class TestMinimum(TestCase):
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
-    def test_minumum_fail(self):
+    def test_minimum_exclusive_pass(self):
+        #Test greater than
+        data = { "prop": 21 }
+
+        try:
+            validictory.validate(data, self.schema_exclusive)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_minimum_fail(self):
         #Test number
         data1 = { "prop01": 9, "prop02": 21 }
         #Test integer
@@ -253,6 +285,12 @@ class TestMinimum(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data1, self.schema)
         self.assertRaises(ValueError, validictory.validate, data2, self.schema)
+
+    def test_minimum_exclusive_fail(self):
+        #Test equal
+        data = { "prop": 20 }
+
+        self.assertRaises(ValueError, validictory.validate, data, self.schema_exclusive)
 
 
 class TestMinLength(TestCase):
