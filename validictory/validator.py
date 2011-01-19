@@ -43,11 +43,12 @@ class SchemaValidator(object):
     Validator based on JSON Schema Proposal 2nd Draft.
     '''
 
-    def __init__(self, format_validators=None):
+    def __init__(self, format_validators=None, required_by_default=True):
         if format_validators is None:
             format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
         self._format_validators = format_validators
+        self.required_by_default = required_by_default
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -169,12 +170,12 @@ class SchemaValidator(object):
                 else:
                     raise SchemaError("Properties definition of field '%s' is not a list or an object" % fieldname)
 
-    def validate_optional(self, x, fieldname, schema, optional=False):
+    def validate_required(self, x, fieldname, schema, required):
         '''
-        Validates that the given field is present if optional is false
+        Validates that the given field is present if required is True
         '''
         # Make sure the field is present
-        if fieldname not in x.keys() and not optional:
+        if fieldname not in x.keys() and required:
             self._error("Required field '%(fieldname)s' is missing",
                         None, fieldname)
 
@@ -434,8 +435,15 @@ class SchemaValidator(object):
 
             newschema = copy.copy(schema)
 
-            if 'optional' not in schema:
-                newschema['optional'] = False
+            # handle 'optional', replace it with 'required'
+            if 'required' in schema and 'optional' in schema:
+                raise SchemaError('cannot specify optional and required')
+            elif 'optional' in schema:
+                warnings.warn('The "optional" attribute has been replaced by "required"', DeprecationWarning)
+                newschema['required'] = not schema['optional']
+            elif 'required' not in schema:
+                newschema['required'] = self.required_by_default
+
             if 'blank' not in schema:
                 newschema['blank'] = False
 
