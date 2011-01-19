@@ -442,4 +442,4 @@ class SchemaValidator(object):
 
         return data
 
-__all__ = ['JSONSchemaValidator']
+__all__ = ['SchemaValidator']
