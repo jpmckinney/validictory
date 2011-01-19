@@ -51,12 +51,20 @@ class TestPattern(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
+def validate_format_contains_spaces(validator, fieldname, value, format_option):
+    if ' ' in value:
+        return
+
+    raise validictory.ValidationError(
+        "Value %(value)r of field '%(fieldname)s' does not contain any spaces, but it should" % locals())
+
 class TestFormat(TestCase):
 
-    schema_datetime =    {"format": "date-time"}
-    schema_date =        {"format": "date"}
-    schema_time =        {"format": "time"}
+    schema_datetime    = {"format": "date-time"}
+    schema_date        = {"format": "date"}
+    schema_time        = {"format": "time"}
     schema_utcmillisec = {"format": "utc-millisec"}
+    schema_spaces      = {"format": "spaces"}
 
     def test_format_datetime_pass(self):
         data = "2011-01-13T10:56:53Z"
@@ -125,6 +133,46 @@ class TestFormat(TestCase):
     def test_format_utcmillisec_negative_fail(self):
         data = -1
         self.assertRaises(ValueError, validictory.validate, data, self.schema_utcmillisec)
+
+    def test_format_custom_unregistered_pass(self):
+        data = 'No-spaces-here'
+
+        try:
+            # no custom validator installed, so no error
+            validictory.validate(data, self.schema_spaces)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_custom_instantiated_pass(self):
+        data = 'Here are spaces'
+
+        validator = validictory.SchemaValidator({'spaces': validate_format_contains_spaces})
+
+        try:
+            # validator installed, but data validates
+            validator.validate(data, self.schema_spaces)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_custom_registered_pass(self):
+        data = 'Here are spaces'
+
+        validator = validictory.SchemaValidator()
+        validator.register_format_validator('spaces', validate_format_contains_spaces)
+
+        try:
+            # validator registered, but data validates
+            validator.validate(data, self.schema_spaces)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_custom_registered_fail(self):
+        data = 'No-spaces-here'
+
+        validator = validictory.SchemaValidator({'spaces': validate_format_contains_spaces})
+
+        # validator registered, but data does not conform
+        self.assertRaises(ValueError, validator.validate, data, self.schema_spaces)
 
 
 class TestUniqueItems(TestCase):

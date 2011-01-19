@@ -8,10 +8,49 @@ class SchemaError(ValueError):
 class ValidationError(ValueError):
     """validation errors encountered during validate"""
 
+def _generate_datetime_validator(format_option, dateformat_string):
+    def validate_format_datetime(validator, fieldname, value, format_option):
+        try:
+            datetime.strptime(value, dateformat_string)
+        except ValueError, e:
+            raise ValidationError(
+                    "Value %(value)r of field '%(fieldname)s' is not in '%(format_option)s' format" % locals())
+
+    return validate_format_datetime
+
+validate_format_date_time  = _generate_datetime_validator('date-time', '%Y-%m-%dT%H:%M:%SZ')
+validate_format_date       = _generate_datetime_validator('date', '%Y-%m-%d')
+validate_format_time       = _generate_datetime_validator('time', '%H:%M:%S')
+
+def validate_format_utc_millisec(validator, fieldname, value, format_option):
+    if not isinstance(value, (int,float)):
+        raise ValidationError("Value %(value)r of field '%(fieldname)s' is not a number" % locals())
+
+    if not value > 0:
+        raise ValidationError("Value %(value)r of field '%(fieldname)s' is not a positive number" % locals())
+
+
+DEFAULT_FORMAT_VALIDATORS = {
+    'date-time'    : validate_format_date_time,
+    'date'         : validate_format_date,
+    'time'         : validate_format_time,
+    'utc-millisec' : validate_format_utc_millisec,
+}
+
 class SchemaValidator(object):
     '''
     Validator based on JSON Schema Proposal 2nd Draft.
     '''
+
+    def __init__(self, format_validators=None):
+        if format_validators is None:
+            format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
+
+        self._format_validators = format_validators
+
+    def register_format_validator(self, format_name, format_validator_fun):
+        self._format_validators[format_name] = format_validator_fun
+
     def validate_type_string(self, val):
         return isinstance(val, basestring)
 
@@ -274,27 +313,10 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
 
-        date_formats = {
-            'date-time': '%Y-%m-%dT%H:%M:%SZ',
-            'date': '%Y-%m-%d',
-            'time': '%H:%M:%S',
-        }
+        format_validator = self._format_validators.get(format_option, None)
 
-        if isinstance(value, str) and format_option in date_formats.keys():
-            try:
-                datetime.strptime(value, date_formats[format_option])
-            except ValueError, e:
-                self._error("Value %(value)r of field '%(fieldname)s' is not in '%(format_option)s' format",
-                            value, fieldname, format_option=format_option)
-
-        if format_option == 'utc-millisec':
-            if not isinstance(value, (int,float)):
-                self._error("Value %(value)r of field '%(fieldname)s' is not a number",
-                            value, fieldname)
-
-            if not value > 0:
-                self._error("Value %(value)r of field '%(fieldname)s' is not a positive number",
-                            value, fieldname)
+        if format_validator:
+            format_validator(self, fieldname, value, format_option)
 
         # TODO: warn about unsupported format ?
 

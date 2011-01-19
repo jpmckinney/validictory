@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from validictory.validator import SchemaValidator
+from validictory.validator import SchemaValidator, ValidationError
 
-__all__ = [ 'validate', 'SchemaValidator' ]
+__all__ = [ 'validate', 'SchemaValidator', 'ValidationError' ]
 __version__ = '0.6.0-dev'
 
-def validate(data, schema, validator_cls=SchemaValidator):
+def validate(data, schema, validator_cls=SchemaValidator, format_validators=None):
     '''
     Validates a parsed json document against the provided schema. If an
     error is found a ValueError is raised.
@@ -17,8 +17,11 @@ def validate(data, schema, validator_cls=SchemaValidator):
     If ``validator_cls`` is provided that class will be used to validate
     the given ``schema`` against the given ``data``. The given class should
     be a subclass of the SchemaValidator class.
+
+    If ``format_validators`` is provided, the validator_cls will be
+    instanciated with these default format validators.
     '''
-    v = validator_cls()
+    v = validator_cls(format_validators)
     return v.validate(data,schema)
 
 if __name__ == '__main__':
