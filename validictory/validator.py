@@ -349,7 +349,7 @@ class SchemaValidator(object):
         unhashables = []
 
         for value in values:
-            if isinstance(value, (list, tuple, dict)):
+            if isinstance(value, (list, dict)):
                 container, add = unhashables, unhashables.append
             else:
                 container, add = hashables, hashables.add
