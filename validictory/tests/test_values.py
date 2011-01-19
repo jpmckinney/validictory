@@ -377,3 +377,24 @@ class TestBlank(TestCase):
             validictory.validate("test", {"blank":True})
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
+
+
+class TestDivisibleBy(TestCase):
+    schema  = {'type': 'number', 'divisibleBy': 12}
+    schema0 = {'type': 'number', 'divisibleBy': 0}
+
+    def test_divisibleBy_pass(self):
+        data = 60
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_divisibleBy_fail(self):
+        data = 13
+        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+    def test_divisibleBy_ZeroDivisionError_fail(self):
+        data = 60
+        self.assertRaises(ValueError, validictory.validate, data, self.schema0)
+

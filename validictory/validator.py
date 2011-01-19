@@ -360,6 +360,19 @@ class SchemaValidator(object):
             raise SchemaError("The description for field '%s' must be a string."
                              % fieldname)
 
+    def validate_divisibleBy(self, x, fieldname, schema, divisibleBy=None):
+        value = x.get(fieldname)
+
+        if not self.validate_type_number(value):
+            return
+
+        if divisibleBy == 0:
+            raise SchemaError("'%r' <- divisibleBy can not be 0" % schema)
+
+        if value % divisibleBy != 0:
+            self._error("Value %(value)r field '%(fieldname)s' is not divisible by '%(divisibleBy)s'.",
+                        x.get(fieldname), fieldname, divisibleBy=divisibleBy)
+
     def validate_disallow(self, x, fieldname, schema, disallow=None):
         '''
         Validates that the value of the given field does not match the
