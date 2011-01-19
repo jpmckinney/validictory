@@ -1,6 +1,7 @@
 import re
 import copy
 from datetime import datetime
+import warnings
 
 class SchemaError(ValueError):
     """errors relating to an invalid schema passed to validate"""
@@ -248,10 +249,17 @@ class SchemaValidator(object):
             raise SchemaError("additionalProperties schema definition for field '%s' is not an object" % fieldname)
 
     def validate_requires(self, x, fieldname, schema, requires=None):
+        warnings.warn('The "requires" attribute has been replaced by "dependencies"', DeprecationWarning)
         if x.get(fieldname) is not None:
             if x.get(requires) is None:
                 self._error("Field '%(requires)s' is required by field '%(fieldname)s'",
                             None, fieldname, requires=requires)
+
+    def validate_dependencies(self, x, fieldname, schema, dependencies=None):
+        if x.get(fieldname) is not None:
+            if x.get(dependencies) is None:
+                self._error("Field '%(dependencies)s' is required by field '%(fieldname)s'",
+                            None, fieldname, dependencies=dependencies)
 
     def validate_minimum(self, x, fieldname, schema, minimum=None):
         '''
