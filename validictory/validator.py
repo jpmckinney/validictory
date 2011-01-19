@@ -67,7 +67,7 @@ class SchemaValidator(object):
         return isinstance(val, dict)
 
     def validate_type_array(self, val):
-        return isinstance(val, list)
+        return isinstance(val, (list, tuple))
 
     def validate_type_null(self, val):
         return val is None
@@ -97,7 +97,7 @@ class SchemaValidator(object):
             value = x.get(fieldname)
 
         if fieldtype and fieldexists:
-            if isinstance(fieldtype, list):
+            if isinstance(fieldtype, (list, tuple)):
                 # Match if type matches any one of the types in the list
                 datavalid = False
                 for eachtype in fieldtype:
@@ -148,8 +148,8 @@ class SchemaValidator(object):
         '''
         if x.get(fieldname) is not None:
             value = x.get(fieldname)
-            if isinstance(value, list):
-                if isinstance(items, list):
+            if isinstance(value, (list, tuple)):
+                if isinstance(items, (list, tuple)):
                     if not 'additionalItems' in schema.keys() and len(items) != len(value):
                         self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
                                     value, fieldname)
@@ -201,7 +201,7 @@ class SchemaValidator(object):
     def validate_additionalItems(self, x, fieldname, schema, additionalItems=False):
         value = x.get(fieldname)
 
-        if not isinstance(value, list):
+        if not isinstance(value, (list, tuple)):
             return
 
         if isinstance(additionalItems, bool):
@@ -290,7 +290,7 @@ class SchemaValidator(object):
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (basestring, list)) and len(value) > length:
+        if isinstance(value, (basestring, list, tuple)) and len(value) > length:
             self._error("Length of value %(value)r for field '%(fieldname)s' must be less than or equal to %(length)d",
                         value, fieldname, length=length)
 
@@ -300,7 +300,7 @@ class SchemaValidator(object):
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (basestring, list)) and len(value) < length:
+        if isinstance(value, (basestring, list, tuple)) and len(value) < length:
             self._error("Length of value %(value)r for field '%(fieldname)s' must be greater than or equal to %(length)d",
                         value, fieldname, length=length)
 
@@ -349,7 +349,7 @@ class SchemaValidator(object):
         unhashables = []
 
         for value in values:
-            if isinstance(value, (list, dict)):
+            if isinstance(value, (list, tuple, dict)):
                 container, add = unhashables, unhashables.append
             else:
                 container, add = hashables, hashables.add
@@ -368,7 +368,7 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if value is not None:
-            if not isinstance(options, list):
+            if not isinstance(options, (list, tuple)):
                 raise SchemaError("Enumeration %r for field '%s' is not a list type", (options, fieldname))
             if value not in options:
                 self._error("Value %(value)r for field '%(fieldname)s' is not in the enumeration: %(options)r",

@@ -9,12 +9,14 @@ import validictory
 
 class TestEnum(TestCase):
     schema = {"enum":["test", True, 123, ["???"]]}
+    schema2 = {"enum":("test", True, 123, ["???"])}
 
     def test_enum_pass(self):
         data = ["test", True, 123, ["???"]]
         try:
             for item in data:
                 validictory.validate(item, self.schema)
+                validictory.validate(item, self.schema2)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 

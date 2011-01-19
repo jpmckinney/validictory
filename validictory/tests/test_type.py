@@ -62,7 +62,7 @@ class TestType(TestCase):
         self._test_type('object', valids, invalids)
 
     def test_array(self):
-        valids = [[1, 89], [48, {"test":"blah"}, "49", 42]]
+        valids = [[1, 89], [48, {"test":"blah"}, "49", 42], (47, 11)]
         invalids = [1.2, "bad", {"test":"blah"}, 1234, None, True]
         self._test_type('array', valids, invalids)
 
@@ -89,7 +89,7 @@ class TestType(TestCase):
         valids = [None, 42, "string"]
         invalids = [1.2, {"test":"blah"}, [32, 49], True]
         self._test_type(types, valids, invalids)
-
+        self._test_type(tuple(types), valids, invalids)
 
 class TestDisallow(TestType):
     def _test_type(self, typename, valids, invalids):

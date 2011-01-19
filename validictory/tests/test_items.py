@@ -13,6 +13,11 @@ class TestItems(TestCase):
         "items":[{"type":"integer"}, {"type":"string"}, {"type":"boolean"}]
     }
 
+    schema3 = {
+        "type": "array",
+        "items":({"type":"integer"}, {"type":"string"}, {"type":"boolean"})
+    }
+
     def test_items_single_pass(self):
         data = ["string", "another string", "mystring"]
         data2 = ["JSON Schema is cool", "yet another string"]
@@ -34,6 +39,8 @@ class TestItems(TestCase):
         try:
             validictory.validate(data, self.schema2)
             validictory.validate(data2, self.schema2)
+            validictory.validate(tuple(data), self.schema3)
+            validictory.validate(tuple(data2), self.schema3)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
