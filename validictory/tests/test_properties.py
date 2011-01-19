@@ -248,3 +248,36 @@ class TestOptional(TestCase):
         self.assertRaises(ValueError, validictory.validate, x, self.schema)
         x = { "prop04":True }  # should still fail
         self.assertRaises(ValueError, validictory.validate, x, self.schema)
+
+
+class TestRequired(TestCase):
+    props = {
+        "prop_def": {"type":"string"},
+        "prop_opt": {"type":"number", "required":False},
+        "prop_req": {"type":"boolean", "required":True}
+    }
+    schema = {"type": "object", "properties":props}
+
+    def_and_req = {"prop_def": "test", "prop_req": False}
+    req_only = {"prop_req": True}
+    opt_only = {"prop_opt": 7}
+
+    def test_required_pass(self):
+        try:
+            # should pass if def and req are there
+            validictory.validate(self.def_and_req, self.schema)
+            # should pass if default is missing but req_by_default=False
+            validictory.validate(self.req_only, self.schema,
+                                 required_by_default=False)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_required_fail(self):
+        # missing required should always fail
+        self.assertRaises(ValueError, validictory.validate, self.opt_only,
+                          self.schema)
+        self.assertRaises(ValueError, validictory.validate, self.opt_only,
+                          self.schema, required_by_default=False)
+        # missing the default, fail if required_by_default=True
+        self.assertRaises(ValueError, validictory.validate, self.req_only,
+                          self.schema)
