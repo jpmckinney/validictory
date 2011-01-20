@@ -354,6 +354,9 @@ class SchemaValidator(object):
 
         values = x.get(fieldname)
 
+        if not isinstance(values, (list, tuple)):
+            return
+
         hashables = set()
         unhashables = []
 

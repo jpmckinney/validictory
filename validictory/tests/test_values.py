@@ -210,6 +210,14 @@ class TestUniqueItems(TestCase):
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
+    def test_uniqueitems_pass_not_an_array(self):
+        data = 13 # it's pretty unique
+
+        try:
+            validictory.validate(data, self.schema)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
     def test_uniqueitems_pass_different_types(self):
         data = [1, "1"]
 
