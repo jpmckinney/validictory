@@ -1,3 +1,7 @@
+0.6.1 - 2011-01-21
+------------------
+* bugfix for uniqueItems
+
 0.6.0 - 2011-01-20
 ------------------
 * more draft-03 stuff: patternProperties, additionalItems
