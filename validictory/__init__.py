@@ -3,7 +3,7 @@
 from validictory.validator import SchemaValidator, ValidationError
 
 __all__ = [ 'validate', 'SchemaValidator', 'ValidationError' ]
-__version__ = '0.6.1'
+__version__ = '0.6.2-dev'
 
 def validate(data, schema, validator_cls=SchemaValidator,
              format_validators=None, required_by_default=True):
