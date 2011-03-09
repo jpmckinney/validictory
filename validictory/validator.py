@@ -4,10 +4,15 @@ from datetime import datetime
 import warnings
 
 class SchemaError(ValueError):
-    """errors relating to an invalid schema passed to validate"""
+    """
+    errors encountered in processing a schema (subclass of :class:`ValueError`)
+    """
 
 class ValidationError(ValueError):
-    """validation errors encountered during validate"""
+    """
+    validation errors encountered during validation (subclass of
+    :class:`ValueError`)
+    """
 
 def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
@@ -40,7 +45,12 @@ DEFAULT_FORMAT_VALIDATORS = {
 
 class SchemaValidator(object):
     '''
-    Validator based on JSON Schema Proposal 2nd Draft.
+    Validator largely based upon the JSON Schema proposal but useful for
+    validating arbitrary python data structures.
+
+    :param format_validators: optional dictionary of custom format validators
+    :param required_by_default: defaults to True, set to False to make 
+        ``required`` schema attribute False by default.
     '''
 
     def __init__(self, format_validators=None, required_by_default=True):

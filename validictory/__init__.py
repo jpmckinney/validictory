@@ -1,29 +1,26 @@
 #!/usr/bin/env python
 
-from validictory.validator import SchemaValidator, ValidationError
+from validictory.validator import SchemaValidator, ValidationError, SchemaError
 
-__all__ = [ 'validate', 'SchemaValidator', 'ValidationError' ]
-__version__ = '0.6.2-dev'
+__all__ = [ 'validate', 'SchemaValidator', 'ValidationError', 'SchemaError' ]
+__version__ = '0.7.0'
 
 def validate(data, schema, validator_cls=SchemaValidator,
              format_validators=None, required_by_default=True):
     '''
     Validates a parsed json document against the provided schema. If an
-    error is found a ValueError is raised.
+    error is found a :class:`ValidationError` is raised.
 
-    ``data`` is a python dictionary object of parsed json data.
+    If there is an issue in the schema a :class:`SchemaError` will be raised.
 
-    ``schema`` is a python dictionary object representing the schema.
-
-    If ``validator_cls`` is provided that class will be used to validate
-    the given ``schema`` against the given ``data``. The given class should
-    be a subclass of the SchemaValidator class.
-
-    If ``format_validators`` is provided, the validator_cls will be
-    instanciated with these default format validators.
-
-    ``required_by_default`` specifies if ``required`` should default to True
-    or False (default: True)
+    :param data:  python data to validate
+    :param schema: python dictionary representing the schema (see
+        `schema format`_)
+    :param validator_cls: optional validator class (default is
+        :class:`SchemaValidator`)
+    :param format_validators: optional dictionary of custom format validators
+    :param required_by_default: defaults to True, set to False to make
+        ``required`` schema attribute False by default.
     '''
     v = validator_cls(format_validators, required_by_default)
     return v.validate(data,schema)
