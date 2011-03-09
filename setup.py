@@ -6,14 +6,6 @@ from validictory import __version__
 DESCRIPTION = "general purpose python data validator"
 LONG_DESCRIPTION = open('README.rst').read()
 
-CLASSIFIERS = filter(None, map(str.strip,
-"""
-Intended Audience :: Developers
-License :: OSI Approved :: MIT License
-Programming Language :: Python
-Topic :: Software Development :: Libraries :: Python Modules
-""".splitlines()))
-
 setup(name='validictory',
       version=__version__,
       description=DESCRIPTION,

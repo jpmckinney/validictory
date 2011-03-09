@@ -147,7 +147,7 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, dict):
                 if isinstance(properties, dict):
-                    for eachProp in properties.keys():
+                    for eachProp in properties:
                         self.__validate(eachProp, value,
                                         properties.get(eachProp))
                 else:
@@ -162,7 +162,7 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, (list, tuple)):
                 if isinstance(items, (list, tuple)):
-                    if not 'additionalItems' in schema.keys() and len(items) != len(value):
+                    if not 'additionalItems' in schema and len(items) != len(value):
                         self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
                                     value, fieldname)
                     else:
@@ -185,7 +185,7 @@ class SchemaValidator(object):
         Validates that the given field is present if required is True
         '''
         # Make sure the field is present
-        if fieldname not in x.keys() and required:
+        if fieldname not in x and required:
             self._error("Required field '%(fieldname)s' is missing",
                         None, fieldname)
 
@@ -217,7 +217,7 @@ class SchemaValidator(object):
             return
 
         if isinstance(additionalItems, bool):
-            if additionalItems or 'items' not in schema.keys():
+            if additionalItems or 'items' not in schema:
                 return
             elif len(value) != len(schema['items']):
                 #print locals(), value, len(value), len(schema['items'])
@@ -246,7 +246,7 @@ class SchemaValidator(object):
                 properties = {}
             if value is None:
                 value = {}
-            for eachProperty in value.keys():
+            for eachProperty in value:
                 if eachProperty not in properties:
                     # If additionalProperties is the boolean value False
                     # then we don't accept any additional properties.
