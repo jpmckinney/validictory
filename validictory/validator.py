@@ -268,9 +268,15 @@ class SchemaValidator(object):
 
     def validate_dependencies(self, x, fieldname, schema, dependencies=None):
         if x.get(fieldname) is not None:
-            if x.get(dependencies) is None:
-                self._error("Field '%(dependencies)s' is required by field '%(fieldname)s'",
-                            None, fieldname, dependencies=dependencies)
+
+            # handle cases where dependencies is a string or list of strings
+            if isinstance(dependencies, basestring):
+                dependencies = [dependencies]
+            if isinstance(dependencies, (list, tuple)):
+                for dependency in dependencies:
+                    if dependency not in x:
+                        self._error("Field '%(dependency)s' is required by field '%(fieldname)s'",
+                            None, fieldname, dependency=dependency)
 
     def validate_minimum(self, x, fieldname, schema, minimum=None):
         '''

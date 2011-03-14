@@ -1,6 +1,10 @@
 validictory changelog
 =====================
 
+0.6.2
+-----
+    * fix dependencies not really supporting lists
+
 0.6.1
 -----
 **2011-01-21**
