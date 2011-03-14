@@ -276,6 +276,17 @@ class SchemaValidator(object):
                     if dependency not in x:
                         self._error("Field '%(dependency)s' is required by field '%(fieldname)s'",
                             None, fieldname, dependency=dependency)
+            elif isinstance(dependencies, dict):
+                # NOTE: the version 3 spec is really unclear on what this means
+                # based on the meta-schema I'm assuming that it should check
+                # that if a key exists, the appropriate value exists
+                for k,v in dependencies.iteritems():
+                    if k in x and v not in x:
+                        self._error("Field '%(v)s' is required by field '%(k)s'",
+                                    None, fieldname, k=k,v=v)
+            else:
+                raise SchemaError("'dependencies' must be a string, "
+                                  "list of strings, or dict")
 
     def validate_minimum(self, x, fieldname, schema, minimum=None):
         '''

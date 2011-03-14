@@ -1,9 +1,10 @@
 validictory changelog
 =====================
 
-0.6.2
+0.7.0
 -----
     * fix dependencies not really supporting lists
+    * add what might be the draft03 behavior for schema dependencies
 
 0.6.1
 -----
