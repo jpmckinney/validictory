@@ -105,8 +105,7 @@ class SchemaValidator(object):
             value = x[fieldname]
         except KeyError:
             fieldexists = False
-        finally:
-            value = x.get(fieldname)
+            value = None
 
         if fieldtype and fieldexists:
             if isinstance(fieldtype, (list, tuple)):
