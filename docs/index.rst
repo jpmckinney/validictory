@@ -11,6 +11,15 @@ library is also useful as a validator for JSON data.
 
 Contains code derived from `jsonschema <http://json-schema.org/implementations.html>`_ by Ian Lewis and Ysuke Muraoka.
 
+Obtaining validictory
+---------------------
+
+Source is available from `GitHub <http://github.com/sunlightlabs/validictory/>`_.
+
+The latest release is always available on `PyPI <http://pypi.python.org/pypi/validictory>`_ and can be installed via `pip <http://www.pip-installer.org/>`_.
+
+Documentation lives at `ReadTheDocs <http://validictory.readthedocs.org>`_.
+
 Contents
 --------
 

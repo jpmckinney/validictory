@@ -4,6 +4,55 @@ Using validictory
 Normal use of validictory is as simple as calling :func:`validictory.validate`,
 the only thing to learn is how to craft a schema.
 
+Examples
+--------
+
+JSON documents and schema must first be loaded into a Python dictionary type
+before it can be validated.
+
+Parsing a simple JSON document::
+
+    >>> import validictory
+
+    >>> validictory.validate("roast beef", {"type":"string"})
+
+Parsing a more complex JSON document::
+
+    >>> import json
+    >>> import validictory
+
+    >>> data = json.loads('["foo", {"bar":["baz", null, 1.0, 2]}]')
+    >>> schema = {
+    ...   "type":"array",
+    ...   "items":[
+    ...     {"type":"string"},
+    ...     {"type":"object",
+    ...      "properties":{
+    ...        "bar":{
+    ...          "items":[
+    ...            {"type":"string"},
+    ...            {"type":"any"},
+    ...            {"type":"number"},
+    ...            {"type":"integer"}
+    ...          ]
+    ...        }
+    ...      }
+    ...    }
+    ...   ]
+    ... }
+    >>> validictory.validate(data,schema)
+
+Catch ValueErrors to handle validation issues::
+
+    >>> import validictory
+
+    >>> try:
+    ...     validictory.validate("short", {"type":"string","minLength":15})
+    ... except ValueError, error:
+    ...     print error
+    ...
+    Length of value 'short' for field '_data' must be greater than or equal to 15
+
 For more example usage of all schema options check out the tests within 
 ``validictory/tests``.
 
