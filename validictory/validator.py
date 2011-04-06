@@ -110,8 +110,7 @@ class SchemaValidator(object):
             value = x[fieldname]
         except KeyError:
             fieldexists = False
-        finally:
-            value = x.get(fieldname)
+            value = None
 
         if fieldtype and fieldexists:
             if isinstance(fieldtype, (list, tuple)):
@@ -273,9 +272,26 @@ class SchemaValidator(object):
 
     def validate_dependencies(self, x, fieldname, schema, dependencies=None):
         if x.get(fieldname) is not None:
-            if x.get(dependencies) is None:
-                self._error("Field '%(dependencies)s' is required by field '%(fieldname)s'",
-                            None, fieldname, dependencies=dependencies)
+
+            # handle cases where dependencies is a string or list of strings
+            if isinstance(dependencies, basestring):
+                dependencies = [dependencies]
+            if isinstance(dependencies, (list, tuple)):
+                for dependency in dependencies:
+                    if dependency not in x:
+                        self._error("Field '%(dependency)s' is required by field '%(fieldname)s'",
+                            None, fieldname, dependency=dependency)
+            elif isinstance(dependencies, dict):
+                # NOTE: the version 3 spec is really unclear on what this means
+                # based on the meta-schema I'm assuming that it should check
+                # that if a key exists, the appropriate value exists
+                for k,v in dependencies.iteritems():
+                    if k in x and v not in x:
+                        self._error("Field '%(v)s' is required by field '%(k)s'",
+                                    None, fieldname, k=k,v=v)
+            else:
+                raise SchemaError("'dependencies' must be a string, "
+                                  "list of strings, or dict")
 
     def validate_minimum(self, x, fieldname, schema, minimum=None):
         '''

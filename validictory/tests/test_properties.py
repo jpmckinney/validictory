@@ -209,18 +209,23 @@ class TestDependencies(TestCase):
         data1 = {}
         data2 = { "prop01": "test" }
         data3 = { "prop01": "test", "prop02": 2 }
+        data4 = { "prop01": "a", "prop02": "b", "prop03": 7 }
 
         try:
             validictory.validate(data1, self.schema)
             validictory.validate(data2, self.schema)
             validictory.validate(data3, self.schema)
+            validictory.validate(data4, self.schema_array)
         except ValueError, e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_dependencies_fail(self):
-        data = { "prop02": 2 }
+        data1 = { "prop02": 2 }
+        data2 = { "prop01": "x", "prop03": 7}
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data1, self.schema)
+        self.assertRaises(ValueError, validictory.validate, data2,
+                          self.schema_array)
 
 class TestOptional(TestCase):
     props = {

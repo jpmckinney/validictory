@@ -1,6 +1,13 @@
 validictory changelog
 =====================
 
+0.7.0
+-----
+**2011-03-15**
+    * fix dependencies not really supporting lists
+    * add what might be the draft03 behavior for schema dependencies
+    * add Sphinx documentation
+
 0.6.1
 -----
 **2011-01-21**
