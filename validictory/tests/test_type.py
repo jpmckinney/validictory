@@ -81,7 +81,7 @@ class TestType(TestCase):
         for x in valids:
             try:
                 validictory.validate(x, {})
-            except ValueError:
+            except ValueError, e:
                 self.fail("Unexpected failure: %s" % e)
 
     def test_multi(self):
