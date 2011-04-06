@@ -285,10 +285,10 @@ class SchemaValidator(object):
                 # NOTE: the version 3 spec is really unclear on what this means
                 # based on the meta-schema I'm assuming that it should check
                 # that if a key exists, the appropriate value exists
-                for k,v in dependencies.iteritems():
+                for k, v in dependencies.iteritems():
                     if k in x and v not in x:
                         self._error("Field '%(v)s' is required by field '%(k)s'",
-                                    None, fieldname, k=k,v=v)
+                                    None, fieldname, k=k, v=v)
             else:
                 raise SchemaError("'dependencies' must be a string, "
                                   "list of strings, or dict")
