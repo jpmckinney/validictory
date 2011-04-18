@@ -3,6 +3,12 @@ import copy
 from datetime import datetime
 import warnings
 
+try:
+    from collections import Mapping
+    _HAS_ABCS = True
+except ImportError:
+    _HAS_ABCS = False
+
 
 class SchemaError(ValueError):
     """
@@ -81,6 +87,8 @@ class SchemaValidator(object):
         return type(val) == bool
 
     def validate_type_object(self, val):
+        if _HAS_ABCS:
+            return isinstance(val, Mapping)
         return isinstance(val, dict)
 
     def validate_type_array(self, val):
