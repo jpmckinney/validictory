@@ -136,6 +136,19 @@ class TestFormat(TestCase):
         data = -1
         self.assertRaises(ValueError, validictory.validate, data, self.schema_utcmillisec)
 
+    def test_format_required_false(self):
+        schema = {
+            u'type': u'object',
+            u'properties': {
+                u'startdate': {u'type': u'string', u'format': u'date-time',
+                               u'required': False}
+            }
+        }
+        try:
+            validictory.validate({}, schema, required_by_default=False)
+        except ValueError, e:
+            self.fail("Unexpected failure: %s" % e)
+
     def test_format_custom_unregistered_pass(self):
         data = 'No-spaces-here'
 
