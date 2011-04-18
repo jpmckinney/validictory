@@ -1,6 +1,13 @@
 validictory changelog
 =====================
 
+0.7.1
+-----
+**unreleased**
+    * PEP8 changes to code base
+    * fix for combination of format & required=False
+
+
 0.7.0
 -----
 **2011-03-15**
