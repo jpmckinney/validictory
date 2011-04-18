@@ -20,8 +20,7 @@ class ValidationError(ValueError):
 def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
         try:
-            if value:
-                datetime.strptime(value, dateformat_string)
+            datetime.strptime(value, dateformat_string)
         except ValueError:
             raise ValidationError(
                     "Value %(value)r of field '%(fieldname)s' is not in '%(format_option)s' format" % locals())
@@ -355,7 +354,7 @@ class SchemaValidator(object):
 
         format_validator = self._format_validators.get(format_option, None)
 
-        if format_validator:
+        if format_validator and value:
             format_validator(self, fieldname, value, format_option)
 
         # TODO: warn about unsupported format ?
