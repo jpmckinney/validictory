@@ -1,5 +1,6 @@
 * James Turk
 * Silas Sewell - Cosmetic fixes
 * Filip Noetzel - lots of work towards being compatible with the draft-03 spec
+* Mark Nenadov - Python 3.x compatibility
 
 Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
