@@ -25,7 +25,7 @@ class TestItems(TestCase):
         try:
             validictory.validate(data, self.schema1)
             validictory.validate(data2, self.schema1)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_items_single_fail(self):
@@ -41,7 +41,7 @@ class TestItems(TestCase):
             validictory.validate(data2, self.schema2)
             validictory.validate(tuple(data), self.schema3)
             validictory.validate(tuple(data2), self.schema3)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_items_multiple_fail(self):
@@ -81,7 +81,7 @@ class TestAdditionalItems(TestCase):
 
         try:
             validictory.validate(data, self.schema1)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_additionalItems_false_additional_items_fail(self):
@@ -92,14 +92,14 @@ class TestAdditionalItems(TestCase):
         data = [12482, "Yes, more strings", False, ["I'm"], {"also": "allowed!"}]
         try:
             validictory.validate(data, self.schema2)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_additionalItems_schema_pass(self):
         data = [12482, "Yes, more strings", False, 13.37, 47.11]
         try:
             validictory.validate(data, self.schema3)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_additionalItems_schema_fail(self):
@@ -110,7 +110,7 @@ class TestAdditionalItems(TestCase):
         data = [12482, "Yes, more strings", False, 13.37, 47.11, True, False]
         try:
             validictory.validate(data, self.schema4)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_additionalItems_multischema_fail(self):

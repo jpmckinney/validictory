@@ -75,7 +75,7 @@ class SchemaValidator(object):
         self._format_validators[format_name] = format_validator_fun
 
     def validate_type_string(self, val):
-        return isinstance(val, basestring)
+        return isinstance(val, str)
 
     def validate_type_integer(self, val):
         return type(val) == int
@@ -137,7 +137,7 @@ class SchemaValidator(object):
             elif isinstance(fieldtype, dict):
                 try:
                     self.__validate(fieldname, x, fieldtype)
-                except ValueError, e:
+                except ValueError as e:
                     raise e
             else:
                 try:
@@ -181,13 +181,13 @@ class SchemaValidator(object):
                         for itemIndex in range(len(items)):
                             try:
                                 self.validate(value[itemIndex], items[itemIndex])
-                            except ValueError, e:
+                            except ValueError as e:
                                 raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
                 elif isinstance(items, dict):
                     for eachItem in value:
                         try:
                             self._validate(eachItem, items)
-                        except ValueError, e:
+                        except ValueError as e:
                             raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
                 else:
                     raise SchemaError("Properties definition of field '%s' is not a list or an object" % fieldname)
@@ -206,7 +206,7 @@ class SchemaValidator(object):
         Validates that the given field is not blank if blank=False
         '''
         value = x.get(fieldname)
-        if isinstance(value, basestring) and not blank and not value:
+        if isinstance(value, str) and not blank and not value:
             self._error("Value %(value)r for field '%(fieldname)s' cannot be blank'",
                         value, fieldname)
 
@@ -217,8 +217,8 @@ class SchemaValidator(object):
 
         value_obj = x.get(fieldname)
 
-        for pattern, schema in patternproperties.iteritems():
-            for key, value in value_obj.iteritems():
+        for pattern, schema in list(patternproperties.items()):
+            for key, value in list(value_obj.items()):
                 if re.match(pattern, key):
                     self.validate(value, schema)
 
@@ -282,7 +282,7 @@ class SchemaValidator(object):
         if x.get(fieldname) is not None:
 
             # handle cases where dependencies is a string or list of strings
-            if isinstance(dependencies, basestring):
+            if isinstance(dependencies, str):
                 dependencies = [dependencies]
             if isinstance(dependencies, (list, tuple)):
                 for dependency in dependencies:
@@ -293,7 +293,7 @@ class SchemaValidator(object):
                 # NOTE: the version 3 spec is really unclear on what this means
                 # based on the meta-schema I'm assuming that it should check
                 # that if a key exists, the appropriate value exists
-                for k, v in dependencies.iteritems():
+                for k, v in list(dependencies.items()):
                     if k in x and v not in x:
                         self._error("Field '%(v)s' is required by field '%(k)s'",
                                     None, fieldname, k=k, v=v)
@@ -337,7 +337,7 @@ class SchemaValidator(object):
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (basestring, list, tuple)) and len(value) > length:
+        if isinstance(value, (str, list, tuple)) and len(value) > length:
             self._error("Length of value %(value)r for field '%(fieldname)s' must be less than or equal to %(length)d",
                         value, fieldname, length=length)
 
@@ -347,7 +347,7 @@ class SchemaValidator(object):
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (basestring, list, tuple)) and len(value) < length:
+        if isinstance(value, (str, list, tuple)) and len(value) < length:
             self._error("Length of value %(value)r for field '%(fieldname)s' must be greater than or equal to %(length)d",
                         value, fieldname, length=length)
 
@@ -373,7 +373,7 @@ class SchemaValidator(object):
         regular expression.
         '''
         value = x.get(fieldname)
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             if not re.match(pattern, value):
                 self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
                             value, fieldname, pattern=pattern)
@@ -424,12 +424,12 @@ class SchemaValidator(object):
                             value, fieldname, options=options)
 
     def validate_title(self, x, fieldname, schema, title=None):
-        if not isinstance(title, (basestring, type(None))):
+        if not isinstance(title, (str, type(None))):
             raise SchemaError("The title for field '%s' must be a string" %
                              fieldname)
 
     def validate_description(self, x, fieldname, schema, description=None):
-        if not isinstance(description, (basestring, type(None))):
+        if not isinstance(description, (str, type(None))):
             raise SchemaError("The description for field '%s' must be a string."
                              % fieldname)
 

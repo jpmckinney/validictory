@@ -34,7 +34,7 @@ class TestProperties(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_properties2(self):
@@ -48,7 +48,7 @@ class TestProperties(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_properties3(self):
@@ -69,7 +69,7 @@ class TestPatternProperties(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_patternproperties_nonmatch(self):
@@ -77,7 +77,7 @@ class TestPatternProperties(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_patternproperties_nested(self):
@@ -89,7 +89,7 @@ class TestPatternProperties(TestCase):
 
         try:
             validictory.validate(data, schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_patternproperties_fail_multiple(self):
@@ -109,7 +109,7 @@ class TestAdditionalProperties(TestCase):
             try:
                 data = {"prop": x}
                 validictory.validate(data, schema)
-            except ValueError,e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         #failures
@@ -134,7 +134,7 @@ class TestAdditionalProperties(TestCase):
                     "prop3": x
                 }
                 validictory.validate(data, schema)
-            except ValueError,e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         #failures
@@ -152,7 +152,7 @@ class TestAdditionalProperties(TestCase):
         for x in [1.2, 1, {"test":"blah"}, [32, 49], None, True, "blah"]:
             try:
                 validictory.validate({"prop": x}, schema)
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
     def test_false(self):
@@ -183,7 +183,7 @@ class TestRequires(TestCase):
             validictory.validate(data1, self.schema)
             validictory.validate(data2, self.schema)
             validictory.validate(data3, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_requires_fail(self):
@@ -216,7 +216,7 @@ class TestDependencies(TestCase):
             validictory.validate(data2, self.schema)
             validictory.validate(data3, self.schema)
             validictory.validate(data4, self.schema_array)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_dependencies_fail(self):
@@ -245,7 +245,7 @@ class TestOptional(TestCase):
 
         try:
             validictory.validate(x, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_optional_fail(self):
@@ -274,7 +274,7 @@ class TestRequired(TestCase):
             # should pass if default is missing but req_by_default=False
             validictory.validate(self.req_only, self.schema,
                                  required_by_default=False)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_required_fail(self):

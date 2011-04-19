@@ -1,8 +1,19 @@
 from unittest import TestCase
+import sys
 import datetime
 
 import validictory
 
+def str_wrap(working_str):
+    """ Wrap strings that need to be explicitly unicoded 
+    in Python 2.x but are already unicode in Python 3.x
+    (because Python 3 strings are unicode by default
+    """
+
+    if sys.version_info == 3:
+        return working_str
+    else:
+        return unicode(working_str)
 
 class TestType(TestCase):
     def test_schema(self):
@@ -20,7 +31,7 @@ class TestType(TestCase):
         for x in [data1, data2]:
             try:
                 validictory.validate(x, schema)
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         self.assertRaises(ValueError, validictory.validate, data3, schema)
@@ -29,7 +40,7 @@ class TestType(TestCase):
         for x in valids:
             try:
                 validictory.validate(x, {"type":typename})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:
@@ -42,7 +53,7 @@ class TestType(TestCase):
         self._test_type('integer', valid_ints, invalid_ints)
 
     def test_string(self):
-        valids = ["abc", u"unicode"]
+        valids = ["abc", str_wrap("unicode")]
         invalids = [1.2, 1, {"test":"blah"}, [32, 49], None, True]
         self._test_type('string', valids, invalids)
 
@@ -81,7 +92,7 @@ class TestType(TestCase):
         for x in valids:
             try:
                 validictory.validate(x, {})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
     def test_multi(self):
@@ -96,7 +107,7 @@ class TestDisallow(TestType):
         for x in invalids:
             try:
                 validictory.validate(x, {"disallow":typename})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in valids:
@@ -132,7 +143,7 @@ class TestCustomType(TestCase):
         for x in valids:
             try:
                 validator.validate(x, {"type":typename})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:
