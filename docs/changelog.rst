@@ -3,10 +3,10 @@ validictory changelog
 
 0.7.1
 -----
-**unreleased**
+**2011-05-03**
     * PEP8 changes to code base
     * fix for combination of format & required=False
-
+    * use ABCs to determine types in Python >= 2.6
 
 0.7.0
 -----
