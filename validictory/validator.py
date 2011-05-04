@@ -62,14 +62,17 @@ class SchemaValidator(object):
     :param format_validators: optional dictionary of custom format validators
     :param required_by_default: defaults to True, set to False to make
         ``required`` schema attribute False by default.
+    :param blank_by_default: defaults to False, set to True to make ``blank``
+        schema attribute True by default.
     '''
 
-    def __init__(self, format_validators=None, required_by_default=True):
+    def __init__(self, format_validators=None, required_by_default=True, blank_by_default=False):
         if format_validators is None:
             format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
         self._format_validators = format_validators
         self.required_by_default = required_by_default
+        self.blank_by_default = blank_by_default
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -485,7 +488,7 @@ class SchemaValidator(object):
                 newschema['required'] = self.required_by_default
 
             if 'blank' not in schema:
-                newschema['blank'] = False
+                newschema['blank'] = self.blank_by_default
 
             for schemaprop in newschema:
 
