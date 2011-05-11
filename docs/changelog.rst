@@ -1,6 +1,12 @@
 validictory changelog
 =====================
 
+0.8.0
+-----
+**in development**
+    * add blank_by_default argument
+
+
 0.7.1
 -----
 **2011-05-03**

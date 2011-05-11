@@ -1,5 +1,6 @@
 * James Turk
 * Silas Sewell - Cosmetic fixes
 * Filip Noetzel - lots of work towards being compatible with the draft-03 spec
+* Kai Lautaportti - blank_by_default
 
 Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
