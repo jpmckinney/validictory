@@ -5,7 +5,7 @@ validictory changelog
 -----
 **in development**
     * add blank_by_default argument
-
+    * more descriptive error message for list items
 
 0.7.1
 -----

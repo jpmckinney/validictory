@@ -50,6 +50,15 @@ class TestItems(TestCase):
         self.assertRaises(ValueError, validictory.validate, data, self.schema2)
         self.assertRaises(ValueError, validictory.validate, data2, self.schema2)
 
+    def test_items_descriptive_fail(self):
+        data = [1294]
+        try:
+            validictory.validate(data, self.schema1)
+        except ValueError, e:
+            # warning should mention list item, not _data
+            assert 'list item' in str(e)
+
+
 class TestAdditionalItems(TestCase):
 
     schema1 = {

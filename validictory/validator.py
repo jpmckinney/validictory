@@ -191,7 +191,11 @@ class SchemaValidator(object):
                         try:
                             self._validate(eachItem, items)
                         except ValueError, e:
-                            raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
+                            # a bit of a hack: replace reference to _data
+                            # with 'list item' so error messages make sense
+                            old_error = str(e).replace("field '_data'",
+                                                       'list item')
+                            raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, old_error))
                 else:
                     raise SchemaError("Properties definition of field '%s' is not a list or an object" % fieldname)
 
