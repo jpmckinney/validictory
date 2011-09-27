@@ -1,9 +1,9 @@
 validictory changelog
 =====================
 
-0.8.0
+0.7.2
 -----
-**in development**
+**2011-09-27**
     * add blank_by_default argument
     * more descriptive error message for list items
 
