@@ -14,7 +14,7 @@ class TestSchemaErrors(TestCase):
     def test_description_pass(self):
         try:
             validictory.validate(self.data, self.valid_desc)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_description_fail(self):
@@ -24,7 +24,7 @@ class TestSchemaErrors(TestCase):
     def test_title_pass(self):
         try:
             validictory.validate(self.data, self.valid_title)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_title_fail(self):

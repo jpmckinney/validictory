@@ -20,7 +20,7 @@ class TestType(TestCase):
         for x in [data1, data2]:
             try:
                 validictory.validate(x, schema)
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         self.assertRaises(ValueError, validictory.validate, data3, schema)
@@ -29,7 +29,7 @@ class TestType(TestCase):
         for x in valids:
             try:
                 validictory.validate(x, {"type":typename})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:
@@ -81,7 +81,7 @@ class TestType(TestCase):
         for x in valids:
             try:
                 validictory.validate(x, {})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
     def test_multi(self):
@@ -96,7 +96,7 @@ class TestDisallow(TestType):
         for x in invalids:
             try:
                 validictory.validate(x, {"disallow":typename})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in valids:
@@ -132,7 +132,7 @@ class TestCustomType(TestCase):
         for x in valids:
             try:
                 validator.validate(x, {"type":typename})
-            except ValueError, e:
+            except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:

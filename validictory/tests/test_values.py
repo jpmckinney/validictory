@@ -17,7 +17,7 @@ class TestEnum(TestCase):
             for item in data:
                 validictory.validate(item, self.schema)
                 validictory.validate(item, self.schema2)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_enum_fail(self):
@@ -37,7 +37,7 @@ class TestPattern(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_pattern_pass_nonstring(self):
@@ -45,7 +45,7 @@ class TestPattern(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_pattern_fail(self):
@@ -73,7 +73,7 @@ class TestFormat(TestCase):
 
         try:
             validictory.validate(data, self.schema_datetime)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_date_pass(self):
@@ -81,7 +81,7 @@ class TestFormat(TestCase):
 
         try:
             validictory.validate(data, self.schema_date)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_time_pass(self):
@@ -89,7 +89,7 @@ class TestFormat(TestCase):
 
         try:
             validictory.validate(data, self.schema_time)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_utcmillisec_pass(self):
@@ -97,7 +97,7 @@ class TestFormat(TestCase):
 
         try:
             validictory.validate(data, self.schema_utcmillisec)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
 
@@ -146,7 +146,7 @@ class TestFormat(TestCase):
         }
         try:
             validictory.validate({}, schema, required_by_default=False)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_custom_unregistered_pass(self):
@@ -155,7 +155,7 @@ class TestFormat(TestCase):
         try:
             # no custom validator installed, so no error
             validictory.validate(data, self.schema_spaces)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_custom_instantiated_pass(self):
@@ -166,7 +166,7 @@ class TestFormat(TestCase):
         try:
             # validator installed, but data validates
             validator.validate(data, self.schema_spaces)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_custom_registered_pass(self):
@@ -178,7 +178,7 @@ class TestFormat(TestCase):
         try:
             # validator registered, but data validates
             validator.validate(data, self.schema_spaces)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_custom_registered_fail(self):
@@ -200,7 +200,7 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_pass_string(self):
@@ -208,7 +208,7 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_pass_nested_array(self):
@@ -220,7 +220,7 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_pass_not_an_array(self):
@@ -228,7 +228,7 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_pass_different_types(self):
@@ -236,7 +236,7 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_false_pass(self):
@@ -244,7 +244,7 @@ class TestUniqueItems(TestCase):
 
         try:
             validictory.validate(data, self.schema_false)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_fail(self):
@@ -288,7 +288,7 @@ class TestMaximum(TestCase):
         try:
             validictory.validate(data1, self.schema)
             validictory.validate(data2, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_maximum_exclusive_pass(self):
@@ -297,7 +297,7 @@ class TestMaximum(TestCase):
 
         try:
             validictory.validate(data, self.schema_exclusive)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_maximum_fail(self):
@@ -336,7 +336,7 @@ class TestMinimum(TestCase):
         try:
             validictory.validate(data1, self.schema)
             validictory.validate(data2, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_minimum_exclusive_pass(self):
@@ -345,7 +345,7 @@ class TestMinimum(TestCase):
 
         try:
             validictory.validate(data, self.schema_exclusive)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_minimum_fail(self):
@@ -374,7 +374,7 @@ class TestMinLength(TestCase):
         try:
             for item in data:
                 validictory.validate(item, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_minLength_pass_nonstring(self):
@@ -383,7 +383,7 @@ class TestMinLength(TestCase):
 
         try:
             validictory.validate(data1, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_minLength_fail(self):
@@ -404,7 +404,7 @@ class TestMaxLength(TestCase):
         try:
             for item in data:
                 validictory.validate(item, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_maxLength_pass_nonstring(self):
@@ -413,7 +413,7 @@ class TestMaxLength(TestCase):
 
         try:
             validictory.validate(data1, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_maxLength_fail(self):
@@ -437,7 +437,7 @@ class TestBlank(TestCase):
         }
         try:
             validictory.validate({"key": "value"}, {}, blank_by_default=False)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
         self.assertRaises(ValueError, validictory.validate, {"key": ""}, schema)
@@ -454,14 +454,14 @@ class TestBlank(TestCase):
         }
         try:
             validictory.validate({"key": ""}, schema, blank_by_default=True)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_blank_false(self):
         schema = {"blank":False}
         try:
             validictory.validate("test", schema, blank_by_default=True)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
         self.assertRaises(ValueError, validictory.validate, "", schema)
@@ -470,7 +470,7 @@ class TestBlank(TestCase):
         try:
             validictory.validate("", {"blank":True}, blank_by_default=False)
             validictory.validate("test", {"blank":True}, blank_by_default=False)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
 
@@ -482,7 +482,7 @@ class TestDivisibleBy(TestCase):
         data = 60
         try:
             validictory.validate(data, self.schema)
-        except ValueError, e:
+        except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
     def test_divisibleBy_fail(self):

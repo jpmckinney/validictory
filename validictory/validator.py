@@ -140,7 +140,7 @@ class SchemaValidator(object):
             elif isinstance(fieldtype, dict):
                 try:
                     self.__validate(fieldname, x, fieldtype)
-                except ValueError, e:
+                except ValueError as e:
                     raise e
             else:
                 try:
@@ -184,13 +184,13 @@ class SchemaValidator(object):
                         for itemIndex in range(len(items)):
                             try:
                                 self.validate(value[itemIndex], items[itemIndex])
-                            except ValueError, e:
+                            except ValueError as e:
                                 raise type(e)("Failed to validate field '%s' list schema: %s" % (fieldname, e))
                 elif isinstance(items, dict):
                     for eachItem in value:
                         try:
                             self._validate(eachItem, items)
-                        except ValueError, e:
+                        except ValueError as e:
                             # a bit of a hack: replace reference to _data
                             # with 'list item' so error messages make sense
                             old_error = str(e).replace("field '_data'",
