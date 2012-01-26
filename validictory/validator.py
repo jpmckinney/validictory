@@ -1,8 +1,14 @@
 import re
+import sys
 import copy
 from datetime import datetime
 import warnings
 from collections import Mapping, Container
+
+if sys.version_info[0] == 3:
+    _str_type = str
+else:
+    _str_type = basestring
 
 
 class SchemaError(ValueError):
@@ -73,7 +79,7 @@ class SchemaValidator(object):
         self._format_validators[format_name] = format_validator_fun
 
     def validate_type_string(self, val):
-        return isinstance(val, basestring)
+        return isinstance(val, _str_type)
 
     def validate_type_integer(self, val):
         return type(val) == int
@@ -206,7 +212,7 @@ class SchemaValidator(object):
         Validates that the given field is not blank if blank=False
         '''
         value = x.get(fieldname)
-        if isinstance(value, basestring) and not blank and not value:
+        if isinstance(value, _str_type) and not blank and not value:
             self._error("Value %(value)r for field '%(fieldname)s' cannot be blank'",
                         value, fieldname)
 
@@ -217,8 +223,8 @@ class SchemaValidator(object):
 
         value_obj = x.get(fieldname)
 
-        for pattern, schema in patternproperties.iteritems():
-            for key, value in value_obj.iteritems():
+        for pattern, schema in patternproperties.items():
+            for key, value in value_obj.items():
                 if re.match(pattern, key):
                     self.validate(value, schema)
 
@@ -282,7 +288,7 @@ class SchemaValidator(object):
         if x.get(fieldname) is not None:
 
             # handle cases where dependencies is a string or list of strings
-            if isinstance(dependencies, basestring):
+            if isinstance(dependencies, _str_type):
                 dependencies = [dependencies]
             if isinstance(dependencies, (list, tuple)):
                 for dependency in dependencies:
@@ -293,7 +299,7 @@ class SchemaValidator(object):
                 # NOTE: the version 3 spec is really unclear on what this means
                 # based on the meta-schema I'm assuming that it should check
                 # that if a key exists, the appropriate value exists
-                for k, v in dependencies.iteritems():
+                for k, v in dependencies.items():
                     if k in x and v not in x:
                         self._error("Field '%(v)s' is required by field '%(k)s'",
                                     None, fieldname, k=k, v=v)
@@ -337,7 +343,7 @@ class SchemaValidator(object):
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (basestring, list, tuple)) and len(value) > length:
+        if isinstance(value, (_str_type, list, tuple)) and len(value) > length:
             self._error("Length of value %(value)r for field '%(fieldname)s' must be less than or equal to %(length)d",
                         value, fieldname, length=length)
 
@@ -347,7 +353,7 @@ class SchemaValidator(object):
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (basestring, list, tuple)) and len(value) < length:
+        if isinstance(value, (_str_type, list, tuple)) and len(value) < length:
             self._error("Length of value %(value)r for field '%(fieldname)s' must be greater than or equal to %(length)d",
                         value, fieldname, length=length)
 
@@ -373,7 +379,7 @@ class SchemaValidator(object):
         regular expression.
         '''
         value = x.get(fieldname)
-        if isinstance(value, basestring):
+        if isinstance(value, _str_type):
             if not re.match(pattern, value):
                 self._error("Value %(value)r for field '%(fieldname)s' does not match regular expression '%(pattern)s'",
                             value, fieldname, pattern=pattern)
@@ -424,12 +430,12 @@ class SchemaValidator(object):
                             value, fieldname, options=options)
 
     def validate_title(self, x, fieldname, schema, title=None):
-        if not isinstance(title, (basestring, type(None))):
+        if not isinstance(title, (_str_type, type(None))):
             raise SchemaError("The title for field '%s' must be a string" %
                              fieldname)
 
     def validate_description(self, x, fieldname, schema, description=None):
-        if not isinstance(description, (basestring, type(None))):
+        if not isinstance(description, (_str_type, type(None))):
             raise SchemaError("The description for field '%s' must be a string."
                              % fieldname)
 
