@@ -1,6 +1,13 @@
 validictory changelog
 =====================
 
+0.8.0
+-----
+**2012-01-26**
+    * validate_enum accepts any container type
+    * add support for Python 3
+    * drop support for Python 2.5 and earlier
+
 0.7.2
 -----
 **2011-09-27**
