@@ -1,5 +1,12 @@
 from unittest import TestCase
 import datetime
+import sys
+
+if sys.version_info[0] == 3:
+    unicode_str = '\u2603'
+else:
+    unicode_str = unicode('snowman')
+
 
 import validictory
 
@@ -42,7 +49,7 @@ class TestType(TestCase):
         self._test_type('integer', valid_ints, invalid_ints)
 
     def test_string(self):
-        valids = ["abc", u"unicode"]
+        valids = ["abc", unicode_str]
         invalids = [1.2, 1, {"test":"blah"}, [32, 49], None, True]
         self._test_type('string', valids, invalids)
 

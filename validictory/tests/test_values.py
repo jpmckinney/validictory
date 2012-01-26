@@ -138,10 +138,10 @@ class TestFormat(TestCase):
 
     def test_format_required_false(self):
         schema = {
-            u'type': u'object',
-            u'properties': {
-                u'startdate': {u'type': u'string', u'format': u'date-time',
-                               u'required': False}
+            'type': 'object',
+            'properties': {
+                'startdate': {'type': 'string', 'format': 'date-time',
+                               'required': False}
             }
         }
         try:
