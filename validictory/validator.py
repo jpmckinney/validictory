@@ -4,7 +4,7 @@ from datetime import datetime
 import warnings
 
 try:
-    from collections import Mapping
+    from collections import Mapping, Container
     _HAS_ABCS = True
 except ImportError:
     _HAS_ABCS = False
@@ -424,8 +424,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if value is not None:
-            if not isinstance(options, (list, tuple)):
-                raise SchemaError("Enumeration %r for field '%s' is not a list type", (options, fieldname))
+            if not isinstance(options, Container):
+                raise SchemaError("Enumeration %r for field '%s' must be a container", (options, fieldname))
             if value not in options:
                 self._error("Value %(value)r for field '%(fieldname)s' is not in the enumeration: %(options)r",
                             value, fieldname, options=options)
