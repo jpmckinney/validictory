@@ -185,3 +185,87 @@ For example::
     These do no validation, but if provided must be strings or a
     ``~validictory.SchemaError`` will be raised.
 
+
+Common Recipes
+--------------
+
+A situation that often arises is the need to validate that all members of
+a list validate according to one type of object or another.  This can be
+achieved by combining the "items", "type", and "object" schema options.
+
+To define a property that you want to be a list of one or more types you'd
+need to follow the following recipe (filling in foo and bar definition with
+normal schema definition)::
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "foo_or_bar_list": {
+                "type": "array",
+                "items": {"type": [
+                    {"type": "object",
+                      # foo definition
+                    },
+                    {"type": "object",
+                      # bar definition
+                    },
+                ]}
+            }
+        }
+    }
+
+A common example of this is the GeoJSON spec, which allows for a geometry
+collection to have a list of geometries (Point, MultiPoint, LineString,
+MultiLineString, Polygon, MultiPolygon).
+
+Simplified GeoJSON example::
+
+    # to simplify things we make a few subschema dicts
+
+    position = {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 3
+    }
+
+    point = {
+        "type": "object",
+        "properties": {
+            "type": {
+                "pattern": "Point"
+            },
+            "coordinates": {
+                "type": position
+            }
+        }
+    }
+
+    multipoint = {
+        "type": "object",
+        "properties": {
+            "type": {
+                "pattern": "MultiPoint"
+            },
+            "coordinates": {
+                "type": "array",
+                "minItems": 2,
+                "items": position
+            }
+        }
+    }
+
+    # the main schema
+    simplified_geojson_geometry = {
+        "type": "object",
+        "properties": {
+            "type": {
+                "pattern": "GeometryCollection"
+            },
+            # this defines an array ('geometries') that is a list of objects
+            # which conform to one of the schemas in the type list
+            "geometries": {
+                "type": "array",
+                "items": {"type": [point, multipoint]}
+            }
+        }
+    }
