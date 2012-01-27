@@ -269,3 +269,6 @@ Simplified GeoJSON example::
             }
         }
     }
+
+
+(thanks to Jason Sanford for bringing this need to my attention)
