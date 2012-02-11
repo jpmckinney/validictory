@@ -493,7 +493,7 @@ class SchemaValidator(object):
             if 'blank' not in schema:
                 newschema['blank'] = self.blank_by_default
 
-            for schemaprop in newschema:
+            for schemaprop in self._prioritize(newschema.keys()):
 
                 validatorname = "validate_" + schemaprop
 
@@ -504,4 +504,22 @@ class SchemaValidator(object):
 
         return data
 
+    def _prioritize(self, schema_keys):
+        """
+        Return the prioritized list of evaluators
+        """
+        res = []
+        if 'type' in schema_keys:
+            res.append('type')
+            schema_keys.remove('type')
+            
+        if 'properties' in schema_keys:
+            res.append('properties')
+            schema_keys.remove('properties')
+
+        for k in schema_keys:
+            res.append(k)
+
+        return res
+    
 __all__ = ['SchemaValidator']

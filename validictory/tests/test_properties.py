@@ -162,7 +162,22 @@ class TestAdditionalProperties(TestCase):
             self.assertRaises(ValueError, validictory.validate, {"prop":x},
                               schema)
 
+    def test_nested(self):
+        x =  {'rows' : [1, 2, 3]}
+              
+        
 
+        schema = {'type' : 'object',
+                  'properties' : {
+                                  'rows' : { 'type' : 'array', 
+                                             'items' : {'type' : 'object',
+                                                        'properties' : {'_id' : {'type' : 'string'}},
+                                                        'additionalProperties' : {'type' : 'number'}}}}}
+        
+        self.assertRaises(ValueError, validictory.validate, x, schema)
+        
+    
+        
 class TestRequires(TestCase):
     '''
     "requires" is deprecated in draft-03 and replaced by "dependencies"
