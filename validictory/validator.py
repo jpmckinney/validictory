@@ -82,10 +82,10 @@ class SchemaValidator(object):
         return isinstance(val, _str_type)
 
     def validate_type_integer(self, val):
-        return type(val) == int
+        return type(val) in (int, long)
 
     def validate_type_number(self, val):
-        return type(val) in (int, float)
+        return type(val) in (int, long, float)
 
     def validate_type_boolean(self, val):
         return type(val) == bool
