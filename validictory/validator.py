@@ -1,6 +1,7 @@
 import re
 import sys
 import copy
+import socket
 from datetime import datetime
 import warnings
 from collections import Mapping, Container
@@ -99,6 +100,15 @@ class SchemaValidator(object):
     def validate_type_null(self, val):
         return val is None
 
+    def validate_type_ip_address(self, val):
+        try:
+            socket.inet_aton(val)
+            # Make sure we expect "X.X.X.X" as socket.inet_aton() converts "1"
+            # to "0.0.0.1"
+            return len(val.split('.')) == 4
+        except:
+            return False
+
     def validate_type_any(self, val):
         return True
 
@@ -143,7 +153,8 @@ class SchemaValidator(object):
                     raise e
             else:
                 try:
-                    type_checker = getattr(self, 'validate_type_%s' % fieldtype)
+                    type_checker = getattr(self, 'validate_type_%s' %
+                                           fieldtype.replace('-', '_'))
                 except AttributeError:
                     raise SchemaError("Field type '%s' is not supported." %
                                       fieldtype)
