@@ -252,6 +252,12 @@ class SchemaValidator(object):
         Validates additional properties of a JSON object that were not
         specifically defined by the properties property
         '''
+
+        # Shouldn't be validating additionalProperties on non-dicts 
+        value = x.get(fieldname)
+        if not isinstance(value, dict):
+            return
+
         # If additionalProperties is the boolean value True then we accept
         # any additional properties.
         if isinstance(additionalProperties, bool) and additionalProperties:
