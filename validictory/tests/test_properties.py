@@ -162,6 +162,24 @@ class TestAdditionalProperties(TestCase):
             self.assertRaises(ValueError, validictory.validate, {"prop":x},
                               schema)
 
+    def test_false_with_type_string(self):
+        schema = {
+            "type": ["object", "string"],
+            "properties": {
+                "key": {"type":"string"}
+            },
+            "additionalProperties": False
+        }
+
+        for data in ["foobar", {'key':'value'}]:
+            try:
+                validictory.validate(data, schema)
+            except ValueError as e:
+                self.fail("Unexpected failure: %s" % e)
+
+        #failures
+        for data in [['foo','bar'], None, True, {'roses':'red'}]:
+            self.assertRaises(ValueError, validictory.validate, data, schema)
 
 class TestRequires(TestCase):
     '''
