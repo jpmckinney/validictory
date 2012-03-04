@@ -78,6 +78,12 @@ class TestType(TestCase):
         invalids = [1.2, "bad", {"test":"blah"}, [32, 49], 1284, True]
         self._test_type('null', valids, invalids)
 
+    def test_ip_address(self):
+        valids = ["0.0.0.0", "255.255.255.255"]
+        invalids = [1.2, "bad", {"test":"blah"}, [32, 49], 1284, True,
+                    "-0.-0.-0.-0", "-1.-1.-1.-1", "256.256.256.256"]
+        self._test_type('ip-address', valids, invalids)
+
     def test_any(self):
         valids = [1.2, "bad", {"test":"blah"}, [32, 49], None, 1284, True]
         self._test_type('any', valids, [])
