@@ -1,6 +1,12 @@
 validictory changelog
 =====================
 
+0.8.1
+-----
+    * add GeoJSON example to docs
+    * allow longs in int/number validation
+    * ignore additionalProperties for non-dicts
+
 0.8.0
 -----
 **2012-01-26**
