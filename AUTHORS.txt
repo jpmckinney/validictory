@@ -4,5 +4,6 @@
 * Kai Lautaportti - blank_by_default
 * Filod Lin - fix for longs, validate as ints
 * John Krauss - ignore additionalProperties with non-dicts
+* Alexandre Conrad - IP address validator
 
 Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.

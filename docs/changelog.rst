@@ -3,9 +3,11 @@ validictory changelog
 
 0.8.1
 -----
+**2012-03-04**
     * add GeoJSON example to docs
     * allow longs in int/number validation
     * ignore additionalProperties for non-dicts
+    * ip-address type validator
 
 0.8.0
 -----
