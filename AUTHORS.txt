@@ -5,5 +5,6 @@
 * Filod Lin - fix for longs, validate as ints
 * John Krauss - ignore additionalProperties with non-dicts
 * Alexandre Conrad - IP address validator
+* Michael Stephens - support for collections.Mapping
 
 Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
