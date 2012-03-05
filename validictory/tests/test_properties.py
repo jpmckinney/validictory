@@ -223,34 +223,6 @@ class TestDependencies(TestCase):
                           self.schema_array)
 
 
-class TestOptional(TestCase):
-    props = {
-        "prop01": {"type": "string"},
-        "prop02": {"type": "number", "required": False},
-        "prop03": {"type": "integer"},
-        "prop04": {"type": "boolean", "required": True}
-   }
-    schema = {"type": "object", "properties": props}
-
-    def test_optional_pass(self):
-        x = {
-            "prop01": "test",
-            "prop03": 1,
-            "prop04": False
-       }
-
-        try:
-            validictory.validate(x, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
-
-    def test_optional_fail(self):
-        x = {"prop02": "blah"}
-        self.assertRaises(ValueError, validictory.validate, x, self.schema)
-        x = {"prop04": True}  # should still fail
-        self.assertRaises(ValueError, validictory.validate, x, self.schema)
-
-
 class TestRequired(TestCase):
     props = {
         "prop_def": {"type": "string"},
