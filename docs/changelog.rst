@@ -4,6 +4,7 @@ validictory changelog
 0.8.2
 -----
     * doc improvements
+    * PEP8 almost everything
 
 0.8.1
 -----

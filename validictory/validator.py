@@ -298,13 +298,6 @@ class SchemaValidator(object):
         else:
             raise SchemaError("additionalProperties schema definition for field '%s' is not an object" % fieldname)
 
-    def validate_requires(self, x, fieldname, schema, requires=None):
-        warnings.warn('The "requires" attribute has been replaced by "dependencies"', DeprecationWarning)
-        if x.get(fieldname) is not None:
-            if x.get(requires) is None:
-                self._error("Field '%(requires)s' is required by field '%(fieldname)s'",
-                            None, fieldname, requires=requires)
-
     def validate_dependencies(self, x, fieldname, schema, dependencies=None):
         if x.get(fieldname) is not None:
 
@@ -506,15 +499,15 @@ class SchemaValidator(object):
 
             newschema = copy.copy(schema)
 
-            # handle 'optional', replace it with 'required'
-            if 'required' in schema and 'optional' in schema:
-                raise SchemaError('cannot specify optional and required')
-            elif 'optional' in schema:
-                warnings.warn('The "optional" attribute has been replaced by "required"', DeprecationWarning)
-                newschema['required'] = not schema['optional']
-            elif 'required' not in schema:
-                newschema['required'] = self.required_by_default
+            if 'optional' in schema:
+                raise SchemaError('The "optional" attribute has been replaced'
+                                  ' by "required"')
+            if 'requires' in schema:
+                raise SchemaError('The "requires" attribute has been replaced'
+                                  ' by "dependencies"')
 
+            if 'required' not in schema:
+                newschema['required'] = self.required_by_default
             if 'blank' not in schema:
                 newschema['blank'] = self.blank_by_default
 
