@@ -6,15 +6,15 @@ import validictory
 class TestProperties(TestCase):
     props = {
         "prop01": {"type": "string"},
-        "prop02": {"type": "number", "optional": True},
+        "prop02": {"type": "number", "required": False},
         "prop03": {"type": "integer"},
         "prop04": {"type": "boolean"},
         "prop05": {
             "type": "object",
-            "optional": True,
+            "required": False,
             "properties": {
                 "subprop01": {"type": "string"},
-                "subprop02": {"type": "string", "optional": False}
+                "subprop02": {"type": "string", "required": True}
            }
        }
    }
@@ -184,47 +184,18 @@ class TestAdditionalProperties(TestCase):
             self.assertRaises(ValueError, validictory.validate, data, schema)
 
 
-class TestRequires(TestCase):
-    '''
-    "requires" is deprecated in draft-03 and replaced by "dependencies"
-    '''
-
-    props = {
-        "prop01": {"type": "string", "optional": True},
-        "prop02": {"type": "number", "optional": True, "requires": "prop01"}
-   }
-    schema = {"type": "object", "properties": props}
-
-    def test_requires_pass(self):
-        data1 = {}
-        data2 = {"prop01": "test"}
-        data3 = {"prop01": "test", "prop02": 2}
-
-        try:
-            validictory.validate(data1, self.schema)
-            validictory.validate(data2, self.schema)
-            validictory.validate(data3, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
-
-    def test_requires_fail(self):
-        data = {"prop02": 2}
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
-
-
 class TestDependencies(TestCase):
     props = {
-        "prop01": {"type": "string", "optional": True},
-        "prop02": {"type": "number", "optional": True,
+        "prop01": {"type": "string", "required": False},
+        "prop02": {"type": "number", "required": False,
                    "dependencies": "prop01"}
     }
     schema = {"type": "object", "properties": props}
 
     props_array = {
-        "prop01": {"type": "string", "optional": True},
-        "prop02": {"type": "string", "optional": True},
-        "prop03": {"type": "number", "optional": True,
+        "prop01": {"type": "string", "required": False},
+        "prop02": {"type": "string", "required": False},
+        "prop03": {"type": "number", "required": False,
                    "dependencies": ["prop01", "prop02"]}
     }
     schema_array = {"type": "object", "properties": props_array}
@@ -255,9 +226,9 @@ class TestDependencies(TestCase):
 class TestOptional(TestCase):
     props = {
         "prop01": {"type": "string"},
-        "prop02": {"type": "number", "optional": True},
+        "prop02": {"type": "number", "required": False},
         "prop03": {"type": "integer"},
-        "prop04": {"type": "boolean", "optional": False}
+        "prop04": {"type": "boolean", "required": True}
    }
     schema = {"type": "object", "properties": props}
 
