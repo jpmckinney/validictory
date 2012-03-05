@@ -15,8 +15,8 @@ class TestType(TestCase):
     def test_schema(self):
         schema = {
             "type": [
-                { "type": "array", "minItems": 10 },
-                { "type": "string", "pattern": "^0+$" }
+                {"type": "array", "minItems": 10},
+                {"type": "string", "pattern": "^0+$"}
             ]
         }
 
@@ -35,13 +35,13 @@ class TestType(TestCase):
     def _test_type(self, typename, valids, invalids):
         for x in valids:
             try:
-                validictory.validate(x, {"type":typename})
+                validictory.validate(x, {"type": typename})
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:
             self.assertRaises(ValueError, validictory.validate, x,
-                              {"type":typename})
+                              {"type": typename})
 
     def test_integer(self):
         valid_ints = [1, -89, 420000]
@@ -104,17 +104,18 @@ class TestType(TestCase):
         self._test_type(types, valids, invalids)
         self._test_type(tuple(types), valids, invalids)
 
+
 class TestDisallow(TestType):
     def _test_type(self, typename, valids, invalids):
         for x in invalids:
             try:
-                validictory.validate(x, {"disallow":typename})
+                validictory.validate(x, {"disallow": typename})
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in valids:
             self.assertRaises(ValueError, validictory.validate, x,
-                              {"disallow":typename})
+                              {"disallow": typename})
 
 
 class DateValidator(validictory.validator.SchemaValidator):
@@ -144,10 +145,10 @@ class TestCustomType(TestCase):
         validator = DateValidator()
         for x in valids:
             try:
-                validator.validate(x, {"type":typename})
+                validator.validate(x, {"type": typename})
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
         for x in invalids:
             self.assertRaises(ValueError, validator.validate, x,
-                              {"type":typename})
+                              {"type": typename})

@@ -2,20 +2,21 @@ from unittest import TestCase
 
 import validictory
 
+
 class TestItems(TestCase):
     schema1 = {
         "type": "array",
-        "items":{"type":"string"}
+        "items": {"type": "string"}
     }
 
     schema2 = {
         "type": "array",
-        "items":[{"type":"integer"}, {"type":"string"}, {"type":"boolean"}]
+        "items": [{"type": "integer"}, {"type": "string"}, {"type": "boolean"}]
     }
 
     schema3 = {
         "type": "array",
-        "items":({"type":"integer"}, {"type":"string"}, {"type":"boolean"})
+        "items": ({"type": "integer"}, {"type": "string"}, {"type": "boolean"})
     }
 
     def test_items_single_pass(self):
@@ -48,7 +49,8 @@ class TestItems(TestCase):
         data = [1294, "Ok. I give up"]
         data2 = [1294, "Ok. I give up", "Not a boolean"]
         self.assertRaises(ValueError, validictory.validate, data, self.schema2)
-        self.assertRaises(ValueError, validictory.validate, data2, self.schema2)
+        self.assertRaises(ValueError, validictory.validate, data2,
+                          self.schema2)
 
     def test_items_descriptive_fail(self):
         data = [1294]
@@ -63,25 +65,29 @@ class TestAdditionalItems(TestCase):
 
     schema1 = {
         "type": "array",
-        "items":[{"type":"integer"}, {"type":"string"}, {"type":"boolean"}],
+        "items": [{"type": "integer"}, {"type": "string"},
+                  {"type": "boolean"}],
         "additionalItems": False
     }
 
     schema2 = {
         "type": "array",
-        "items":[{"type":"integer"}, {"type":"string"}, {"type":"boolean"}],
+        "items": [{"type": "integer"}, {"type": "string"},
+                  {"type": "boolean"}],
         "additionalItems": True
     }
 
     schema3 = {
         "type": "array",
-        "items":[{"type":"integer"}, {"type":"string"}, {"type":"boolean"}],
+        "items": [{"type": "integer"}, {"type": "string"},
+                  {"type": "boolean"}],
         "additionalItems": {"type": "number"}
     }
 
     schema4 = {
         "type": "array",
-        "items":[{"type":"integer"}, {"type":"string"}, {"type":"boolean"}],
+        "items": [{"type": "integer"}, {"type": "string"},
+                  {"type": "boolean"}],
         "additionalItems": {"type": ["number", "boolean"]}
     }
 
@@ -98,7 +104,8 @@ class TestAdditionalItems(TestCase):
         self.assertRaises(ValueError, validictory.validate, data, self.schema1)
 
     def test_additionalItems_pass(self):
-        data = [12482, "Yes, more strings", False, ["I'm"], {"also": "allowed!"}]
+        data = [12482, "Yes, more strings", False, ["I'm"],
+                {"also": "allowed!"}]
         try:
             validictory.validate(data, self.schema2)
         except ValueError as e:
@@ -123,6 +130,6 @@ class TestAdditionalItems(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_additionalItems_multischema_fail(self):
-        data = [12482, "Yes, more strings", False, 13.37, True, "I'm not allowed"]
+        data = [12482, "Yes, more strings", False, 13.37, True,
+                "I'm not allowed"]
         self.assertRaises(ValueError, validictory.validate, data, self.schema4)
-

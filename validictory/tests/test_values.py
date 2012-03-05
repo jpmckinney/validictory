@@ -8,8 +8,8 @@ import validictory
 
 
 class TestEnum(TestCase):
-    schema = {"enum":["test", True, 123, ["???"]]}
-    schema2 = {"enum":("test", True, 123, ["???"])}
+    schema = {"enum": ["test", True, 123, ["???"]]}
+    schema2 = {"enum": ("test", True, 123, ["???"])}
 
     def test_enum_pass(self):
         data = ["test", True, 123, ["???"]]
@@ -53,20 +53,24 @@ class TestPattern(TestCase):
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
-def validate_format_contains_spaces(validator, fieldname, value, format_option):
+
+def validate_format_contains_spaces(validator, fieldname, value,
+                                    format_option):
     if ' ' in value:
         return
 
     raise validictory.ValidationError(
-        "Value %(value)r of field '%(fieldname)s' does not contain any spaces, but it should" % locals())
+        "Value %(value)r of field '%(fieldname)s' does not contain any spaces,"
+        "but it should" % locals())
+
 
 class TestFormat(TestCase):
 
-    schema_datetime    = {"format": "date-time"}
-    schema_date        = {"format": "date"}
-    schema_time        = {"format": "time"}
+    schema_datetime = {"format": "date-time"}
+    schema_date = {"format": "date"}
+    schema_time = {"format": "time"}
     schema_utcmillisec = {"format": "utc-millisec"}
-    schema_spaces      = {"format": "spaces"}
+    schema_spaces = {"format": "spaces"}
 
     def test_format_datetime_pass(self):
         data = "2011-01-13T10:56:53Z"
@@ -100,41 +104,48 @@ class TestFormat(TestCase):
         except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
-
     def test_format_datetime_nonexisting_day_fail(self):
         data = "2013-13-13T00:00:00Z"
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_datetime)
 
     def test_format_datetime_feb29_fail(self):
         data = "2011-02-29T00:00:00Z"
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_datetime)
 
     def test_format_datetime_notutc_fail(self):
-        data = "2011-01-13T10:56:53+01:00"
+        data = "2011-01-13T10:56:53+01: 00"
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_datetime)
 
     def test_format_datetime_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_datetime)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_datetime)
 
     def test_format_date_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_date)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_date)
 
     def test_format_time_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_time)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_time)
 
     def test_format_utcmillisec_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_utcmillisec)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_utcmillisec)
 
     def test_format_utcmillisec_negative_fail(self):
         data = -1
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_utcmillisec)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_utcmillisec)
 
     def test_format_required_false(self):
         schema = {
@@ -142,7 +153,7 @@ class TestFormat(TestCase):
             'properties': {
                 'startdate': {'type': 'string', 'format': 'date-time',
                                'required': False}
-            }
+           }
         }
         try:
             validictory.validate({}, schema, required_by_default=False)
@@ -161,7 +172,8 @@ class TestFormat(TestCase):
     def test_format_custom_instantiated_pass(self):
         data = 'Here are spaces'
 
-        validator = validictory.SchemaValidator({'spaces': validate_format_contains_spaces})
+        validator = validictory.SchemaValidator(
+            {'spaces': validate_format_contains_spaces})
 
         try:
             # validator installed, but data validates
@@ -173,7 +185,8 @@ class TestFormat(TestCase):
         data = 'Here are spaces'
 
         validator = validictory.SchemaValidator()
-        validator.register_format_validator('spaces', validate_format_contains_spaces)
+        validator.register_format_validator('spaces',
+                                            validate_format_contains_spaces)
 
         try:
             # validator registered, but data validates
@@ -184,10 +197,12 @@ class TestFormat(TestCase):
     def test_format_custom_registered_fail(self):
         data = 'No-spaces-here'
 
-        validator = validictory.SchemaValidator({'spaces': validate_format_contains_spaces})
+        validator = validictory.SchemaValidator(
+            {'spaces': validate_format_contains_spaces})
 
         # validator registered, but data does not conform
-        self.assertRaises(ValueError, validator.validate, data, self.schema_spaces)
+        self.assertRaises(ValueError, validator.validate, data,
+                          self.schema_spaces)
 
 
 class TestUniqueItems(TestCase):
@@ -196,7 +211,7 @@ class TestUniqueItems(TestCase):
     schema_false = {"uniqueItems": False}
 
     def test_uniqueitems_pass(self):
-        data = [1,2,3]
+        data = [1, 2, 3]
 
         try:
             validictory.validate(data, self.schema)
@@ -224,7 +239,7 @@ class TestUniqueItems(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_uniqueitems_pass_not_an_array(self):
-        data = 13 # it's pretty unique
+        data = 13  # it's pretty unique
 
         try:
             validictory.validate(data, self.schema)
@@ -253,7 +268,7 @@ class TestUniqueItems(TestCase):
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
     def test_uniqueitems_fail_nested_arrays(self):
-        data = [[1,2,3], [1,2,3]]
+        data = [[1, 2, 3], [1, 2, 3]]
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
@@ -270,20 +285,20 @@ class TestUniqueItems(TestCase):
 
 class TestMaximum(TestCase):
     props = {
-        "prop01": { "type":"number", "maximum":10 },
-        "prop02": { "type":"integer", "maximum":20 }
-    }
+        "prop01": {"type": "number", "maximum": 10},
+        "prop02": {"type": "integer", "maximum": 20}
+   }
     props_exclusive = {
-        "prop": { "type":"integer", "maximum":20, "exclusiveMaximum": True },
-    }
-    schema = {"type": "object", "properties":props}
+        "prop": {"type": "integer", "maximum": 20, "exclusiveMaximum": True},
+   }
+    schema = {"type": "object", "properties": props}
     schema_exclusive = {"type": "object", "properties": props_exclusive}
 
     def test_maximum_pass(self):
         #Test less than
-        data1 = { "prop01": 5, "prop02": 10 }
+        data1 = {"prop01": 5, "prop02": 10}
         #Test equal
-        data2 = { "prop01": 10, "prop02": 20 }
+        data2 = {"prop01": 10, "prop02": 20}
 
         try:
             validictory.validate(data1, self.schema)
@@ -293,7 +308,7 @@ class TestMaximum(TestCase):
 
     def test_maximum_exclusive_pass(self):
         #Test less than
-        data = { "prop": 19 }
+        data = {"prop": 19}
 
         try:
             validictory.validate(data, self.schema_exclusive)
@@ -302,36 +317,37 @@ class TestMaximum(TestCase):
 
     def test_maximum_fail(self):
         #Test number
-        data1 = { "prop01": 11, "prop02": 19 }
+        data1 = {"prop01": 11, "prop02": 19}
         #Test integer
-        data2 = { "prop01": 9, "prop02": 21 }
+        data2 = {"prop01": 9, "prop02": 21}
 
         self.assertRaises(ValueError, validictory.validate, data1, self.schema)
         self.assertRaises(ValueError, validictory.validate, data2, self.schema)
 
     def test_maximum_exclusive_fail(self):
         #Test equal
-        data = { "prop": 20 }
+        data = {"prop": 20}
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_exclusive)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_exclusive)
 
 
 class TestMinimum(TestCase):
     props = {
-        "prop01": { "type":"number", "minimum":10 },
-        "prop02": { "type":"integer", "minimum":20 }
-    }
+        "prop01": {"type": "number", "minimum": 10},
+        "prop02": {"type": "integer", "minimum": 20}
+   }
     props_exclusive = {
-        "prop": { "type":"integer", "minimum":20, "exclusiveMinimum": True },
-    }
-    schema = {"type": "object", "properties":props}
+        "prop": {"type": "integer", "minimum": 20, "exclusiveMinimum": True},
+   }
+    schema = {"type": "object", "properties": props}
     schema_exclusive = {"type": "object", "properties": props_exclusive}
 
     def test_minimum_pass(self):
         #Test greater than
-        data1 = { "prop01": 21, "prop02": 21 }
+        data1 = {"prop01": 21, "prop02": 21}
         #Test equal
-        data2 = { "prop01": 10, "prop02": 20 }
+        data2 = {"prop01": 10, "prop02": 20}
 
         try:
             validictory.validate(data1, self.schema)
@@ -341,7 +357,7 @@ class TestMinimum(TestCase):
 
     def test_minimum_exclusive_pass(self):
         #Test greater than
-        data = { "prop": 21 }
+        data = {"prop": 21}
 
         try:
             validictory.validate(data, self.schema_exclusive)
@@ -350,26 +366,27 @@ class TestMinimum(TestCase):
 
     def test_minimum_fail(self):
         #Test number
-        data1 = { "prop01": 9, "prop02": 21 }
+        data1 = {"prop01": 9, "prop02": 21}
         #Test integer
-        data2 = { "prop01": 10, "prop02": 19 }
+        data2 = {"prop01": 10, "prop02": 19}
 
         self.assertRaises(ValueError, validictory.validate, data1, self.schema)
         self.assertRaises(ValueError, validictory.validate, data2, self.schema)
 
     def test_minimum_exclusive_fail(self):
         #Test equal
-        data = { "prop": 20 }
+        data = {"prop": 20}
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema_exclusive)
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_exclusive)
 
 
 class TestMinLength(TestCase):
-    schema = { "minLength": 4 }
+    schema = {"minLength": 4}
 
     def test_minLength_pass(self):
         # str-equal, str-gt, list-equal, list-gt
-        data = ['test', 'string', [1,2,3,4], [0,0,0,0,0]]
+        data = ['test', 'string', [1, 2, 3, 4], [0, 0, 0, 0, 0]]
 
         try:
             for item in data:
@@ -388,7 +405,7 @@ class TestMinLength(TestCase):
 
     def test_minLength_fail(self):
         #test equal
-        data = ["car", [1,2,3]]
+        data = ["car", [1, 2, 3]]
 
         for item in data:
             self.assertRaises(ValueError, validictory.validate, data,
@@ -396,11 +413,11 @@ class TestMinLength(TestCase):
 
 
 class TestMaxLength(TestCase):
-    schema = { "maxLength": 4 }
+    schema = {"maxLength": 4}
 
     def test_maxLength_pass(self):
         # str-equal, str-lt, list-equal, list-lt
-        data = ["test", "car", [1,2,3,4], [0,0,0]]
+        data = ["test", "car", [1, 2, 3, 4], [0, 0, 0]]
         try:
             for item in data:
                 validictory.validate(item, self.schema)
@@ -417,7 +434,7 @@ class TestMaxLength(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_maxLength_fail(self):
-        data = ["string", [1,2,3,4,5]]
+        data = ["string", [1, 2, 3, 4, 5]]
         for item in data:
             self.assertRaises(ValueError, validictory.validate, item,
                               self.schema)
@@ -432,15 +449,16 @@ class TestBlank(TestCase):
                 "key": {
                     "type": "string",
                     "required": True,
-                }
-            }
-        }
+               }
+           }
+       }
         try:
             validictory.validate({"key": "value"}, {}, blank_by_default=False)
         except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
-        self.assertRaises(ValueError, validictory.validate, {"key": ""}, schema)
+        self.assertRaises(ValueError, validictory.validate, {"key": ""},
+                          schema)
 
     def test_blank_default_true(self):
         schema = {
@@ -449,8 +467,8 @@ class TestBlank(TestCase):
                 "key": {
                     "type": "string",
                     "required": True,
-                }
-            }
+               }
+           }
         }
         try:
             validictory.validate({"key": ""}, schema, blank_by_default=True)
@@ -458,7 +476,7 @@ class TestBlank(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_blank_false(self):
-        schema = {"blank":False}
+        schema = {"blank": False}
         try:
             validictory.validate("test", schema, blank_by_default=True)
         except ValueError as e:
@@ -468,14 +486,15 @@ class TestBlank(TestCase):
 
     def test_blank_true(self):
         try:
-            validictory.validate("", {"blank":True}, blank_by_default=False)
-            validictory.validate("test", {"blank":True}, blank_by_default=False)
+            validictory.validate("", {"blank": True}, blank_by_default=False)
+            validictory.validate("test", {"blank": True},
+                                 blank_by_default=False)
         except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
 
 class TestDivisibleBy(TestCase):
-    schema  = {'type': 'number', 'divisibleBy': 12}
+    schema = {'type': 'number', 'divisibleBy': 12}
     schema0 = {'type': 'number', 'divisibleBy': 0}
 
     def test_divisibleBy_pass(self):
@@ -492,4 +511,3 @@ class TestDivisibleBy(TestCase):
     def test_divisibleBy_ZeroDivisionError_fail(self):
         data = 60
         self.assertRaises(ValueError, validictory.validate, data, self.schema0)
-
