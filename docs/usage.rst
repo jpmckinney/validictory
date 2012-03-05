@@ -161,6 +161,12 @@ For example::
     If the value is a string, this provides a regular expression that
     the string must match to be valid.
 
+``blank``
+    If False, validate that string values are not blank (the empty string).
+
+    The default value of this parameter is set when initializing
+    `SchemaValidator`. By default it is ``False``.
+
 ``enum``
     Provides an array that the value must match if present.
 
