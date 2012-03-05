@@ -35,9 +35,9 @@ def _generate_datetime_validator(format_option, dateformat_string):
 
     return validate_format_datetime
 
-validate_format_date_time  = _generate_datetime_validator('date-time', '%Y-%m-%dT%H:%M:%SZ')
-validate_format_date       = _generate_datetime_validator('date', '%Y-%m-%d')
-validate_format_time       = _generate_datetime_validator('time', '%H:%M:%S')
+validate_format_date_time = _generate_datetime_validator('date-time', '%Y-%m-%dT%H:%M:%SZ')
+validate_format_date = _generate_datetime_validator('date', '%Y-%m-%d')
+validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
@@ -49,10 +49,10 @@ def validate_format_utc_millisec(validator, fieldname, value, format_option):
 
 
 DEFAULT_FORMAT_VALIDATORS = {
-    'date-time'    : validate_format_date_time,
-    'date'         : validate_format_date,
-    'time'         : validate_format_time,
-    'utc-millisec' : validate_format_utc_millisec,
+    'date-time': validate_format_date_time,
+    'date': validate_format_date,
+    'time': validate_format_time,
+    'utc-millisec': validate_format_utc_millisec,
 }
 
 
@@ -68,7 +68,8 @@ class SchemaValidator(object):
         schema attribute True by default.
     '''
 
-    def __init__(self, format_validators=None, required_by_default=True, blank_by_default=False):
+    def __init__(self, format_validators=None, required_by_default=True,
+                 blank_by_default=False):
         if format_validators is None:
             format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
@@ -187,7 +188,8 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, (list, tuple)):
                 if isinstance(items, (list, tuple)):
-                    if not 'additionalItems' in schema and len(items) != len(value):
+                    if (not 'additionalItems' in schema and
+                        len(items) != len(value)):
                         self._error("Length of list %(value)r for field '%(fieldname)s' is not equal to length of schema list",
                                     value, fieldname)
                     else:
@@ -227,7 +229,8 @@ class SchemaValidator(object):
             self._error("Value %(value)r for field '%(fieldname)s' cannot be blank'",
                         value, fieldname)
 
-    def validate_patternProperties(self, x, fieldname, schema, patternproperties=None):
+    def validate_patternProperties(self, x, fieldname, schema,
+                                   patternproperties=None):
 
         if patternproperties == None:
             patternproperties = {}
@@ -239,7 +242,8 @@ class SchemaValidator(object):
                 if re.match(pattern, key):
                     self.validate(value, schema)
 
-    def validate_additionalItems(self, x, fieldname, schema, additionalItems=False):
+    def validate_additionalItems(self, x, fieldname, schema,
+                                 additionalItems=False):
         value = x.get(fieldname)
 
         if not isinstance(value, (list, tuple)):
@@ -264,7 +268,7 @@ class SchemaValidator(object):
         specifically defined by the properties property
         '''
 
-        # Shouldn't be validating additionalProperties on non-dicts 
+        # Shouldn't be validating additionalProperties on non-dicts
         value = x.get(fieldname)
         if not isinstance(value, dict):
             return
@@ -335,7 +339,9 @@ class SchemaValidator(object):
         if x.get(fieldname) is not None:
             value = x.get(fieldname)
             if value is not None:
-                if type(value) in (int, float) and (not exclusive and value < minimum) or (exclusive and value <= minimum):
+                if (type(value) in (int, float) and
+                    (not exclusive and value < minimum) or
+                    (exclusive and value <= minimum)):
                     self._error("Value %(value)r for field '%(fieldname)s' is less than minimum value: %(minimum)f",
                                 value, fieldname, minimum=minimum)
 
@@ -350,7 +356,9 @@ class SchemaValidator(object):
         if x.get(fieldname) is not None:
             value = x.get(fieldname)
             if value is not None:
-                if type(value) in (int, float) and (not exclusive and value > maximum) or (exclusive and value >= maximum):
+                if (type(value) in (int, float) and
+                    (not exclusive and value > maximum) or
+                    (exclusive and value >= maximum)):
                     self._error("Value %(value)r for field '%(fieldname)s' is greater than maximum value: %(maximum)f",
                                 value, fieldname, maximum=maximum)
 

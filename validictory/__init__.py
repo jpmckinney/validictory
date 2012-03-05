@@ -7,7 +7,8 @@ __version__ = '0.8.1'
 
 
 def validate(data, schema, validator_cls=SchemaValidator,
-             format_validators=None, required_by_default=True, blank_by_default=False):
+             format_validators=None, required_by_default=True,
+             blank_by_default=False):
     '''
     Validates a parsed json document against the provided schema. If an
     error is found a :class:`ValidationError` is raised.
