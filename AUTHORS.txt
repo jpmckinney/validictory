@@ -6,5 +6,6 @@
 * John Krauss - ignore additionalProperties with non-dicts
 * Alexandre Conrad - IP address validator
 * Michael Stephens - support for collections.Mapping
+* Simon Weber - doc improvements
 
 Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.

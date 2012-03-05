@@ -1,6 +1,10 @@
 validictory changelog
 =====================
 
+0.8.2
+-----
+    * doc improvements
+
 0.8.1
 -----
 **2012-03-04**
