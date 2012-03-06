@@ -235,7 +235,7 @@ class SchemaValidator(object):
         if patternproperties == None:
             patternproperties = {}
 
-        value_obj = x.get(fieldname)
+        value_obj = x.get(fieldname, {})
 
         for pattern, schema in patternproperties.items():
             for key, value in value_obj.items():
