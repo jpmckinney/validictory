@@ -102,6 +102,21 @@ class TestPatternProperties(TestCase):
         data = {'a': 12}
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
+    def test_patternproperties_missing(self):
+        schema = {'properties':
+                  {'patprops': {'required': False, 'type': 'object',
+                               'patternProperties': {'[abc]':
+                                                     {'required': True,
+                                                     'type': 'array'}}
+                               }
+                  }
+                 }
+        data = {'id': 1}
+        try:
+            validictory.validate(data, schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
 
 class TestAdditionalProperties(TestCase):
     def test_no_properties(self):
