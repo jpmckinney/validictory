@@ -4,6 +4,8 @@ validictory changelog
 0.8.2
 -----
     * doc improvements
+    * PEP8 nearly everything
+    * bugfix for patternProperties
 
 0.8.1
 -----
