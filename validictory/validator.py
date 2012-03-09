@@ -3,7 +3,6 @@ import sys
 import copy
 import socket
 from datetime import datetime
-import warnings
 from collections import Mapping, Container
 
 if sys.version_info[0] == 3:
