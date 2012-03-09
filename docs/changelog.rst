@@ -4,6 +4,7 @@ validictory changelog
 0.8.2
 -----
     * doc improvements
+    * ip-address should have been a format, not a type, reverted
 
 0.8.1
 -----
