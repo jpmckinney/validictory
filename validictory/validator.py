@@ -51,11 +51,25 @@ def validate_format_utc_millisec(validator, fieldname, value, format_option):
                               "not a positive number" % locals())
 
 
+def validate_format_ip_address(validator, fieldname, value, format_option):
+    try:
+        socket.inet_aton(value)
+        # Make sure we expect "X.X.X.X" as socket.inet_aton() converts "1"
+        # to "0.0.0.1"
+        ip = len(value.split('.')) == 4
+    except:
+        ip = False
+    if not ip:
+        raise ValidationError("Value %(value)r of field '%(fieldname)s' is "
+                              "not a ip-address" % locals())
+
+
 DEFAULT_FORMAT_VALIDATORS = {
     'date-time': validate_format_date_time,
     'date': validate_format_date,
     'time': validate_format_time,
     'utc-millisec': validate_format_utc_millisec,
+    'ip-address': validate_format_ip_address,
 }
 
 
@@ -104,15 +118,6 @@ class SchemaValidator(object):
     def validate_type_null(self, val):
         return val is None
 
-    def validate_type_ip_address(self, val):
-        try:
-            socket.inet_aton(val)
-            # Make sure we expect "X.X.X.X" as socket.inet_aton() converts "1"
-            # to "0.0.0.1"
-            return len(val.split('.')) == 4
-        except:
-            return False
-
     def validate_type_any(self, val):
         return True
 
@@ -159,7 +164,7 @@ class SchemaValidator(object):
             else:
                 try:
                     type_checker = getattr(self, 'validate_type_%s' %
-                                           fieldtype.replace('-', '_'))
+                                           fieldtype)
                 except AttributeError:
                     raise SchemaError("Field type '%s' is not supported." %
                                       fieldtype)
@@ -248,7 +253,7 @@ class SchemaValidator(object):
         if patternproperties == None:
             patternproperties = {}
 
-        value_obj = x.get(fieldname)
+        value_obj = x.get(fieldname, {})
 
         for pattern, schema in patternproperties.items():
             for key, value in value_obj.items():

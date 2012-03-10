@@ -1,3 +1,5 @@
+Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
+
 * James Turk
 * Silas Sewell - Cosmetic fixes
 * Filip Noetzel - lots of work towards being compatible with the draft-03 spec
@@ -7,5 +9,4 @@
 * Alexandre Conrad - IP address validator
 * Michael Stephens - support for collections.Mapping
 * Simon Weber - doc improvements
-
-Also contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
+* Ahmed El-Hassany - fix for patternProperties on non-required fields
