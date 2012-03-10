@@ -1,6 +1,9 @@
 validictory changelog
 =====================
 
+0.9.0
+    * remove optional and requires, deprecated in 0.6
+
 0.8.2
 -----
 **2012-03-09**
