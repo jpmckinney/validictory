@@ -6,6 +6,7 @@ validictory changelog
     * doc improvements
     * PEP8 nearly everything
     * bugfix for patternProperties
+    * ip-address should have been a format, not a type, reverted
 
 0.8.1
 -----

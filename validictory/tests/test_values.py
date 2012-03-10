@@ -70,6 +70,7 @@ class TestFormat(TestCase):
     schema_date = {"format": "date"}
     schema_time = {"format": "time"}
     schema_utcmillisec = {"format": "utc-millisec"}
+    schema_ip = {"format": "ip-address"}
     schema_spaces = {"format": "spaces"}
 
     def test_format_datetime_pass(self):
@@ -146,6 +147,21 @@ class TestFormat(TestCase):
         data = -1
         self.assertRaises(ValueError, validictory.validate, data,
                           self.schema_utcmillisec)
+
+    def test_format_ip_pass(self):
+        valids = ["0.0.0.0", "255.255.255.255"]
+        for ip in valids:
+            try:
+                validictory.validate(ip, self.schema_ip)
+            except ValueError as e:
+                self.fail("Unexpected failure: %s" % e)
+
+    def test_format_ip_fail(self):
+        invalids = [1.2, "bad", {"test":"blah"}, [32, 49], 1284, True,
+                    "-0.-0.-0.-0", "-1.-1.-1.-1", "256.256.256.256"]
+        for ip in invalids:
+            self.assertRaises(ValueError, validictory.validate, ip,
+                              self.schema_ip)
 
     def test_format_required_false(self):
         schema = {
