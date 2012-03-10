@@ -3,10 +3,12 @@ validictory changelog
 
 0.8.2
 -----
+**2012-03-09**
     * doc improvements
     * PEP8 nearly everything
     * bugfix for patternProperties
-    * ip-address should have been a format, not a type, reverted
+    * ip-address should have been a format, not a type, breaks
+      any code written depending on it in 0.8.1
 
 0.8.1
 -----
