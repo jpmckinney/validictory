@@ -1,6 +1,11 @@
 validictory changelog
 =====================
 
+0.8.3
+-----
+**2012-03-13**
+    * bugfix for Python 3: fix regression from 0.8.1 in use of long
+
 0.8.2
 -----
 **2012-03-09**
