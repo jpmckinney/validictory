@@ -8,7 +8,7 @@ from collections import Mapping, Container
 
 if sys.version_info[0] == 3:
     _str_type = str
-    _int_types = int
+    _int_types = (int,)
 else:
     _str_type = basestring
     _int_types = (int, long)
