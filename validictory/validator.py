@@ -8,8 +8,10 @@ from collections import Mapping, Container
 
 if sys.version_info[0] == 3:
     _str_type = str
+    _int_types = int
 else:
     _str_type = basestring
+    _int_types = (int, long)
 
 
 class SchemaError(ValueError):
@@ -102,10 +104,10 @@ class SchemaValidator(object):
         return isinstance(val, _str_type)
 
     def validate_type_integer(self, val):
-        return type(val) in (int, long)
+        return type(val) in _int_types
 
     def validate_type_number(self, val):
-        return type(val) in (int, long, float)
+        return type(val) in _int_types + (float,)
 
     def validate_type_boolean(self, val):
         return type(val) == bool
