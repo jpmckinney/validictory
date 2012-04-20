@@ -312,10 +312,10 @@ class SchemaValidator(object):
                     # then we don't accept any additional properties.
                     if (isinstance(additionalProperties, bool) and
                         not additionalProperties):
-                        self._error("additional properties not defined by "
-                                    "'properties' are not allowed in field "
-                                    "'%(fieldname)s'",
-                                    None, fieldname)
+                        self._error("additional property '%(prop)s' "
+                                    "not defined by 'properties' are not "
+                                    "allowed in field '%(fieldname)s'",
+                                    None, fieldname, prop=eachProperty)
                     self.__validate(eachProperty, value,
                                     additionalProperties)
         else:
