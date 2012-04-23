@@ -10,3 +10,4 @@ Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 * Michael Stephens - support for collections.Mapping
 * Simon Weber - doc improvements
 * Ahmed El-Hassany - fix for patternProperties on non-required fields
+* Lowe Thiderman - improved error message for additionalProperties

@@ -4,6 +4,7 @@ validictory changelog
 0.9.0
 -----
     * remove optional and requires, deprecated in 0.6
+    * improved additionalProperties error message
 
 0.8.3
 -----
