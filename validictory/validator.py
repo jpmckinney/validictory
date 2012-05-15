@@ -3,6 +3,7 @@ import sys
 import copy
 import socket
 from datetime import datetime
+import warnings
 from collections import Mapping, Container
 
 if sys.version_info[0] == 3:
@@ -201,6 +202,22 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, (list, tuple)):
                 if isinstance(items, (list, tuple)):
+                    if len(items) != len(value):
+                        # resolve defaults now
+                        for i, item in enumerate(items):
+                            try:
+                                value[i]
+                            except IndexError as e:
+                                # obviously it does not exists
+                                if 'default' in item:
+                                    value.append(item['default'])
+                                else:
+                                    raise ValidationError(
+                                        "Failed to validate field '%s' "
+                                        "value missing for item %d" %
+                                        (fieldname, i)
+                                    )
+
                     if (not 'additionalItems' in schema and
                         len(items) != len(value)):
                         self._error("Length of list %(value)r for field "
@@ -519,11 +536,12 @@ class SchemaValidator(object):
     def validate(self, data, schema):
         '''
         Validates a piece of json data against the provided json-schema.
+        Returns the validated data.
         '''
-        self._validate(data, schema)
+        return self._validate(data, schema)
 
     def _validate(self, data, schema):
-        self.__validate("_data", {"_data": data}, schema)
+        return self.__validate("_data", {"_data": data}, schema).get('_data')
 
     def __validate(self, fieldname, data, schema):
 
@@ -532,6 +550,9 @@ class SchemaValidator(object):
                 raise SchemaError("Schema structure is invalid.")
 
             newschema = copy.copy(schema)
+
+            if fieldname not in data and 'default' in schema:
+                data[fieldname] = schema['default']
 
             if 'optional' in schema:
                 raise SchemaError('The "optional" attribute has been replaced'

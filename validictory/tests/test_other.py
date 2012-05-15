@@ -2,7 +2,6 @@ from unittest import TestCase
 
 import validictory
 
-
 class TestSchemaErrors(TestCase):
 
     valid_desc = {"description": "My Description for My Schema"}
