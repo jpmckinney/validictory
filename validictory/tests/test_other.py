@@ -5,12 +5,13 @@ import validictory
 
 class TestSchemaErrors(TestCase):
 
-    valid_desc = {"description": "My Description for My Schema"}
-    invalid_desc = {"description": 1233}
-    valid_title = {"title": "My Title for My Schema"}
-    invalid_title = {"title": 1233}
-    # doesn't matter what this is
-    data = "whatever"
+    def setUp(self):
+        self.valid_desc = {"description": "My Description for My Schema"}
+        self.invalid_desc = {"description": 1233}
+        self.valid_title = {"title": "My Title for My Schema"}
+        self.invalid_title = {"title": 1233}
+        # doesn't matter what this is
+        self.data = "whatever"
 
     def test_description_pass(self):
         try:
