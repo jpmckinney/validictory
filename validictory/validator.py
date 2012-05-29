@@ -529,7 +529,8 @@ class SchemaValidator(object):
 
         if schema is not None:
             if not isinstance(schema, dict):
-                raise SchemaError("Schema structure is invalid.")
+                raise SchemaError("Schema type for field '%s' must be 'dict', got: '%s'" 
+                                 % (fieldname, type(schema).__name__))
 
             newschema = copy.copy(schema)
 
