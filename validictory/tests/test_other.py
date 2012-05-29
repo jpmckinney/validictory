@@ -31,3 +31,15 @@ class TestSchemaErrors(TestCase):
     def test_title_fail(self):
         self.assertRaises(ValueError, validictory.validate, self.data,
                           self.invalid_title)
+
+    def test_invalid_type(self):
+        expected = "Type for field 'bar' must be 'dict', got: 'str'"
+        data = {'bar': False}
+        schema = {"type":"object", "required":True, "properties":{"bar":"foo"}}
+        try:
+            validictory.validate(data, schema)
+            result = None
+        except Exception, e:
+            result = e.__str__()
+        self.assertEqual(expected, result)
+
