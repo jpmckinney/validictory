@@ -5,12 +5,13 @@ import validictory
 
 class TestSchemaErrors(TestCase):
 
-    valid_desc = {"description": "My Description for My Schema"}
-    invalid_desc = {"description": 1233}
-    valid_title = {"title": "My Title for My Schema"}
-    invalid_title = {"title": 1233}
-    # doesn't matter what this is
-    data = "whatever"
+    def setUp(self):
+        self.valid_desc = {"description": "My Description for My Schema"}
+        self.invalid_desc = {"description": 1233}
+        self.valid_title = {"title": "My Title for My Schema"}
+        self.invalid_title = {"title": 1233}
+        # doesn't matter what this is
+        self.data = "whatever"
 
     def test_description_pass(self):
         try:
@@ -31,3 +32,15 @@ class TestSchemaErrors(TestCase):
     def test_title_fail(self):
         self.assertRaises(ValueError, validictory.validate, self.data,
                           self.invalid_title)
+
+    def test_invalid_type(self):
+        expected = "Type for field 'bar' must be 'dict', got: 'str'"
+        data = {'bar': False}
+        schema = {"type":"object", "required":True, "properties":{"bar":"foo"}}
+        try:
+            validictory.validate(data, schema)
+            result = None
+        except Exception, e:
+            result = e.__str__()
+        self.assertEqual(expected, result)
+
