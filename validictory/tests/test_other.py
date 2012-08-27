@@ -40,7 +40,7 @@ class TestSchemaErrors(TestCase):
         try:
             validictory.validate(data, schema)
             result = None
-        except Exception, e:
+        except Exception as e:
             result = e.__str__()
         self.assertEqual(expected, result)
 
