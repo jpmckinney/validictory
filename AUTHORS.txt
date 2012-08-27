@@ -11,3 +11,4 @@ Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 * Simon Weber - doc improvements
 * Ahmed El-Hassany - fix for patternProperties on non-required fields
 * Lowe Thiderman - improved error message for additionalProperties
+* Alfredo Deza - improved SchemaError messages

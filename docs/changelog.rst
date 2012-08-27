@@ -5,6 +5,7 @@ validictory changelog
 -----
     * remove optional and requires, deprecated in 0.6
     * improved additionalProperties error message
+    * improved schema error message
 
 0.8.3
 -----
