@@ -2,7 +2,6 @@ from unittest import TestCase
 
 import validictory
 
-
 class TestSchemaErrors(TestCase):
 
     def setUp(self):
