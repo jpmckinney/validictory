@@ -113,6 +113,11 @@ Schema Options
     are allowed, if a schema is provided then all additional items must
     match the provided schema.
 
+``allowedValues``
+    Used instead of ``items``. Provides a list of allowed values to match 
+    against a list. At least one value must be present. Allowed
+    values include strings, numbers, lists and objects.
+
 ``required``
     If True, the property must be present to validate.
 
