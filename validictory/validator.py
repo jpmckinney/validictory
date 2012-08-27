@@ -85,19 +85,16 @@ class SchemaValidator(object):
         ``required`` schema attribute False by default.
     :param blank_by_default: defaults to False, set to True to make ``blank``
         schema attribute True by default.
-    :param disallow_unknown_properties: defaults to False, set to True to
-        disallow properties not listed in the schema definition
     '''
 
     def __init__(self, format_validators=None, required_by_default=True,
-                 blank_by_default=False, disallow_unknown_properties=False):
+                 blank_by_default=False):
         if format_validators is None:
             format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
         self._format_validators = format_validators
         self.required_by_default = required_by_default
         self.blank_by_default = blank_by_default
-        self.disallow_unknown_properties = disallow_unknown_properties
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -131,19 +128,6 @@ class SchemaValidator(object):
         params['fieldname'] = fieldname
         message = desc % params
         raise ValidationError(message)
-
-    def _validate_unknown_properties(self, schema, data, fieldname):
-        schema_properties = set(schema)
-        data_properties = set(data)
-        delta = data_properties - schema_properties
-        if delta:
-            unknowns = ''
-            for x in delta:
-                unknowns += '"%s", ' % x
-            unknowns = unknowns.rstrip(", ")
-            raise SchemaError('Unknown properties for field '
-                              '"%(fieldname)s": %(unknowns)s' %
-                              locals())
 
     def validate_type(self, x, fieldname, schema, fieldtype=None):
         '''
@@ -202,9 +186,6 @@ class SchemaValidator(object):
             if isinstance(value, dict):
                 if isinstance(properties, dict):
 
-                    if self.disallow_unknown_properties:
-                        self._validate_unknown_properties(properties, value, fieldname)
-
                     for eachProp in properties:
                         self.__validate(eachProp, value,
                                         properties.get(eachProp))
@@ -237,9 +218,6 @@ class SchemaValidator(object):
                                               (fieldname, e))
                 elif isinstance(items, dict):
                     for eachItem in value:
-                        if self.disallow_unknown_properties:
-                            self._validate_unknown_properties(items, eachItem, fieldname)
-
                         try:
                             self._validate(eachItem, items)
                         except ValueError as e:
