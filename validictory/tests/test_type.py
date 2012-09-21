@@ -1,4 +1,5 @@
 from unittest import TestCase
+from decimal import Decimal
 import datetime
 import sys
 
@@ -54,7 +55,7 @@ class TestType(TestCase):
         self._test_type('string', valids, invalids)
 
     def test_number(self):
-        valids = [1.2, -89.42, 48, -32]
+        valids = [1.2, -89.42, 48, -32, Decimal('25.25')]
         invalids = ["bad", {"test":"blah"}, [32.42, 494242], None, True]
         self._test_type('number', valids, invalids)
 
