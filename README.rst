@@ -58,3 +58,5 @@ Catch ValueErrors to handle validation issues::
     ...     print error
     ...
     Length of value 'simplejson' for field '_data' must be greater than or equal to 15
+
+You can read more in the official documentation at `Read the Docs <http://validictory.readthedocs.org/en/latest/>`_.
