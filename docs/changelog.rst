@@ -6,6 +6,9 @@ validictory changelog
     * remove optional and requires, deprecated in 0.6
     * improved additionalProperties error message
     * improved schema error message
+    * add long to utc-millisec validation
+    * accept Decimal where float is accepted
+    * a few Python 3 fixes
 
 0.8.3
 -----

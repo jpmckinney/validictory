@@ -1,6 +1,6 @@
 Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 
-* James Turk
+* James Turk - port from jsonschema & additional features & maintenance
 * Silas Sewell - Cosmetic fixes
 * Filip Noetzel - lots of work towards being compatible with the draft-03 spec
 * Kai Lautaportti - blank_by_default
@@ -12,3 +12,6 @@ Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 * Ahmed El-Hassany - fix for patternProperties on non-required fields
 * Lowe Thiderman - improved error message for additionalProperties
 * Alfredo Deza - improved SchemaError messages
+* Arthur S. - fix to support Decimal in addition to float
+* Jesse Printz - doc fix
+* Nicola Iarocci - disallow_unknown_properties option
