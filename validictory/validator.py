@@ -45,7 +45,7 @@ validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
-    if not isinstance(value, (int, float)):
+    if not isinstance(value, _int_types + (float, Decimal)):
         raise ValidationError("Value %(value)r of field '%(fieldname)s' is "
                               "not a number" % locals())
 
@@ -274,7 +274,6 @@ class SchemaValidator(object):
             if additionalItems or 'items' not in schema:
                 return
             elif len(value) != len(schema['items']):
-                #print locals(), value, len(value), len(schema['items'])
                 self._error("Length of list %(value)r for field "
                             "'%(fieldname)s' is not equal to length of schema "
                             "list", value, fieldname)
