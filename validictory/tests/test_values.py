@@ -102,7 +102,6 @@ class TestFormat(TestCase):
 
         try:
             validictory.validate(1294915735, self.schema_utcmillisec)
-            validictory.validate(1294915735L, self.schema_utcmillisec)
             validictory.validate(1294915735.0, self.schema_utcmillisec)
         except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
