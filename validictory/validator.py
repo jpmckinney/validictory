@@ -3,6 +3,7 @@ import sys
 import copy
 import socket
 from datetime import datetime
+from decimal import Decimal
 from collections import Mapping, Container
 
 if sys.version_info[0] == 3:
@@ -106,7 +107,7 @@ class SchemaValidator(object):
         return type(val) in _int_types
 
     def validate_type_number(self, val):
-        return type(val) in _int_types + (float,)
+        return type(val) in _int_types + (float, Decimal,)
 
     def validate_type_boolean(self, val):
         return type(val) == bool
@@ -529,7 +530,7 @@ class SchemaValidator(object):
 
         if schema is not None:
             if not isinstance(schema, dict):
-                raise SchemaError("Type for field '%s' must be 'dict', got: '%s'" 
+                raise SchemaError("Type for field '%s' must be 'dict', got: '%s'"
                                  % (fieldname, type(schema).__name__))
 
             newschema = copy.copy(schema)
