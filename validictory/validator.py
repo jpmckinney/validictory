@@ -186,6 +186,7 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, dict):
                 if isinstance(properties, dict):
+
                     for eachProp in properties:
                         self.__validate(eachProp, value,
                                         properties.get(eachProp))
@@ -231,6 +232,37 @@ class SchemaValidator(object):
                 else:
                     raise SchemaError("Properties definition of field '%s' is "
                                       "not a list or an object" % fieldname)
+
+
+    def validate_allowedValues(self, x, fieldname, schema, allowed_items=None):
+        '''
+        Validates that all items in the list for the given field are allowed
+        by the given schema
+        '''
+        if 'items' in schema:
+            raise SchemaError("Property 'allowedValues' cannot be used "
+                              "togheter with 'items'")
+
+        if x.get(fieldname) is not None:
+            value = x.get(fieldname)
+            if isinstance(value, (list, tuple)):
+                if isinstance(allowed_items, (list, tuple)):
+                    if len(value) == 0:
+                        self._error ("Items list for field '%(fieldname)s' "
+                                     "cannot be empty", value, fieldname)
+
+                    for item in value:
+                        if item not in allowed_items:
+                            self._error("Value %(item)r for field "
+                                        "'%(fieldname)s' not allowed. Allowed "
+                                        "values: %(allowed_items)s",
+                                        value, fieldname, item=item,
+                                        allowed_items=allowed_items)
+
+                else:
+                    raise SchemaError("allowedItems definition of field '%s' is "
+                                      "not a list or an tuple" % fieldname)
+
 
     def validate_required(self, x, fieldname, schema, required):
         '''
