@@ -204,7 +204,8 @@ class SchemaValidator(object):
                 if isinstance(properties, dict):
 
                     if self.disallow_unknown_properties:
-                        self._validate_unknown_properties(properties, value, fieldname)
+                        self._validate_unknown_properties(properties, value,
+                                                          fieldname)
 
                     for eachProp in properties:
                         self.__validate(eachProp, value,
@@ -223,7 +224,7 @@ class SchemaValidator(object):
             if isinstance(value, (list, tuple)):
                 if isinstance(items, (list, tuple)):
                     if (not 'additionalItems' in schema and
-                        len(items) != len(value)):
+                            len(items) != len(value)):
                         self._error("Length of list %(value)r for field "
                                     "'%(fieldname)s' is not equal to length "
                                     "of schema list", value, fieldname)
@@ -239,7 +240,8 @@ class SchemaValidator(object):
                 elif isinstance(items, dict):
                     for eachItem in value:
                         if self.disallow_unknown_properties:
-                            self._validate_unknown_properties(items, eachItem, fieldname)
+                            self._validate_unknown_properties(items, eachItem,
+                                                              fieldname)
 
                         try:
                             self._validate(eachItem, items)
@@ -276,7 +278,7 @@ class SchemaValidator(object):
     def validate_patternProperties(self, x, fieldname, schema,
                                    patternproperties=None):
 
-        if patternproperties == None:
+        if patternproperties is None:
             patternproperties = {}
 
         value_obj = x.get(fieldname, {})
@@ -333,8 +335,8 @@ class SchemaValidator(object):
                 if eachProperty not in properties:
                     # If additionalProperties is the boolean value False
                     # then we don't accept any additional properties.
-                    if (isinstance(additionalProperties, bool) and
-                        not additionalProperties):
+                    if (isinstance(additionalProperties, bool) and not
+                            additionalProperties):
                         self._error("additional property '%(prop)s' "
                                     "not defined by 'properties' are not "
                                     "allowed in field '%(fieldname)s'",
@@ -356,7 +358,7 @@ class SchemaValidator(object):
                     if dependency not in x:
                         self._error("Field '%(dependency)s' is required by "
                                     "field '%(fieldname)s'",
-                            None, fieldname, dependency=dependency)
+                                    None, fieldname, dependency=dependency)
             elif isinstance(dependencies, dict):
                 # NOTE: the version 3 spec is really unclear on what this means
                 # based on the meta-schema I'm assuming that it should check
@@ -382,7 +384,7 @@ class SchemaValidator(object):
             if value is not None:
                 if (type(value) in (int, float) and
                     (not exclusive and value < minimum) or
-                    (exclusive and value <= minimum)):
+                        (exclusive and value <= minimum)):
                     self._error("Value %(value)r for field '%(fieldname)s' is "
                                 "less than minimum value: %(minimum)f",
                                 value, fieldname, minimum=minimum)
@@ -400,7 +402,7 @@ class SchemaValidator(object):
             if value is not None:
                 if (type(value) in (int, float) and
                     (not exclusive and value > maximum) or
-                    (exclusive and value >= maximum)):
+                        (exclusive and value >= maximum)):
                     self._error("Value %(value)r for field '%(fieldname)s' is "
                                 "greater than maximum value: %(maximum)f",
                                 value, fieldname, maximum=maximum)
@@ -505,12 +507,12 @@ class SchemaValidator(object):
     def validate_title(self, x, fieldname, schema, title=None):
         if not isinstance(title, (_str_type, type(None))):
             raise SchemaError("The title for field '%s' must be a string" %
-                             fieldname)
+                              fieldname)
 
     def validate_description(self, x, fieldname, schema, description=None):
         if not isinstance(description, (_str_type, type(None))):
             raise SchemaError("The description for field '%s' must be a string"
-                             % fieldname)
+                              % fieldname)
 
     def validate_divisibleBy(self, x, fieldname, schema, divisibleBy=None):
         value = x.get(fieldname)
@@ -552,8 +554,9 @@ class SchemaValidator(object):
 
         if schema is not None:
             if not isinstance(schema, dict):
-                raise SchemaError("Type for field '%s' must be 'dict', got: '%s'"
-                                 % (fieldname, type(schema).__name__))
+                raise SchemaError(
+                    "Type for field '%s' must be 'dict', got: '%s'" %
+                    (fieldname, type(schema).__name__))
 
             newschema = copy.copy(schema)
 

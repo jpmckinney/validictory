@@ -15,9 +15,9 @@ class TestProperties(TestCase):
             "properties": {
                 "subprop01": {"type": "string"},
                 "subprop02": {"type": "string", "required": True}
-           }
-       }
-   }
+            }
+        }
+    }
     schema = {"type": "object", "properties": props}
 
     def test_properties1(self):
@@ -30,8 +30,8 @@ class TestProperties(TestCase):
             "prop05": {
                 "subprop01": "test",
                 "subprop02": "test2",
-           }
-       }
+            }
+        }
 
         try:
             validictory.validate(data, self.schema)
@@ -45,7 +45,7 @@ class TestProperties(TestCase):
             "prop02": 1.20,
             "prop03": 1,
             "prop04": True
-       }
+        }
 
         try:
             validictory.validate(data, self.schema)
@@ -57,8 +57,8 @@ class TestProperties(TestCase):
             "prop02": 1.60,
             "prop05": {
                 "subprop01": "test"
-           }
-       }
+            }
+        }
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
@@ -84,8 +84,8 @@ class TestPatternProperties(TestCase):
 
     def test_patternproperties_nested(self):
         schema = {'patternProperties': {'[abc]': {
-                     'patternProperties': {'[abc]': {'type': 'boolean'}}
-                 }}}
+            'patternProperties': {'[abc]': {'type': 'boolean'}}
+        }}}
 
         data = {'a': {'b': False}}
 
@@ -103,14 +103,11 @@ class TestPatternProperties(TestCase):
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
 
     def test_patternproperties_missing(self):
-        schema = {'properties':
-                  {'patprops': {'required': False, 'type': 'object',
-                               'patternProperties': {'[abc]':
-                                                     {'required': True,
-                                                     'type': 'array'}}
-                               }
-                  }
-                 }
+        schema = {'properties': {'patprops': {
+            'required': False, 'type': 'object',
+            'patternProperties': {'[abc]': {'required': True,
+                                            'type': 'array'}}
+        }}}
         data = {'id': 1}
         try:
             validictory.validate(data, schema)
@@ -139,9 +136,9 @@ class TestAdditionalProperties(TestCase):
             "properties": {
                 "prop1": {"type": "integer"},
                 "prop2": {"type": "string"}
-           },
+            },
             "additionalProperties": {"type": ["string", "number"]}
-       }
+        }
 
         for x in [1, "test", 48, "ok", 4.9, 42]:
             try:
@@ -149,7 +146,7 @@ class TestAdditionalProperties(TestCase):
                     "prop1": 123,
                     "prop2": "this is prop2",
                     "prop3": x
-               }
+                }
                 validictory.validate(data, schema)
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
@@ -160,7 +157,7 @@ class TestAdditionalProperties(TestCase):
                 "prop1": 123,
                 "prop2": "this is prop2",
                 "prop3": x
-           }
+            }
             self.assertRaises(ValueError, validictory.validate, data, schema)
 
     def test_true(self):
@@ -184,9 +181,9 @@ class TestAdditionalProperties(TestCase):
             "type": ["object", "string"],
             "properties": {
                 "key": {"type": "string"}
-           },
+            },
             "additionalProperties": False
-       }
+        }
 
         for data in ["foobar", {'key': 'value'}]:
             try:

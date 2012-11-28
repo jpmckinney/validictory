@@ -8,11 +8,11 @@ class TestDisallowUnknownProperties(TestCase):
     def setUp(self):
         self.data_simple = {"name": "john doe", "age": 42}
         self.schema_simple = {
-                "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "age": {"type": "integer"}
-                     },
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"}
+            },
         }
 
         self.data_complex = {
@@ -40,10 +40,11 @@ class TestDisallowUnknownProperties(TestCase):
                         "sku": {"type": "string"},
                         "desc": {"type": "string"},
                         "price": {"type": "number"}
-                     },
+                    },
                 }
-             }
+            }
         }
+
     def test_disallow_unknown_properties_pass(self):
         try:
             validictory.validate(self.data_simple, self.schema_simple,
@@ -65,7 +66,8 @@ class TestDisallowUnknownProperties(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_disallow_unknown_properties_complex_fail(self):
-        newrow = {"sku": "789", "desc": "catch me if you can", "price": 1, "rice": 666}
+        newrow = {"sku": "789", "desc": "catch me if you can", "price": 1,
+                  "rice": 666}
         self.data_complex["rows"].append(newrow)
         self.assertRaises(validictory.SchemaError, validictory.validate,
                           self.data_complex, self.schema_complex,

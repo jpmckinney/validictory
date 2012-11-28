@@ -36,11 +36,11 @@ class TestSchemaErrors(TestCase):
     def test_invalid_type(self):
         expected = "Type for field 'bar' must be 'dict', got: 'str'"
         data = {'bar': False}
-        schema = {"type":"object", "required":True, "properties":{"bar":"foo"}}
+        schema = {"type": "object", "required": True,
+                  "properties": {"bar": "foo"}}
         try:
             validictory.validate(data, schema)
             result = None
         except Exception as e:
             result = e.__str__()
         self.assertEqual(expected, result)
-

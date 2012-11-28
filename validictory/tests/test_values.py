@@ -98,8 +98,6 @@ class TestFormat(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_format_utcmillisec_pass(self):
-        data = 1294915735
-
         try:
             validictory.validate(1294915735, self.schema_utcmillisec)
             validictory.validate(1294915735.0, self.schema_utcmillisec)
@@ -169,8 +167,8 @@ class TestFormat(TestCase):
             'type': 'object',
             'properties': {
                 'startdate': {'type': 'string', 'format': 'date-time',
-                               'required': False}
-           }
+                              'required': False}
+            }
         }
         try:
             validictory.validate({}, schema, required_by_default=False)
@@ -304,10 +302,10 @@ class TestMaximum(TestCase):
     props = {
         "prop01": {"type": "number", "maximum": 10},
         "prop02": {"type": "integer", "maximum": 20}
-   }
+    }
     props_exclusive = {
         "prop": {"type": "integer", "maximum": 20, "exclusiveMaximum": True},
-   }
+    }
     schema = {"type": "object", "properties": props}
     schema_exclusive = {"type": "object", "properties": props_exclusive}
 
@@ -353,10 +351,10 @@ class TestMinimum(TestCase):
     props = {
         "prop01": {"type": "number", "minimum": 10},
         "prop02": {"type": "integer", "minimum": 20}
-   }
+    }
     props_exclusive = {
         "prop": {"type": "integer", "minimum": 20, "exclusiveMinimum": True},
-   }
+    }
     schema = {"type": "object", "properties": props}
     schema_exclusive = {"type": "object", "properties": props_exclusive}
 
@@ -466,9 +464,9 @@ class TestBlank(TestCase):
                 "key": {
                     "type": "string",
                     "required": True,
-               }
-           }
-       }
+                }
+            }
+        }
         try:
             validictory.validate({"key": "value"}, {}, blank_by_default=False)
         except ValueError as e:
@@ -484,8 +482,8 @@ class TestBlank(TestCase):
                 "key": {
                     "type": "string",
                     "required": True,
-               }
-           }
+                }
+            }
         }
         try:
             validictory.validate({"key": ""}, schema, blank_by_default=True)
