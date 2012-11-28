@@ -277,4 +277,5 @@ Simplified GeoJSON example::
     }
 
 
-(thanks to Jason Sanford for bringing this need to my attention)
+(thanks to Jason Sanford for bringing this need to my attention, see `his 
+blog post on validating GeoJSON <http://geojason.info/2012/geojson-validation-via-geojsonlint.com/>_`)
