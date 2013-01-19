@@ -8,6 +8,7 @@ validictory changelog
     * improved schema error message
     * add long to utc-millisec validation
     * accept Decimal where float is accepted
+    * add FieldValidationError so that field names can be retrieved from error
     * a few Python 3 fixes
 
 0.8.3

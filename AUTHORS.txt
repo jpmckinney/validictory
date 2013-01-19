@@ -15,3 +15,4 @@ Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 * Arthur S. - fix to support Decimal in addition to float
 * Jesse Printz - doc fix
 * Nicola Iarocci - disallow_unknown_properties option
+* Rhett Garber - addition of FieldValidationError
