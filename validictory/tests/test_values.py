@@ -156,7 +156,7 @@ class TestFormat(TestCase):
                 self.fail("Unexpected failure: %s" % e)
 
     def test_format_ip_fail(self):
-        invalids = [1.2, "bad", {"test":"blah"}, [32, 49], 1284, True,
+        invalids = [1.2, "bad", {"test": "blah"}, [32, 49], 1284, True,
                     "-0.-0.-0.-0", "-1.-1.-1.-1", "256.256.256.256"]
         for ip in invalids:
             self.assertRaises(ValueError, validictory.validate, ip,
