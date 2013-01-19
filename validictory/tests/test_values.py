@@ -59,9 +59,9 @@ def validate_format_contains_spaces(validator, fieldname, value,
     if ' ' in value:
         return
 
-    raise validictory.ValidationError(
+    raise validictory.FieldValidationError(
         "Value %(value)r of field '%(fieldname)s' does not contain any spaces,"
-        "but it should" % locals())
+        "but it should" % locals(), fieldname, value)
 
 
 class TestFormat(TestCase):
