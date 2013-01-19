@@ -56,7 +56,7 @@ class TestFieldValidationErrors(TestCase):
     def test(self):
         try:
             validictory.validate(self.data, self.schema)
-        except validictory.FieldValidationError, e:
+        except validictory.FieldValidationError as e:
             self.assertEqual(e.fieldname, "bar")
             self.assertEqual(e.value, "faz")
         else:
