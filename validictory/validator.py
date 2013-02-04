@@ -338,18 +338,22 @@ class SchemaValidator(object):
         value = x.get(fieldname)
         if isinstance(additionalProperties, (dict, bool)):
             properties = schema.get("properties")
+            patterns = schema["patternProperties"].keys() \
+                    if schema.has_key("patternProperties") else []
             if properties is None:
                 properties = {}
             if value is None:
                 value = {}
             for eachProperty in value:
-                if eachProperty not in properties:
+                if eachProperty not in properties and not \
+                   any(re.match(p, eachProperty) for p in patterns):
                     # If additionalProperties is the boolean value False
                     # then we don't accept any additional properties.
                     if (isinstance(additionalProperties, bool) and not
                             additionalProperties):
                         self._error("additional property '%(prop)s' "
-                                    "not defined by 'properties' are not "
+                                    "not defined by 'properties' or "
+                                    "'patternProperties' are not "
                                     "allowed in field '%(fieldname)s'",
                                     None, fieldname, prop=eachProperty)
                     self.__validate(eachProperty, value,
