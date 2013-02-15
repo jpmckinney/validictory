@@ -175,17 +175,18 @@ class SchemaValidator(object):
             if isinstance(fieldtype, (list, tuple)):
                 # Match if type matches any one of the types in the list
                 datavalid = False
+                errorlist = []
                 for eachtype in fieldtype:
                     try:
                         self.validate_type(x, fieldname, eachtype, eachtype)
                         datavalid = True
                         break
-                    except ValidationError:
-                        pass
+                    except ValidationError as err:
+                        errorlist.append(err)
                 if not datavalid:
-                    self._error("Value %(value)r for field '%(fieldname)s' is "
-                                "not of type %(fieldtype)s",
-                                value, fieldname, fieldtype=fieldtype)
+                    self._error("Value %(value)r for field '%(fieldname)s' doesn't "
+                                "match any of %(numsubtypes)d subtypes in %(fieldtype)s; errorlist = %(errorlist)r",
+                                value, fieldname, numsubtypes=len(fieldtype), fieldtype=fieldtype, errorlist=errorlist)
             elif isinstance(fieldtype, dict):
                 try:
                     self.__validate(fieldname, x, fieldtype)
