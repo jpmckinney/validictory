@@ -250,8 +250,8 @@ class SchemaValidator(object):
                                               (fieldname, e), fieldname, e.value)
                 elif isinstance(items, dict):
                     for eachItem in value:
-                        if self.disallow_unknown_properties:
-                            self._validate_unknown_properties(items, eachItem,
+                        if self.disallow_unknown_properties and 'properties' in items:
+                            self._validate_unknown_properties(items['properties'], eachItem,
                                                               fieldname)
 
                         try:

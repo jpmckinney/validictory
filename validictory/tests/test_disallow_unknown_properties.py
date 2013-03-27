@@ -37,9 +37,12 @@ class TestDisallowUnknownProperties(TestCase):
                 "rows": {
                     "type": "array",
                     "items": {
-                        "sku": {"type": "string"},
-                        "desc": {"type": "string"},
-                        "price": {"type": "number"}
+                        "type": "object",
+                        "properties": {
+                            "sku": {"type": "string"},
+                            "desc": {"type": "string"},
+                            "price": {"type": "number"}
+                        }
                     },
                 }
             }
