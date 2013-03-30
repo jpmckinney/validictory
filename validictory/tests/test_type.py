@@ -57,6 +57,7 @@ class TestType(TestCase):
     def test_number(self):
         valids = [1.2, -89.42, 48, -32, Decimal('25.25')]
         invalids = ["bad", {"test": "blah"}, [32.42, 494242], None, True]
+        invalids.extend([float('NaN'), float('nan'), float('NAN')])
         self._test_type('number', valids, invalids)
 
     def test_boolean(self):

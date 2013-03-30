@@ -5,6 +5,7 @@ import socket
 from datetime import datetime
 from decimal import Decimal
 from collections import Mapping, Container
+from math import isnan
 
 if sys.version_info[0] == 3:
     _str_type = str
@@ -121,7 +122,8 @@ class SchemaValidator(object):
         return type(val) in _int_types
 
     def validate_type_number(self, val):
-        return type(val) in _int_types + (float, Decimal,)
+
+        return type(val) in _int_types + (float, Decimal,) and not isnan(val)
 
     def validate_type_boolean(self, val):
         return type(val) == bool
