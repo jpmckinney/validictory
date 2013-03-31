@@ -53,6 +53,8 @@ validate_format_date_time = _generate_datetime_validator('date-time',
                                                          '%Y-%m-%dT%H:%M:%SZ')
 validate_format_date = _generate_datetime_validator('date', '%Y-%m-%d')
 validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
+validate_format_date_and_time = _generate_datetime_validator('date-and-time',
+                                                         '%Y-%m-%dT %H:%M:%S')
 
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
