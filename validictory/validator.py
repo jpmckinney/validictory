@@ -105,7 +105,8 @@ class SchemaValidator(object):
     '''
 
     def __init__(self, format_validators=None, required_by_default=True,
-                 blank_by_default=False, disallow_unknown_properties=False):
+                 blank_by_default=False, disallow_unknown_properties=False,
+                 apply_default_to_data=False):
         if format_validators is None:
             format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
@@ -113,6 +114,7 @@ class SchemaValidator(object):
         self.required_by_default = required_by_default
         self.blank_by_default = blank_by_default
         self.disallow_unknown_properties = disallow_unknown_properties
+        self.apply_default_to_data = apply_default_to_data
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -602,6 +604,13 @@ class SchemaValidator(object):
                 if validator:
                     validator(data, fieldname, schema,
                               newschema.get(schemaprop))
+
+            if (self.apply_default_to_data
+                and not fieldname in data
+                and 'default' in schema
+            ):
+                data[fieldname] = schema['default']
+
 
         return data
 

@@ -10,7 +10,8 @@ __version__ = '0.9.1'
 
 def validate(data, schema, validator_cls=SchemaValidator,
              format_validators=None, required_by_default=True,
-             blank_by_default=False, disallow_unknown_properties=False):
+             blank_by_default=False, disallow_unknown_properties=False,
+             apply_default_to_data=False):
     '''
     Validates a parsed json document against the provided schema. If an
     error is found a :class:`ValidationError` is raised.
@@ -29,7 +30,7 @@ def validate(data, schema, validator_cls=SchemaValidator,
         disallow properties not listed in the schema definition
     '''
     v = validator_cls(format_validators, required_by_default, blank_by_default,
-                      disallow_unknown_properties)
+                      disallow_unknown_properties, apply_default_to_data)
     return v.validate(data, schema)
 
 if __name__ == '__main__':
