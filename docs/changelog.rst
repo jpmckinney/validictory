@@ -1,6 +1,12 @@
 validictory changelog
 =====================
 
+0.9.1
+-----
+**2013-05-23**
+    * fix for error message when data doesn't match one of multiple subtypes
+    * fix for disallow_unknown_properties
+
 0.9.0
 -----
 **2013-01-19**
