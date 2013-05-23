@@ -27,14 +27,25 @@ class ValidationError(ValueError):
     """
 
 
+class FieldValidationError(ValidationError):
+    """
+    validation error that refers to a specific field
+    Includes `fieldname` and `value` attributes.
+    """
+    def __init__(self, message, fieldname, value):
+        super(FieldValidationError, self).__init__(message)
+        self.fieldname = fieldname
+        self.value = value
+
+
 def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
         try:
             datetime.strptime(value, dateformat_string)
         except ValueError:
-            raise ValidationError(
+            raise FieldValidationError(
                 "Value %(value)r of field '%(fieldname)s' is not in "
-                "'%(format_option)s' format" % locals())
+                "'%(format_option)s' format" % locals(), fieldname, value)
 
     return validate_format_datetime
 
@@ -46,12 +57,12 @@ validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
     if not isinstance(value, _int_types + (float, Decimal)):
-        raise ValidationError("Value %(value)r of field '%(fieldname)s' is "
-                              "not a number" % locals())
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
+                              "not a number" % locals(), fieldname, value)
 
     if not value > 0:
-        raise ValidationError("Value %(value)r of field '%(fieldname)s' is "
-                              "not a positive number" % locals())
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
+                              "not a positive number" % locals(), fieldname, value)
 
 
 def validate_format_ip_address(validator, fieldname, value, format_option):
@@ -63,8 +74,8 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
     except:
         ip = False
     if not ip:
-        raise ValidationError("Value %(value)r of field '%(fieldname)s' is "
-                              "not a ip-address" % locals())
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
+                              "not a ip-address" % locals(), fieldname, value)
 
 
 DEFAULT_FORMAT_VALIDATORS = {
@@ -131,7 +142,7 @@ class SchemaValidator(object):
         params['value'] = value
         params['fieldname'] = fieldname
         message = desc % params
-        raise ValidationError(message)
+        raise FieldValidationError(message, fieldname, value)
 
     def _validate_unknown_properties(self, schema, data, fieldname):
         schema_properties = set(schema)
@@ -233,10 +244,10 @@ class SchemaValidator(object):
                             try:
                                 self.validate(value[itemIndex],
                                               items[itemIndex])
-                            except ValueError as e:
+                            except FieldValidationError as e:
                                 raise type(e)("Failed to validate field '%s' "
                                               "list schema: %s" %
-                                              (fieldname, e))
+                                              (fieldname, e), fieldname, e.value)
                 elif isinstance(items, dict):
                     for eachItem in value:
                         if self.disallow_unknown_properties:
@@ -245,14 +256,14 @@ class SchemaValidator(object):
 
                         try:
                             self._validate(eachItem, items)
-                        except ValueError as e:
+                        except FieldValidationError as e:
                             # a bit of a hack: replace reference to _data
                             # with 'list item' so error messages make sense
                             old_error = str(e).replace("field '_data'",
                                                        'list item')
                             raise type(e)("Failed to validate field '%s' list "
                                           "schema: %s" %
-                                          (fieldname, old_error))
+                                          (fieldname, old_error), fieldname, e.value)
                 else:
                     raise SchemaError("Properties definition of field '%s' is "
                                       "not a list or an object" % fieldname)
@@ -583,4 +594,4 @@ class SchemaValidator(object):
 
         return data
 
-__all__ = ['SchemaValidator']
+__all__ = ['SchemaValidator', 'FieldValidationError']

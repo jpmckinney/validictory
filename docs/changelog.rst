@@ -3,11 +3,13 @@ validictory changelog
 
 0.9.0
 -----
+**2013-01-19**
     * remove optional and requires, deprecated in 0.6
     * improved additionalProperties error message
     * improved schema error message
     * add long to utc-millisec validation
     * accept Decimal where float is accepted
+    * add FieldValidationError so that field names can be retrieved from error
     * a few Python 3 fixes
 
 0.8.3

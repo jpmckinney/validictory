@@ -44,3 +44,20 @@ class TestSchemaErrors(TestCase):
         except Exception as e:
             result = e.__str__()
         self.assertEqual(expected, result)
+
+
+class TestFieldValidationErrors(TestCase):
+    def setUp(self):
+        self.schema = {"type": "object", "required": True,
+                       "properties": {"bar": {"type": "integer"}}}
+
+        self.data = {"bar": "faz"}
+
+    def test(self):
+        try:
+            validictory.validate(self.data, self.schema)
+        except validictory.FieldValidationError as e:
+            self.assertEqual(e.fieldname, "bar")
+            self.assertEqual(e.value, "faz")
+        else:
+            self.fail("No Exception")

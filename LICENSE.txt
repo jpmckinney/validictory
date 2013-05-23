@@ -1,4 +1,4 @@
-Copyright (c) 2010 Sunlight Labs, James Turk
+Copyright (c) 2013 Sunlight Labs, James Turk
 
 Contains code from jsonschema 0.2, copyright 2008 Ian Lewis, Yusuke Muraoka
 
