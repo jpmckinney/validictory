@@ -57,12 +57,14 @@ validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
     if not isinstance(value, _int_types + (float, Decimal)):
-        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
-                              "not a number" % locals(), fieldname, value)
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' "
+                                   "is not a number" % locals(), fieldname,
+                                   value)
 
     if not value > 0:
-        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
-                              "not a positive number" % locals(), fieldname, value)
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' "
+                                   " is not a positive number" % locals(),
+                                   fieldname, value)
 
 
 def validate_format_ip_address(validator, fieldname, value, format_option):
@@ -74,8 +76,9 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
     except:
         ip = False
     if not ip:
-        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
-                              "not a ip-address" % locals(), fieldname, value)
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s'"
+                                   "is not a ip-address" % locals(), fieldname,
+                                   value)
 
 
 DEFAULT_FORMAT_VALIDATORS = {
@@ -184,9 +187,12 @@ class SchemaValidator(object):
                     except ValidationError as err:
                         errorlist.append(err)
                 if not datavalid:
-                    self._error("Value %(value)r for field '%(fieldname)s' doesn't "
-                                "match any of %(numsubtypes)d subtypes in %(fieldtype)s; errorlist = %(errorlist)r",
-                                value, fieldname, numsubtypes=len(fieldtype), fieldtype=fieldtype, errorlist=errorlist)
+                    self._error("Value %(value)r for field '%(fieldname)s' "
+                                "doesn't match any of %(numsubtypes)d "
+                                "subtypes in %(fieldtype)s; "
+                                "errorlist = %(errorlist)r",
+                                value, fieldname, numsubtypes=len(fieldtype),
+                                fieldtype=fieldtype, errorlist=errorlist)
             elif isinstance(fieldtype, dict):
                 try:
                     self.__validate(fieldname, x, fieldtype)
@@ -248,12 +254,14 @@ class SchemaValidator(object):
                             except FieldValidationError as e:
                                 raise type(e)("Failed to validate field '%s' "
                                               "list schema: %s" %
-                                              (fieldname, e), fieldname, e.value)
+                                              (fieldname, e), fieldname,
+                                              e.value)
                 elif isinstance(items, dict):
                     for eachItem in value:
-                        if self.disallow_unknown_properties and 'properties' in items:
-                            self._validate_unknown_properties(items['properties'], eachItem,
-                                                              fieldname)
+                        if (self.disallow_unknown_properties and
+                                'properties' in items):
+                            self._validate_unknown_properties(
+                                items['properties'], eachItem, fieldname)
 
                         try:
                             self._validate(eachItem, items)
@@ -264,7 +272,8 @@ class SchemaValidator(object):
                                                        'list item')
                             raise type(e)("Failed to validate field '%s' list "
                                           "schema: %s" %
-                                          (fieldname, old_error), fieldname, e.value)
+                                          (fieldname, old_error), fieldname,
+                                          e.value)
                 else:
                     raise SchemaError("Properties definition of field '%s' is "
                                       "not a list or an object" % fieldname)

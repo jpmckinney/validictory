@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-from validictory.validator import SchemaValidator, FieldValidationError, ValidationError, SchemaError
+from validictory.validator import (SchemaValidator, FieldValidationError,
+                                   ValidationError, SchemaError)
 
-__all__ = ['validate', 'SchemaValidator', 'FieldValidationError', 'ValidationError', 'SchemaError']
+__all__ = ['validate', 'SchemaValidator', 'FieldValidationError',
+           'ValidationError', 'SchemaError']
 __version__ = '0.9.0'
 
 
