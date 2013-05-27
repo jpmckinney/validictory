@@ -78,7 +78,7 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
                               "not a ip-address" % locals(), fieldname, value)
 
 
-# This is the assembled, zlib'ed and base64'ed of the regex used here:
+# This is the assembled, zlib'ed and base64'ed email regex used here:
 # https://github.com/SyrusAkbary/validate_email
 RE_EMAIL_ZLIB_B64 = """\
 eJztld0KgkAQhV+lHytH0dIQI4jtPTwrWellFxEktPXszXbhZUvhhSuCR2bdo3x7RpjcFdvmyka4
