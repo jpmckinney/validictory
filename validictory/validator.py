@@ -78,12 +78,26 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
                               "not a ip-address" % locals(), fieldname, value)
 
 
+# This is the assembled version of the regex used here: https://github.com/SyrusAkbary/validate_email
+RE_EMAIL = re.compile(r"""^(?:(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?[\w!#$%&\'\*\+\-/=\?\^`\{\|\}~]+(?:\.[\w!#$%&\'\*\+\-/=\?\^`\{\|\}~]+)*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?|(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?"(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21\x23-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?"(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?)@(?:(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?[\w!#$%&\'\*\+\-/=\?\^`\{\|\}~]+(?:\.[\w!#$%&\'\*\+\-/=\?\^`\{\|\}~]+)*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?|(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?\[(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x5a\x5e-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\](?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\))*(?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\((?:(?:(?:[ \t]*(?:\r\n))?[ \t]+)?(?:[\x01-\x08\x0b\x0c\x0f-\x1f\x7f\x21-\x27\x2a-\x5b\x5d-\x7e]|(?:\\.)))*(?:(?:[ \t]*(?:\r\n))?[ \t]+)?\)|(?:(?:[ \t]*(?:\r\n))?[ \t]+))?)$""")
+
+
+def validate_format_email(validator, fieldname, value, format_option):
+    try:
+        if RE_EMAIL.match(value) is None:
+            raise ValueError('not a valid email')
+    except:
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
+                                   "not an email" % locals(), fieldname, value)
+
+
 DEFAULT_FORMAT_VALIDATORS = {
-    'date-time': validate_format_date_time,
     'date': validate_format_date,
-    'time': validate_format_time,
-    'utc-millisec': validate_format_utc_millisec,
+    'date-time': validate_format_date_time,
+    'email': validate_format_email,
     'ip-address': validate_format_ip_address,
+    'time': validate_format_time,
+    'utc-millisec': validate_format_utc_millisec
 }
 
 
