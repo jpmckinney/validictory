@@ -130,7 +130,8 @@ class SchemaValidator(object):
         return type(val) == bool
 
     def validate_type_object(self, val):
-        return isinstance(val, Mapping) or (hasattr(val, 'keys') and hasattr(val, 'items'))
+        return isinstance(val, Mapping) or (hasattr(val, 'keys')
+                                            and hasattr(val, 'items'))
 
     def validate_type_array(self, val):
         return isinstance(val, (list, tuple))
