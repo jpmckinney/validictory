@@ -64,6 +64,35 @@ class TestType(TestCase):
         invalids = [1.2, "False", {"test": "blah"}, [32, 49], None, 1, 0]
         self._test_type('boolean', valids, invalids)
 
+    def test_UserDict_is_object(self):
+        # A UserDict (and similar classes) are not dicts, but they're dict-like
+        # and should be treated as objects
+
+        try:
+            # Python 2
+            from UserDict import UserDict
+        except ImportError:
+            # Python 3
+            from collections import UserDict
+
+        valids = [UserDict({"a": "b"})]
+        invalids = []
+        self._test_type('object', valids, invalids)
+
+    def test_sqlalchemy_RowProxy_is_object(self):
+        import sqlalchemy
+        engine = sqlalchemy.create_engine('sqlite://')
+        row = engine.execute('SELECT 1').fetchone()
+        valids = [row]
+        invalids = []
+        self._test_type('object', valids, invalids)
+
+    def test_webob_multidict_NestedMultiDict_is_object(self):
+        import webob
+        valids = [webob.multidict.NestedMultiDict({'a': 'b'})]
+        invalids = []
+        self._test_type('object', valids, invalids)
+
     def test_object(self):
         valids = [{"blah": "test"}, {"this": {"blah": "test"}}, {1: 2, 10: 20}]
         invalids = [1.2, "bad", 123, [32, 49], None, True]
