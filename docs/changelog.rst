@@ -1,6 +1,12 @@
 validictory changelog
 =====================
 
+0.9.2
+-----
+(in progress)
+    * fix from Marc Abramowitz for validating dict-like things as dicts
+    * 
+
 0.9.1
 -----
 **2013-05-23**

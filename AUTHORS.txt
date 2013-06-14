@@ -16,5 +16,5 @@ Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 * Jesse Printz - doc fix
 * Nicola Iarocci - disallow_unknown_properties option
 * Rhett Garber - addition of FieldValidationError
-* Marc Abramowitz - fix for error message when data doesn't match one of several types
+* Marc Abramowitz - fix for error message when data doesn't match one of several types, fix to allow dict-like types to validate as dicts
 * Alon Horev - fix for disallow_unknown_properties bug
