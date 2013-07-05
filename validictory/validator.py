@@ -223,8 +223,8 @@ class SchemaValidator(object):
                                                           fieldname)
 
                     for eachProp in properties:
-                        self.__validate(eachProp, value,
-                                        properties.get(eachProp))
+                        for e in self.__validate(eachProp, value, properties.get(eachProp)):
+                            yield e
                 else:
                     raise SchemaError("Properties definition of field '%s' is "
                                       "not an object" % fieldname)
@@ -455,7 +455,8 @@ class SchemaValidator(object):
         format_validator = self._format_validators.get(format_option, None)
 
         if format_validator and value:
-            format_validator(self, fieldname, value, format_option)
+            return format_validator(self, fieldname, value, format_option)
+        return iter([])
 
         # TODO: warn about unsupported format ?
 
