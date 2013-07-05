@@ -14,36 +14,28 @@ class TestSchemaErrors(TestCase):
         self.data = "whatever"
 
     def test_description_pass(self):
-        try:
-            validictory.validate(self.data, self.valid_desc)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(self.data, self.valid_desc)), [])
 
     def test_description_fail(self):
-        self.assertRaises(ValueError, validictory.validate, self.data,
-                          self.invalid_desc)
+        self.assertRaises(validictory.SchemaError, validictory.validate, self.data, self.invalid_desc)
 
     def test_title_pass(self):
-        try:
-            validictory.validate(self.data, self.valid_title)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(self.data, self.valid_title)), [])
 
     def test_title_fail(self):
-        self.assertRaises(ValueError, validictory.validate, self.data,
+        self.assertRaises(validictory.SchemaError, validictory.validate, self.data,
                           self.invalid_title)
 
     def test_invalid_type(self):
-        expected = "Type for field 'bar' must be 'dict', got: 'str'"
         data = {'bar': False}
         schema = {"type": "object", "required": True,
                   "properties": {"bar": "foo"}}
         try:
-            validictory.validate(data, schema)
-            result = None
+            list(validictory.validate(data, schema))
+            assert False
         except Exception as e:
-            result = e.__str__()
-        self.assertEqual(expected, result)
+            self.assertEqual(type(e), validictory.SchemaError)
+            self.assertEqual(str(e), "Type for field 'bar' must be 'dict', got: 'str'")
 
 
 class TestFieldValidationErrors(TestCase):
@@ -54,10 +46,7 @@ class TestFieldValidationErrors(TestCase):
         self.data = {"bar": "faz"}
 
     def test(self):
-        try:
-            validictory.validate(self.data, self.schema)
-        except validictory.FieldValidationError as e:
-            self.assertEqual(e.fieldname, "bar")
-            self.assertEqual(e.value, "faz")
-        else:
-            self.fail("No Exception")
+        errors = list(validictory.validate(self.data, self.schema))
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].fieldname, "bar")
+        self.assertEqual(errors[0].value, "faz")

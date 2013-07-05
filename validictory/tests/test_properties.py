@@ -33,10 +33,7 @@ class TestProperties(TestCase):
             }
         }
 
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_properties2(self):
 
@@ -47,10 +44,7 @@ class TestProperties(TestCase):
             "prop04": True
         }
 
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_properties3(self):
         data = {
@@ -60,7 +54,7 @@ class TestProperties(TestCase):
             }
         }
 
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 4)
 
 
 class TestPatternProperties(TestCase):
@@ -69,18 +63,12 @@ class TestPatternProperties(TestCase):
     def test_patternproperties_pass(self):
         data = {'a': True}
 
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_patternproperties_nonmatch(self):
         data = {'a': True, 'd': 'foo'}
 
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_patternproperties_nested(self):
         schema = {'patternProperties': {'[abc]': {
@@ -89,18 +77,15 @@ class TestPatternProperties(TestCase):
 
         data = {'a': {'b': False}}
 
-        try:
-            validictory.validate(data, schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, schema)), [])
 
     def test_patternproperties_fail_multiple(self):
         data = {'a': True, 'b': False, 'c': 'foo'}
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
     def test_patternproperties_fail(self):
         data = {'a': 12}
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
     def test_patternproperties_missing(self):
         schema = {'properties': {'patprops': {
@@ -109,10 +94,7 @@ class TestPatternProperties(TestCase):
                                             'type': 'array'}}
         }}}
         data = {'id': 1}
-        try:
-            validictory.validate(data, schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, schema)), [])
 
 
 class TestAdditionalProperties(TestCase):
@@ -120,16 +102,11 @@ class TestAdditionalProperties(TestCase):
         schema = {"additionalProperties": {"type": "integer"}}
 
         for x in [1, 89, 48, 32, 49, 42]:
-            try:
-                data = {"prop": x}
-                validictory.validate(data, schema)
-            except ValueError as e:
-                self.fail("Unexpected failure: %s" % e)
+            self.assertEqual(list(validictory.validate({"prop": x}, schema)), [])
 
         #failures
         for x in [1.2, "bad", {"test": "blah"}, [32, 49], None, True]:
-            self.assertRaises(ValueError, validictory.validate, {"prop": x},
-                              schema)
+            self.assertEqual(len(list(validictory.validate({"prop": x}, schema))), 1)
 
     def test_with_properties(self):
         schema = {
@@ -141,15 +118,12 @@ class TestAdditionalProperties(TestCase):
         }
 
         for x in [1, "test", 48, "ok", 4.9, 42]:
-            try:
-                data = {
-                    "prop1": 123,
-                    "prop2": "this is prop2",
-                    "prop3": x
-                }
-                validictory.validate(data, schema)
-            except ValueError as e:
-                self.fail("Unexpected failure: %s" % e)
+            data = {
+                "prop1": 123,
+                "prop2": "this is prop2",
+                "prop3": x
+            }
+            self.assertEqual(list(validictory.validate(data, schema)), [])
 
         #failures
         for x in [{"test": "blah"}, [32, 49], None, True]:
@@ -158,23 +132,19 @@ class TestAdditionalProperties(TestCase):
                 "prop2": "this is prop2",
                 "prop3": x
             }
-            self.assertRaises(ValueError, validictory.validate, data, schema)
+            self.assertEqual(len(list(validictory.validate(data, schema))), 1)
 
     def test_true(self):
         schema = {"additionalProperties": True}
 
         for x in [1.2, 1, {"test": "blah"}, [32, 49], None, True, "blah"]:
-            try:
-                validictory.validate({"prop": x}, schema)
-            except ValueError as e:
-                self.fail("Unexpected failure: %s" % e)
+            self.assertEqual(list(validictory.validate({"prop": x}, schema)), [])
 
     def test_false(self):
         schema = {"additionalProperties": False}
 
         for x in ["bad", {"test": "blah"}, [32.42, 494242], None, True, 1.34]:
-            self.assertRaises(ValueError, validictory.validate, {"prop": x},
-                              schema)
+            self.assertEqual(len(list(validictory.validate({"prop": x}, schema))), 1)
 
     def test_false_with_type_string(self):
         schema = {
@@ -186,14 +156,12 @@ class TestAdditionalProperties(TestCase):
         }
 
         for data in ["foobar", {'key': 'value'}]:
-            try:
-                validictory.validate(data, schema)
-            except ValueError as e:
-                self.fail("Unexpected failure: %s" % e)
+            self.assertEqual(list(validictory.validate(data, schema)), [])
 
         #failures
-        for data in [['foo', 'bar'], None, True, {'roses': 'red'}]:
-            self.assertRaises(ValueError, validictory.validate, data, schema)
+        for data in [['foo', 'bar'], None, True]:
+            self.assertEqual(len(list(validictory.validate(data, schema))), 1)
+        self.assertEqual(len(list(validictory.validate({'roses': 'red'}, schema))), 2)
 
 
 class TestDependencies(TestCase):
@@ -218,21 +186,17 @@ class TestDependencies(TestCase):
         data3 = {"prop01": "test", "prop02": 2}
         data4 = {"prop01": "a", "prop02": "b", "prop03": 7}
 
-        try:
-            validictory.validate(data1, self.schema)
-            validictory.validate(data2, self.schema)
-            validictory.validate(data3, self.schema)
-            validictory.validate(data4, self.schema_array)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data1, self.schema)), [])
+        self.assertEqual(list(validictory.validate(data2, self.schema)), [])
+        self.assertEqual(list(validictory.validate(data3, self.schema)), [])
+        self.assertEqual(list(validictory.validate(data4, self.schema_array)), [])
 
     def test_dependencies_fail(self):
         data1 = {"prop02": 2}
         data2 = {"prop01": "x", "prop03": 7}
 
-        self.assertRaises(ValueError, validictory.validate, data1, self.schema)
-        self.assertRaises(ValueError, validictory.validate, data2,
-                          self.schema_array)
+        self.assertEqual(len(list(validictory.validate(data1, self.schema))), 1)
+        self.assertEqual(len(list(validictory.validate(data2, self.schema_array))), 1)
 
 
 class TestRequired(TestCase):
@@ -248,21 +212,18 @@ class TestRequired(TestCase):
     opt_only = {"prop_opt": 7}
 
     def test_required_pass(self):
-        try:
-            # should pass if def and req are there
-            validictory.validate(self.def_and_req, self.schema)
-            # should pass if default is missing but req_by_default=False
-            validictory.validate(self.req_only, self.schema,
-                                 required_by_default=False)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        # should pass if def and req are there
+        self.assertEqual(list(validictory.validate(self.def_and_req, self.schema)), [])
+        # should pass if default is missing but req_by_default=False
+        self.assertEqual(list(validictory.validate(self.req_only, self.schema,
+                                 required_by_default=False)), [])
 
     def test_required_fail(self):
         # missing required should always fail
-        self.assertRaises(ValueError, validictory.validate, self.opt_only,
-                          self.schema)
-        self.assertRaises(ValueError, validictory.validate, self.opt_only,
-                          self.schema, required_by_default=False)
+        self.assertEqual(len(list(validictory.validate(self.opt_only,
+                          self.schema))), 2)
+        self.assertEqual(len(list(validictory.validate(self.opt_only,
+                          self.schema, required_by_default=False))), 1)
         # missing the default, fail if required_by_default=True
-        self.assertRaises(ValueError, validictory.validate, self.req_only,
-                          self.schema)
+        self.assertEqual(len(list(validictory.validate(self.req_only,
+                          self.schema))), 1)

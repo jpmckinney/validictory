@@ -45,9 +45,17 @@ if __name__ == '__main__':
         infile = open(sys.argv[2], 'rb')
     else:
         raise SystemExit("%s SCHEMAFILE [INFILE]" % (sys.argv[0],))
+
     try:
         obj = json.load(infile)
+    except ValueError:
+        raise SystemExit('Could not parse input JSON')
+    try:
         schema = json.load(schemafile)
-        validate(obj, schema)
-    except ValueError as e:
-        raise SystemExit(e)
+    except ValueError:
+        raise SystemExit('Could not parse schema JSON')
+    try:
+        for error in validate(obj, schema):
+            print error
+    except SchemaError as e:
+        raise SystemExit('** Schema error: ' + e)

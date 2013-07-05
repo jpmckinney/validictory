@@ -181,4 +181,4 @@ schema = {
 class TestSchemaSchema(TestCase):
 
     def test_schema(self):
-        validictory.validate(schema, schema, required_by_default=False)
+        self.assertEqual(list(validictory.validate(schema, schema, required_by_default=False)), [])
