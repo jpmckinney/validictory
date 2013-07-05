@@ -13,17 +13,13 @@ class TestEnum(TestCase):
 
     def test_enum_pass(self):
         data = ["test", True, 123, ["???"]]
-        try:
-            for item in data:
-                validictory.validate(item, self.schema)
-                validictory.validate(item, self.schema2)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        for item in data:
+            self.assertEqual(list(validictory.validate(item, self.schema)), [])
+            self.assertEqual(list(validictory.validate(item, self.schema2)), [])
 
     def test_enum_fail(self):
         data = "unknown"
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
 
 class TestPattern(TestCase):
@@ -34,24 +30,15 @@ class TestPattern(TestCase):
 
     def test_pattern_pass(self):
         data = "my.email01@gmail.com"
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_pattern_pass_nonstring(self):
         data = 123
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_pattern_fail(self):
         data = "whatever"
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
 
 def validate_format_contains_spaces(validator, fieldname, value,
@@ -59,7 +46,7 @@ def validate_format_contains_spaces(validator, fieldname, value,
     if ' ' in value:
         return
 
-    raise validictory.FieldValidationError(
+    yield validictory.FieldValidationError(
         "Value %(value)r of field '%(fieldname)s' does not contain any spaces,"
         "but it should" % locals(), fieldname, value)
 
@@ -75,92 +62,62 @@ class TestFormat(TestCase):
 
     def test_format_datetime_pass(self):
         data = "2011-01-13T10:56:53Z"
-
-        try:
-            validictory.validate(data, self.schema_datetime)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema_datetime)), [])
 
     def test_format_date_pass(self):
         data = "2011-01-13"
-
-        try:
-            validictory.validate(data, self.schema_date)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema_date)), [])
 
     def test_format_time_pass(self):
         data = "10:56:53"
-
-        try:
-            validictory.validate(data, self.schema_time)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema_time)), [])
 
     def test_format_utcmillisec_pass(self):
-        try:
-            validictory.validate(1294915735, self.schema_utcmillisec)
-            validictory.validate(1294915735.0, self.schema_utcmillisec)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(1294915735, self.schema_utcmillisec)), [])
+        self.assertEqual(list(validictory.validate(1294915735.0, self.schema_utcmillisec)), [])
 
     def test_format_datetime_nonexisting_day_fail(self):
         data = "2013-13-13T00:00:00Z"
-
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_datetime)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_datetime))), 1)
 
     def test_format_datetime_feb29_fail(self):
         data = "2011-02-29T00:00:00Z"
-
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_datetime)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_datetime))), 1)
 
     def test_format_datetime_notutc_fail(self):
         data = "2011-01-13T10:56:53+01: 00"
-
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_datetime)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_datetime))), 1)
 
     def test_format_datetime_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_datetime)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_datetime))), 1)
 
     def test_format_date_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_date)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_date))), 1)
 
     def test_format_time_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_time)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_time))), 1)
 
     def test_format_utcmillisec_fail(self):
         data = "whatever"
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_utcmillisec)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_utcmillisec))), 1)
 
     def test_format_utcmillisec_negative_fail(self):
         data = -1
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_utcmillisec)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_utcmillisec))), 1)
 
     def test_format_ip_pass(self):
         valids = ["0.0.0.0", "255.255.255.255"]
         for ip in valids:
-            try:
-                validictory.validate(ip, self.schema_ip)
-            except ValueError as e:
-                self.fail("Unexpected failure: %s" % e)
+            self.assertEqual(list(validictory.validate(ip, self.schema_ip)), [])
 
     def test_format_ip_fail(self):
         invalids = [1.2, "bad", {"test": "blah"}, [32, 49], 1284, True,
                     "-0.-0.-0.-0", "-1.-1.-1.-1", "256.256.256.256"]
         for ip in invalids:
-            self.assertRaises(ValueError, validictory.validate, ip,
-                              self.schema_ip)
+            self.assertEqual(len(list(validictory.validate(ip, self.schema_ip))), 1)
 
     def test_format_required_false(self):
         schema = {
@@ -170,19 +127,12 @@ class TestFormat(TestCase):
                               'required': False}
             }
         }
-        try:
-            validictory.validate({}, schema, required_by_default=False)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate({}, schema, required_by_default=False)), [])
 
     def test_format_custom_unregistered_pass(self):
         data = 'No-spaces-here'
-
-        try:
-            # no custom validator installed, so no error
-            validictory.validate(data, self.schema_spaces)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        # no custom validator installed, so no error
+        self.assertEqual(list(validictory.validate({}, self.schema_spaces)), [])
 
     def test_format_custom_instantiated_pass(self):
         data = 'Here are spaces'
@@ -190,11 +140,8 @@ class TestFormat(TestCase):
         validator = validictory.SchemaValidator(
             {'spaces': validate_format_contains_spaces})
 
-        try:
-            # validator installed, but data validates
-            validator.validate(data, self.schema_spaces)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        # validator installed, but data validates
+        self.assertEqual(list(validator.validate(data, self.schema_spaces)), [])
 
     def test_format_custom_registered_pass(self):
         data = 'Here are spaces'
@@ -203,11 +150,8 @@ class TestFormat(TestCase):
         validator.register_format_validator('spaces',
                                             validate_format_contains_spaces)
 
-        try:
-            # validator registered, but data validates
-            validator.validate(data, self.schema_spaces)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        # validator registered, but data validates
+        self.assertEqual(list(validator.validate(data, self.schema_spaces)), [])
 
     def test_format_custom_registered_fail(self):
         data = 'No-spaces-here'
@@ -216,8 +160,7 @@ class TestFormat(TestCase):
             {'spaces': validate_format_contains_spaces})
 
         # validator registered, but data does not conform
-        self.assertRaises(ValueError, validator.validate, data,
-                          self.schema_spaces)
+        self.assertEqual(len(list(validator.validate(data, self.schema_spaces))), 1)
 
 
 class TestUniqueItems(TestCase):
@@ -227,19 +170,11 @@ class TestUniqueItems(TestCase):
 
     def test_uniqueitems_pass(self):
         data = [1, 2, 3]
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_uniqueitems_pass_string(self):
         data = ['1', '2', '3']
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_uniqueitems_pass_nested_array(self):
         '''
@@ -247,55 +182,35 @@ class TestUniqueItems(TestCase):
         all datastructures nested within.
         '''
         data = [[1, [5, 5]], [2, [5, 5]]]
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_uniqueitems_pass_not_an_array(self):
         data = 13  # it's pretty unique
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_uniqueitems_pass_different_types(self):
         data = [1, "1"]
-
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_uniqueitems_false_pass(self):
         data = [1, 1, 1]
-
-        try:
-            validictory.validate(data, self.schema_false)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema_false)), [])
 
     def test_uniqueitems_fail(self):
         data = [1, 1, 1]
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 2)
 
     def test_uniqueitems_fail_nested_arrays(self):
         data = [[1, 2, 3], [1, 2, 3]]
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
     def test_uniqueitems_fail_nested_objects(self):
         data = [{'one': 1, 'two': 2}, {'one': 1, 'two': 2}]
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
     def test_uniqueitems_fail_null(self):
         data = [None, None]
-
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
 
 class TestMaximum(TestCase):
@@ -315,20 +230,14 @@ class TestMaximum(TestCase):
         #Test equal
         data2 = {"prop01": 10, "prop02": 20}
 
-        try:
-            validictory.validate(data1, self.schema)
-            validictory.validate(data2, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data1, self.schema)), [])
+        self.assertEqual(list(validictory.validate(data2, self.schema)), [])
 
     def test_maximum_exclusive_pass(self):
         #Test less than
         data = {"prop": 19}
 
-        try:
-            validictory.validate(data, self.schema_exclusive)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema_exclusive)), [])
 
     def test_maximum_fail(self):
         #Test number
@@ -336,15 +245,14 @@ class TestMaximum(TestCase):
         #Test integer
         data2 = {"prop01": 9, "prop02": 21}
 
-        self.assertRaises(ValueError, validictory.validate, data1, self.schema)
-        self.assertRaises(ValueError, validictory.validate, data2, self.schema)
+        self.assertEqual(len(list(validictory.validate(data1, self.schema))), 1)
+        self.assertEqual(len(list(validictory.validate(data2, self.schema))), 1)
 
     def test_maximum_exclusive_fail(self):
         #Test equal
         data = {"prop": 20}
 
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_exclusive)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_exclusive))), 1)
 
 
 class TestMinimum(TestCase):
@@ -364,20 +272,14 @@ class TestMinimum(TestCase):
         #Test equal
         data2 = {"prop01": 10, "prop02": 20}
 
-        try:
-            validictory.validate(data1, self.schema)
-            validictory.validate(data2, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data1, self.schema)), [])
+        self.assertEqual(list(validictory.validate(data2, self.schema)), [])
 
     def test_minimum_exclusive_pass(self):
         #Test greater than
         data = {"prop": 21}
 
-        try:
-            validictory.validate(data, self.schema_exclusive)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema_exclusive)), [])
 
     def test_minimum_fail(self):
         #Test number
@@ -385,15 +287,14 @@ class TestMinimum(TestCase):
         #Test integer
         data2 = {"prop01": 10, "prop02": 19}
 
-        self.assertRaises(ValueError, validictory.validate, data1, self.schema)
-        self.assertRaises(ValueError, validictory.validate, data2, self.schema)
+        self.assertEqual(len(list(validictory.validate(data1, self.schema))), 1)
+        self.assertEqual(len(list(validictory.validate(data2, self.schema))), 1)
 
     def test_minimum_exclusive_fail(self):
         #Test equal
         data = {"prop": 20}
 
-        self.assertRaises(ValueError, validictory.validate, data,
-                          self.schema_exclusive)
+        self.assertEqual(len(list(validictory.validate(data, self.schema_exclusive))), 1)
 
 
 class TestMinLength(TestCase):
@@ -403,28 +304,21 @@ class TestMinLength(TestCase):
         # str-equal, str-gt, list-equal, list-gt
         data = ['test', 'string', [1, 2, 3, 4], [0, 0, 0, 0, 0]]
 
-        try:
-            for item in data:
-                validictory.validate(item, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        for item in data:
+            self.assertEqual(list(validictory.validate(item, self.schema)), [])
 
     def test_minLength_pass_nonstring(self):
         #test when data is not a string
         data1 = 123
 
-        try:
-            validictory.validate(data1, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data1, self.schema)), [])
 
     def test_minLength_fail(self):
         #test equal
         data = ["car", [1, 2, 3]]
 
         for item in data:
-            self.assertRaises(ValueError, validictory.validate, data,
-                              self.schema)
+            self.assertEqual(len(list(validictory.validate(item, self.schema))), 1)
 
 
 class TestMaxLength(TestCase):
@@ -433,26 +327,19 @@ class TestMaxLength(TestCase):
     def test_maxLength_pass(self):
         # str-equal, str-lt, list-equal, list-lt
         data = ["test", "car", [1, 2, 3, 4], [0, 0, 0]]
-        try:
-            for item in data:
-                validictory.validate(item, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        for item in data:
+            self.assertEqual(list(validictory.validate(item, self.schema)), [])
 
     def test_maxLength_pass_nonstring(self):
         # test when data is not a string
         data1 = 12345
 
-        try:
-            validictory.validate(data1, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data1, self.schema)), [])
 
     def test_maxLength_fail(self):
         data = ["string", [1, 2, 3, 4, 5]]
         for item in data:
-            self.assertRaises(ValueError, validictory.validate, item,
-                              self.schema)
+            self.assertEqual(len(list(validictory.validate(item, self.schema))), 1)
 
 
 class TestBlank(TestCase):
@@ -467,13 +354,8 @@ class TestBlank(TestCase):
                 }
             }
         }
-        try:
-            validictory.validate({"key": "value"}, {}, blank_by_default=False)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
-
-        self.assertRaises(ValueError, validictory.validate, {"key": ""},
-                          schema)
+        self.assertEqual(list(validictory.validate({"key": "value"}, {}, blank_by_default=False)), [])
+        self.assertEqual(len(list(validictory.validate({"key": ""}, schema))), 1)
 
     def test_blank_default_true(self):
         schema = {
@@ -485,27 +367,16 @@ class TestBlank(TestCase):
                 }
             }
         }
-        try:
-            validictory.validate({"key": ""}, schema, blank_by_default=True)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate({"key": ""}, schema, blank_by_default=True)), [])
 
     def test_blank_false(self):
         schema = {"blank": False}
-        try:
-            validictory.validate("test", schema, blank_by_default=True)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
-
-        self.assertRaises(ValueError, validictory.validate, "", schema)
+        self.assertEqual(list(validictory.validate("test", schema, blank_by_default=True)), [])
+        self.assertEqual(len(list(validictory.validate("", schema))), 1)
 
     def test_blank_true(self):
-        try:
-            validictory.validate("", {"blank": True}, blank_by_default=False)
-            validictory.validate("test", {"blank": True},
-                                 blank_by_default=False)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate("", {"blank": True}, blank_by_default=False)), [])
+        self.assertEqual(list(validictory.validate("test", {"blank": True}, blank_by_default=False)), [])
 
 
 class TestDivisibleBy(TestCase):
@@ -514,15 +385,13 @@ class TestDivisibleBy(TestCase):
 
     def test_divisibleBy_pass(self):
         data = 60
-        try:
-            validictory.validate(data, self.schema)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(data, self.schema)), [])
 
     def test_divisibleBy_fail(self):
         data = 13
-        self.assertRaises(ValueError, validictory.validate, data, self.schema)
+        self.assertEqual(len(list(validictory.validate(data, self.schema))), 1)
 
     def test_divisibleBy_ZeroDivisionError_fail(self):
         data = 60
-        self.assertRaises(ValueError, validictory.validate, data, self.schema0)
+        # SchemaErrors don't necessarily manifest unless the generator is exhausted.
+        self.assertRaises(validictory.SchemaError, list, validictory.validate(data, self.schema0))
