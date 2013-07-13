@@ -49,29 +49,21 @@ class TestDisallowUnknownProperties(TestCase):
         }
 
     def test_disallow_unknown_properties_pass(self):
-        try:
-            validictory.validate(self.data_simple, self.schema_simple,
-                                 disallow_unknown_properties=True)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(self.data_simple, self.schema_simple,
+                                 disallow_unknown_properties=True)), [])
 
     def test_disallow_unknown_properties_fail(self):
         self.data_simple["sex"] = "male"
-        self.assertRaises(validictory.SchemaError, validictory.validate,
-                          self.data_simple, self.schema_simple,
-                          disallow_unknown_properties=True)
+        self.assertRaises(validictory.SchemaError, list,
+            validictory.validate(self.data_simple, self.schema_simple, disallow_unknown_properties=True))
 
     def test_disallow_unknown_properties_complex_pass(self):
-        try:
-            validictory.validate(self.data_complex, self.schema_complex,
-                                 disallow_unknown_properties=True)
-        except ValueError as e:
-            self.fail("Unexpected failure: %s" % e)
+        self.assertEqual(list(validictory.validate(self.data_complex, self.schema_complex,
+                                 disallow_unknown_properties=True)), [])
 
     def test_disallow_unknown_properties_complex_fail(self):
         newrow = {"sku": "789", "desc": "catch me if you can", "price": 1,
                   "rice": 666}
         self.data_complex["rows"].append(newrow)
-        self.assertRaises(validictory.SchemaError, validictory.validate,
-                          self.data_complex, self.schema_complex,
-                          disallow_unknown_properties=True)
+        self.assertRaises(validictory.SchemaError, list,
+            validictory.validate(self.data_complex, self.schema_complex, disallow_unknown_properties=True))
