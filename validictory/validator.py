@@ -102,10 +102,13 @@ class SchemaValidator(object):
         schema attribute True by default.
     :param disallow_unknown_properties: defaults to False, set to True to
         disallow properties not listed in the schema definition
+    :param apply_default_to_data: defaults to False, set to True to modify the
+        data in case the schema definition includes a "default" property
     '''
 
     def __init__(self, format_validators=None, required_by_default=True,
-                 blank_by_default=False, disallow_unknown_properties=False):
+                 blank_by_default=False, disallow_unknown_properties=False,
+                 apply_default_to_data=False):
         if format_validators is None:
             format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
@@ -113,6 +116,7 @@ class SchemaValidator(object):
         self.required_by_default = required_by_default
         self.blank_by_default = blank_by_default
         self.disallow_unknown_properties = disallow_unknown_properties
+        self.apply_default_to_data = apply_default_to_data
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -602,6 +606,19 @@ class SchemaValidator(object):
                 if validator:
                     validator(data, fieldname, schema,
                               newschema.get(schemaprop))
+
+            if self.apply_default_to_data and 'default' in schema:
+                try:
+                    self.validate_type(
+                        x={'_ds': schema['default']},
+                        fieldname='_ds',
+                        schema=schema,
+                        fieldtype=schema['type'] if 'type' in schema else None
+                    )
+                except FieldValidationError as exc:
+                    raise SchemaError(exc)
+                if not fieldname in data:
+                    data[fieldname] = schema['default']
 
         return data
 
