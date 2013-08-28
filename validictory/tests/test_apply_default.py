@@ -80,8 +80,12 @@ class TestItemDefaults(TestCase):
         data = {"foo": "not_an_integer"}
 
         # the data does not match the schema and raises an error
-        with self.assertRaises(validictory.FieldValidationError):
-            validate_with_apply_default_to_data(data, schema)
+        self.assertRaises(
+            validictory.FieldValidationError,
+            validate_with_apply_default_to_data,
+            data,
+            schema
+        )
 
         # the original data must not contain the default argument
         # because an error occurred
@@ -104,8 +108,12 @@ class TestItemDefaults(TestCase):
         # "There are no restrictions placed on the value of this keyword."
         # "It is RECOMMENDED that a default value be
         # valid against the associated schema."
-        with self.assertRaises(validictory.SchemaError):
-            validate_with_apply_default_to_data(data, schema)
+        self.assertRaises(
+            validictory.SchemaError,
+            validate_with_apply_default_to_data,
+            data,
+            schema
+        )
 
         # the original data is unchanged
         self.assertEqual(data, {})
@@ -125,8 +133,12 @@ class TestItemDefaults(TestCase):
 
         # The SchemaError is still raised because the schema is still wrong
         # even if the property is contained in the data
-        with self.assertRaises(validictory.SchemaError):
-            validate_with_apply_default_to_data(data, schema)
+        self.assertRaises(
+            validictory.SchemaError,
+            validate_with_apply_default_to_data,
+            data,
+            schema
+        )
 
         # the original data is unchanged
         self.assertEqual(data, {'foo': 1})

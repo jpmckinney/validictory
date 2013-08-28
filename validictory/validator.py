@@ -616,7 +616,7 @@ class SchemaValidator(object):
                         fieldtype=schema['type'] if 'type' in schema else None
                     )
                 except FieldValidationError as exc:
-                    raise SchemaError(exc.message)
+                    raise SchemaError(exc)
                 if not fieldname in data:
                     data[fieldname] = schema['default']
 
