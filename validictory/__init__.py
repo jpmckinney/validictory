@@ -28,6 +28,8 @@ def validate(data, schema, validator_cls=SchemaValidator,
         ``required`` schema attribute False by default.
     :param disallow_unknown_properties: defaults to False, set to True to
         disallow properties not listed in the schema definition
+    :param apply_default_to_data: defaults to False, set to True to modify the
+        data in case the schema definition includes a "default" property
     '''
     v = validator_cls(format_validators, required_by_default, blank_by_default,
                       disallow_unknown_properties, apply_default_to_data)

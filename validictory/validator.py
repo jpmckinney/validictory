@@ -102,6 +102,8 @@ class SchemaValidator(object):
         schema attribute True by default.
     :param disallow_unknown_properties: defaults to False, set to True to
         disallow properties not listed in the schema definition
+    :param apply_default_to_data: defaults to False, set to True to modify the
+        data in case the schema definition includes a "default" property
     '''
 
     def __init__(self, format_validators=None, required_by_default=True,
@@ -605,12 +607,18 @@ class SchemaValidator(object):
                     validator(data, fieldname, schema,
                               newschema.get(schemaprop))
 
-            if (self.apply_default_to_data
-                and not fieldname in data
-                and 'default' in schema
-            ):
-                data[fieldname] = schema['default']
-
+            if self.apply_default_to_data and 'default' in schema:
+                try:
+                    self.validate_type(
+                        x={'_ds': schema['default']},
+                        fieldname='_ds',
+                        schema=schema,
+                        fieldtype=schema['type'] if 'type' in schema else None
+                    )
+                except FieldValidationError as exc:
+                    raise SchemaError(exc.message)
+                if not fieldname in data:
+                    data[fieldname] = schema['default']
 
         return data
 
