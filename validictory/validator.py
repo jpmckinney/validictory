@@ -78,15 +78,12 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
                               "not a ip-address" % locals(), fieldname, value)
 
 
-# This is the assembled, zlib'ed and base64'ed email regex used here:
-# https://github.com/SyrusAkbary/validate_email
-RE_EMAIL_ZLIB_B64 = """\
-eJztld0KgkAQhV+lHytH0dIQI4jtPTwrWellFxEktPXszXbhZUvhhSuCR2bdo3x7RpjcFdvmyka4
-SY8LXHEhEp+1TwKu0aK3UK+igG8b1pF1YlX8IKpQp6xY78Ypq+AiYUty5iItpdIfREhEnoGkcViC
-q74auMB9PHVmcyzgwUew3EEgP+ABhedL+vqV0GSyLBPLcE0tVFadpmfhT1pCZa3/pTQzdCnRnv0A
-tB8m2DDBhhYOE6yjuKbwkbXHmhSs8ldEaVWePWs/OW/YydOX"""
+# An email regex found here:
+# http://www.regular-expressions.info/email.html
+RE_EMAIL = """[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@\
+(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"""
 
-RE_EMAIL = re.compile(RE_EMAIL_ZLIB_B64.decode('base64').decode('zlib'))
+RE_EMAIL = re.compile(RE_EMAIL, re.I)
 
 
 def validate_format_email(validator, fieldname, value, format_option):

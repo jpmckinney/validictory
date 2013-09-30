@@ -221,8 +221,8 @@ class TestFormat(TestCase):
                           self.schema_spaces)
 
     def test_format_email_pass(self):
-        valids = ["foo@foo.com", "foo.bar@foo.bar.baz",
-                  "foo+bar@foo.com", "foo'.+bar@ba.fu.blah"]
+        valids = ["foo@foo.com", "foo.bar@foo.bar.baz", "foo+bar@foo.com",
+                  "foo'.+bar@ba.fu.blah", "ALEX@GMAIL.COM"]
         for email in valids:
             try:
                 validictory.validate(email, self.schema_email)
@@ -231,7 +231,8 @@ class TestFormat(TestCase):
 
     def test_format_email_fail(self):
         invalids = [1.2, "bad", {"test": "blah"}, [32, 49], 1284, True,
-                    "foo@", "@example.com"]
+                    "foo@", "@example.com", "alex..@gmail.com",
+                    "ALEX@GMAIL..COM", "al..ex@gmail.com"]
         for email in invalids:
             self.assertRaises(ValueError, validictory.validate, email,
                               self.schema_email)
