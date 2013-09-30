@@ -620,6 +620,7 @@ class SchemaValidator(object):
                     )
                 except FieldValidationError as exc:
                     raise SchemaError(exc)
+
                 if not fieldname in data:
                     data[fieldname] = schema['default']
 

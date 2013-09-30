@@ -38,34 +38,6 @@ class TestItemDefaults(TestCase):
         # Note: data was changed!
         self.assertEqual(data, {"foo": "bar", "baz": 2})
 
-    def test_property_default_denied_does_not_change_original_data_on_error(self):
-        schema = {
-            "type": "object",
-            "properties": {
-                "foo": {
-                    "type": "integer"
-                },
-                "bar": {
-                    "type": "integer",
-                    "default": 1
-                }
-            }
-        }
-
-        data = {"foo": "not_an_integer"}
-
-        # the data does not match the schema and raises an error
-        self.assertRaises(
-            validictory.FieldValidationError,
-            validate_with_apply_default_to_data,
-            data,
-            schema
-        )
-
-        # the original data must not contain the default argument
-        # because an error occurred
-        self.assertEqual(data, {"foo": "not_an_integer"})
-
     def test_property_default_denied_if_wrong_type_for_default(self):
         schema = {
             "type": "object",
