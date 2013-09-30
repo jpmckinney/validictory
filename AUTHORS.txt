@@ -19,3 +19,4 @@ Initially derived from jsonschema, by Ian Lewis and Yusuke Muraoka.
 * Marc Abramowitz - fix for error message when data doesn't match one of several types, fix to allow dict-like types to validate as dicts
 * Alon Horev - fix for disallow_unknown_properties bug
 * Daniel Rech - support for default param
+* Juan Menéndez & James Clemence - fix for patternProperties w/ additionalProperties
