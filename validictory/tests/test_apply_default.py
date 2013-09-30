@@ -38,31 +38,6 @@ class TestItemDefaults(TestCase):
         # Note: data was changed!
         self.assertEqual(data, {"foo": "bar", "baz": 2})
 
-    # def test_item(self):
-    #     schema = {
-    #         'type': 'object',
-    #         'type': 'array',
-    #         'items': [
-    #             {
-    #                 'type': 'any'
-    #             },
-    #             {
-    #                 'type': 'string'
-    #             },
-    #             {
-    #                 'default': 'baz'
-    #             },
-    #         ]
-    #     }
-
-    #     data = ['foo', 'bar']
-
-    #     validictory.validate(
-    #         data, schema, required_by_default=False, apply_default_to_data=True)
-
-    #     # Note: data was changed!
-    #     self.assertEqual(data, ["foo", "bar", "baz"])
-
     def test_property_default_denied_does_not_change_original_data_on_error(self):
         schema = {
             "type": "object",
