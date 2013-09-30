@@ -72,6 +72,7 @@ class TestFormat(TestCase):
     schema_utcmillisec = {"format": "utc-millisec"}
     schema_ip = {"format": "ip-address"}
     schema_spaces = {"format": "spaces"}
+    schema_email = {"format": "email"}
 
     def test_format_datetime_pass(self):
         data = "2011-01-13T10:56:53Z"
@@ -218,6 +219,23 @@ class TestFormat(TestCase):
         # validator registered, but data does not conform
         self.assertRaises(ValueError, validator.validate, data,
                           self.schema_spaces)
+
+    def test_format_email_pass(self):
+        valids = ["foo@foo.com", "foo.bar@foo.bar.baz", "foo+bar@foo.com",
+                  "foo'.+bar@ba.fu.blah", "ALEX@GMAIL.COM"]
+        for email in valids:
+            try:
+                validictory.validate(email, self.schema_email)
+            except ValueError as e:
+                self.fail("Unexpected failure: %s" % e)
+
+    def test_format_email_fail(self):
+        invalids = [1.2, "bad", {"test": "blah"}, [32, 49], 1284, True,
+                    "foo@", "@example.com", "alex..@gmail.com",
+                    "ALEX@GMAIL..COM", "al..ex@gmail.com"]
+        for email in invalids:
+            self.assertRaises(ValueError, validictory.validate, email,
+                              self.schema_email)
 
 
 class TestUniqueItems(TestCase):

@@ -81,12 +81,30 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
                                    value)
 
 
+# An email regex found here:
+# http://www.regular-expressions.info/email.html
+RE_EMAIL = """[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@\
+(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"""
+
+RE_EMAIL = re.compile(RE_EMAIL, re.I)
+
+
+def validate_format_email(validator, fieldname, value, format_option):
+    try:
+        if RE_EMAIL.match(value) is None:
+            raise ValueError('not a valid email')
+    except:
+        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is "
+                                   "not an email" % locals(), fieldname, value)
+
+
 DEFAULT_FORMAT_VALIDATORS = {
-    'date-time': validate_format_date_time,
     'date': validate_format_date,
-    'time': validate_format_time,
-    'utc-millisec': validate_format_utc_millisec,
+    'date-time': validate_format_date_time,
+    'email': validate_format_email,
     'ip-address': validate_format_ip_address,
+    'time': validate_format_time,
+    'utc-millisec': validate_format_utc_millisec
 }
 
 
