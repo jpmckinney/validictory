@@ -7,6 +7,7 @@ __all__ = ['validate', 'SchemaValidator', 'FieldValidationError',
            'ValidationError', 'SchemaError']
 __version__ = '0.9.1'
 
+
 def validate(data, schema, validator_cls=SchemaValidator,
              format_validators=None, required_by_default=True,
              blank_by_default=False, disallow_unknown_properties=False,

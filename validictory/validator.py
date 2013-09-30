@@ -353,8 +353,7 @@ class SchemaValidator(object):
         value = x.get(fieldname)
         if isinstance(additionalProperties, (dict, bool)):
             properties = schema.get("properties")
-            patterns = schema["patternProperties"].keys() \
-                    if schema.has_key("patternProperties") else []
+            patterns = schema["patternProperties"].keys() if 'patternProperties' in schema else []
             if properties is None:
                 properties = {}
             if value is None:
