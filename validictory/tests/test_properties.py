@@ -160,6 +160,27 @@ class TestAdditionalProperties(TestCase):
             }
             self.assertRaises(ValueError, validictory.validate, data, schema)
 
+    def test_with_pattern_properties(self):
+        schema = {
+            "patternProperties": {
+                "[a-c]": {
+                    "type": "string"}
+            }, "additionalProperties": False,
+        }
+        data = {"a": "test"}
+
+        try:
+            validictory.validate(data, schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+        # failures
+        data = {"d": "test"}
+        self.assertRaises(ValueError, validictory.validate, data, schema)
+
+        data = {"a": "test", "d": "test"}
+        self.assertRaises(ValueError, validictory.validate, data, schema)
+
     def test_true(self):
         schema = {"additionalProperties": True}
 
