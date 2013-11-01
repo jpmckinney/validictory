@@ -353,7 +353,10 @@ class SchemaValidator(object):
         value = x.get(fieldname)
         if isinstance(additionalProperties, (dict, bool)):
             properties = schema.get("properties")
-            patterns = schema["patternProperties"].keys() if 'patternProperties' in schema else []
+            if 'patternProperties' in schema:
+                patterns = schema["patternProperties"].keys()
+            else:
+                patterns = []
             if properties is None:
                 properties = {}
             if value is None:
@@ -623,11 +626,9 @@ class SchemaValidator(object):
                     continue
 
                 validatorname = "validate_" + schemaprop
-
                 validator = getattr(self, validatorname, None)
                 if validator:
-                    validator(data, fieldname, schema,
-                              newschema.get(schemaprop))
+                    validator(data, fieldname, schema, newschema[schemaprop])
 
                 else:
                     raise SchemaError('Unknown attribute "%s"' % schemaprop)
