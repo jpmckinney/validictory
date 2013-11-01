@@ -570,6 +570,21 @@ class SchemaValidator(object):
                     "field '%(fieldname)s'",
                     x.get(fieldname), fieldname, disallow=disallow)
 
+    def validate_default(self, x, fieldname, schema, default=None):
+        if self.apply_default_to_data and 'default' in schema:
+            try:
+                self.validate_type(
+                    x={'_ds': schema['default']},
+                    fieldname='_ds',
+                    schema=schema,
+                    fieldtype=schema['type'] if 'type' in schema else None
+                )
+            except FieldValidationError as exc:
+                raise SchemaError(exc)
+
+            if not fieldname in x:
+                x[fieldname] = schema['default']
+
     def validate(self, data, schema):
         '''
         Validates a piece of json data against the provided json-schema.
@@ -601,7 +616,11 @@ class SchemaValidator(object):
             if 'blank' not in schema:
                 newschema['blank'] = self.blank_by_default
 
+            ignored_keys = ['id', 'exclusiveMinimum', 'exclusiveMaximum']
             for schemaprop in newschema:
+
+                if schemaprop.startswith('$') or schemaprop in ignored_keys:
+                    continue
 
                 validatorname = "validate_" + schemaprop
 
@@ -610,19 +629,8 @@ class SchemaValidator(object):
                     validator(data, fieldname, schema,
                               newschema.get(schemaprop))
 
-            if self.apply_default_to_data and 'default' in schema:
-                try:
-                    self.validate_type(
-                        x={'_ds': schema['default']},
-                        fieldname='_ds',
-                        schema=schema,
-                        fieldtype=schema['type'] if 'type' in schema else None
-                    )
-                except FieldValidationError as exc:
-                    raise SchemaError(exc)
-
-                if not fieldname in data:
-                    data[fieldname] = schema['default']
+                else:
+                    raise SchemaError('Unknown attribute "%s"' % schemaprop)
 
         return data
 
