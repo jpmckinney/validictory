@@ -230,7 +230,7 @@ Schema Options
 ``additionalItems``
     Used in conjunction with ``items``.  If False then no additional items
     are allowed, if a schema is provided then all additional items must
-    match the provided schema.
+    match the provided schema. ::
 
     data = json.loads(''' {"results": [1, "a", false, null, null, null]}  ''')
     schema = {
@@ -321,7 +321,7 @@ For example::
 
 ``exclusiveMinimum`` and ``exclusiveMaximum``
     If these values are present and set to True, they will modify the
-    ``minimum`` and ``maximum`` tests to be exclusive.
+    ``minimum`` and ``maximum`` tests to be exclusive. ::
 
     data = json.loads(''' {"result": 10, "resultTwo": 12, "resultThree": 15}''')
 
@@ -344,7 +344,7 @@ For example::
     If the value is a list or str, these will test the length of the list
     or string.
 
-    There is no difference in implementation between the items/length variants.
+    There is no difference in implementation between the items/length variants. ::
 
     data = json.loads(''' { "one": "12345", "two": "2345", "three": [1, 2, 3, 4, 5]} ''')
 
@@ -367,7 +367,7 @@ For example::
     }
 
 ``uniqueItems``
-    Indicate that all attributes in a list must be unique.
+    Indicate that all attributes in a list must be unique. ::
 
     data = json.loads(''' {"one": [1, 2, 3, 4], "two": [1, 1, 2]} ''')
 
@@ -384,16 +384,53 @@ For example::
 
 ``pattern``
     If the value is a string, this provides a regular expression that
-    the string must match to be valid.
+    the string must match to be valid. ::
+
+    data = json.loads(''' {"twentyOne": "21", "thirtyThree": "33"} ''')
+
+    schema = {
+        "properties": {
+            "thirtyThree": {
+                "pattern": "^33$"
+            }
+        }
+    }
 
 ``blank``
     If False, validate that string values are not blank (the empty string).
 
     The default value of this parameter is set when initializing
-    `SchemaValidator`. By default it is ``False``.
+    `SchemaValidator`. By default it is ``False``. ::
+
+    data = json.loads(''' {"hello": "", "testing": ""}''')
+
+    schema = {
+        "properties": {
+            "hello": {
+                "blank": True # passes
+            },
+            "testing": {
+                "blank": False # fails
+            }
+        }
+    }
 
 ``enum``
-    Provides an array that the value must match if present.
+    Provides an array that the value must match if present. ::
+
+    data = json.loads(''' {"today": "monday", "tommrow": "something"}''')
+
+    dayList = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    schema = {
+        "properties": {
+            "today": {
+                "enum": dayList # passes
+            },
+            "tommrow": {
+                "enum": dayList # does not pass, 'something' is not in the enum. 
+            }
+        }
+    }
 
 ``format``
     Validate that the value matches a predefined format.
@@ -404,18 +441,105 @@ For example::
     * ``date``: 'yyyy-mm-dd'
     * ``time``: 'hh:mm::ss'
     * ``utc-millisec``: number of seconds since UTC
+    * ``ip-address``: IPv4 address, in dotted-quad string format (for example, '123.45.67.89')
 
-    formats can be provided as the ``format_validators`` argument to
+    formats can be provided as a dictionary (of type {"formatString": format_func} ) to the ``format_validators`` argument of
     ``validictory.validate``.
+
+    Custom formatting functions have the function signature ``format_func(validator, fieldname, value, format_option):``. 
+    
+    * ``validator`` is a reference to the SchemaValidator (or custom validator class if you passed one in for
+    the ``validator_cls`` argument in ``validictory.validate``).
+    * ``fieldname`` is the name of the field whose value you are validating in the JSON.
+    * ``value`` is the actual value that you are validating
+    * ``format_option`` is the name of the format string that was provided in the JSON, useful if you have one format
+    function for multiple format strings.
+
+    Here is an example of writing a custom format function to validate `UUIDs <http://docs.python.org/3/library/uuid.html/>`_ ::
+
+    import json
+    import validictory
+    import uuid
+
+    data = json.loads(''' {"uuidInt": 117574695023396164616661330147169357159, "uuidHex": "fad9d8cc11d64578bff327df93276964"}''')
+
+    schema = {
+        "title": "My test schema",
+        "properties": {
+            "uuidHex": {
+                "format": "uuid_hex"
+            },
+            "uuidInt": {
+                "format": "uuid_int"
+            }
+        }
+    }
+    
+    def validate_uuid(validator, fieldname, value, format_option):
+
+        print(validator)
+        print(fieldname)
+        print(value)
+        print(format_option)
+
+        if format_option == "uuid_hex":
+            try:
+                uuid.UUID(hex=value)
+            except Exception as e:
+                raise validictory.FieldValidationError("Could not parse UUID from hex string %(uuidstr)s, reason: %(reason)s" 
+                    % {"uuidstr": value, "reason": e}, fieldname, value)
+
+        elif format_option == "uuid_int":
+            try:
+                uuid.UUID(int=value)
+            except Exception as e:
+                raise validictory.FieldValidationError("Could not parse UUID from int string %(uuidstr)s, reason: %(reason)s" 
+                    % {"uuidstr": value, "reason": e}, fieldname, value)
+        else:
+            raise validictory.FieldValidationError("Invalid format option for 'validate_uuid': %(format)s" % format_option, 
+                fieldName, value)
+
+    try:
+        formatdict = {"uuid_hex": validate_uuid, "uuid_int": validate_uuid}
+        validictory.validate(data, schema, format_validators=formatdict)
+    except Exception as e2:
+        print("couldn't validate =( reason: {}".format(e2))
+
+
+
 
 ``divisibleBy``
     Ensures that the data value can be divided (without remainder) by a
-    given divisor (**not 0**).
+    given divisor (**not 0**). ::
+
+    data = json.loads('''{"value": 12, "valueTwo": 13} ''')
+
+    schema = {
+        "properties": {
+            "value": {
+                "divisibleBy": 2 # passes
+            },
+            "valueTwo": {
+                "divisibleBy": 2 # fails
+            }
+        }
+    }
 
 ``title`` and ``description``
     These do no validation, but if provided must be strings or a
-    ``~validictory.SchemaError`` will be raised.
+    ``~validictory.SchemaError`` will be raised. ::
 
+    data = json.loads(''' {"hello": "testing"}''')
+
+    schema = {
+        "title": "My test schema",
+        "properties": {
+            "hello": {
+                "type": "string",
+                "description": Make sure the 'hello' key is a string"
+            }
+        }
+    }
 
 
 Examples
