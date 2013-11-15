@@ -82,7 +82,8 @@ Schema Options
     In essence each item in the provided dict for properties is a sub-schema
     applied against the property (if present) with the same name in the data.
 
-    ::
+::
+
     # each key in the 'properties' option matches a key in the object that you are validating,
     # and the value to each key in the 'properties' option is the schema to validate 
     # the value of the key in the JSON you are verifying. 
@@ -111,7 +112,9 @@ Schema Options
 
     Similarly to how ``properties`` works, any properties in the data that have
     a name matching a particular pattern must validate against the provided
-    sub-schema. ::
+    sub-schema. 
+
+::
 
 
     data = json.loads('''
@@ -149,7 +152,9 @@ Schema Options
 
     Can be ``False`` to disallow any additional properties not in
     ``properties``, or can be a sub-schema that all properties
-    not included in ``properties`` must match. ::
+    not included in ``properties`` must match. 
+
+::
 
 
     data = json.loads(''' 
@@ -191,7 +196,7 @@ Schema Options
     must match the schema in the same position of the list.  (extra items
     will be validated according to ``additionalItems``)
 
-    ::
+::
 
     # given a schema object, every list will be validated against it. 
 
@@ -230,7 +235,9 @@ Schema Options
 ``additionalItems``
     Used in conjunction with ``items``.  If False then no additional items
     are allowed, if a schema is provided then all additional items must
-    match the provided schema. ::
+    match the provided schema. 
+
+::
 
     data = json.loads(''' {"results": [1, "a", false, null, null, null]}  ''')
     schema = {
@@ -256,8 +263,9 @@ Schema Options
     If True, the property must be present to validate.
 
     The default value of this parameter is set on the call to 
-    :func:`~validictory.validate`.  By default it is ``True``. ::
+    :func:`~validictory.validate`.  By default it is ``True``. 
 
+::
 
     data = json.loads(''' {"one": 1, "two": 2}''')
 
@@ -303,7 +311,9 @@ For example::
     If the value is a number (int or float), these methods will validate
     that the values are less than or greater than the given minimum/maximum.
 
-    Minimum and maximum values are inclusive by default. ::
+    Minimum and maximum values are inclusive by default. 
+
+::
 
     data = json.loads(''' {"result": 10, "resultTwo": 12}''')
 
@@ -321,7 +331,9 @@ For example::
 
 ``exclusiveMinimum`` and ``exclusiveMaximum``
     If these values are present and set to True, they will modify the
-    ``minimum`` and ``maximum`` tests to be exclusive. ::
+    ``minimum`` and ``maximum`` tests to be exclusive. 
+
+::
 
     data = json.loads(''' {"result": 10, "resultTwo": 12, "resultThree": 15}''')
 
@@ -344,7 +356,9 @@ For example::
     If the value is a list or str, these will test the length of the list
     or string.
 
-    There is no difference in implementation between the items/length variants. ::
+    There is no difference in implementation between the items/length variants. 
+
+::
 
     data = json.loads(''' { "one": "12345", "two": "2345", "three": [1, 2, 3, 4, 5]} ''')
 
@@ -367,7 +381,9 @@ For example::
     }
 
 ``uniqueItems``
-    Indicate that all attributes in a list must be unique. ::
+    Indicate that all attributes in a list must be unique. 
+
+::
 
     data = json.loads(''' {"one": [1, 2, 3, 4], "two": [1, 1, 2]} ''')
 
@@ -384,7 +400,9 @@ For example::
 
 ``pattern``
     If the value is a string, this provides a regular expression that
-    the string must match to be valid. ::
+    the string must match to be valid. 
+
+::
 
     data = json.loads(''' {"twentyOne": "21", "thirtyThree": "33"} ''')
 
@@ -400,7 +418,9 @@ For example::
     If False, validate that string values are not blank (the empty string).
 
     The default value of this parameter is set when initializing
-    `SchemaValidator`. By default it is ``False``. ::
+    `SchemaValidator`. By default it is ``False``. 
+
+::
 
     data = json.loads(''' {"hello": "", "testing": ""}''')
 
@@ -416,7 +436,9 @@ For example::
     }
 
 ``enum``
-    Provides an array that the value must match if present. ::
+    Provides an array that the value must match if present. 
+
+::
 
     data = json.loads(''' {"today": "monday", "tommrow": "something"}''')
 
@@ -455,7 +477,9 @@ For example::
     * ``format_option`` is the name of the format string that was provided in the JSON, useful if you have one format
     function for multiple format strings.
 
-    Here is an example of writing a custom format function to validate `UUIDs <http://docs.python.org/3/library/uuid.html/>`_ ::
+    Here is an example of writing a custom format function to validate `UUIDs <http://docs.python.org/3/library/uuid.html/>`_ 
+
+::
 
     import json
     import validictory
@@ -474,7 +498,7 @@ For example::
             }
         }
     }
-    
+
     def validate_uuid(validator, fieldname, value, format_option):
 
         print(validator)
@@ -510,7 +534,9 @@ For example::
 
 ``divisibleBy``
     Ensures that the data value can be divided (without remainder) by a
-    given divisor (**not 0**). ::
+    given divisor (**not 0**). 
+
+::
 
     data = json.loads('''{"value": 12, "valueTwo": 13} ''')
 
@@ -527,7 +553,9 @@ For example::
 
 ``title`` and ``description``
     These do no validation, but if provided must be strings or a
-    ``~validictory.SchemaError`` will be raised. ::
+    ``~validictory.SchemaError`` will be raised. 
+
+::
 
     data = json.loads(''' {"hello": "testing"}''')
 
@@ -603,7 +631,9 @@ Validating Using Builtin Types
     validictory.validate(data, schema)
 
 the 'number' type can be used when you don't care what type the number is, or 'integer' if you want a non 
-floating point number::
+floating point number
+
+::
 
     dataTwo = json.loads('''{"valueOne": 12} ''')
 
@@ -611,7 +641,9 @@ floating point number::
 
     validictory.validate(dataTwo, schemaTwo)
 
-the 'any' type can be used to validate any type.::
+the 'any' type can be used to validate any type.
+
+::
 
     dataThree = json.loads(''' {"valueOne": 12, "valueTwo": null, "valueThree": "hello" }''')
 
@@ -625,7 +657,9 @@ the 'any' type can be used to validate any type.::
 
     validictory.validate(dataThree, schemaThree)
 
-You can list multiple types as well. ::
+You can list multiple types as well. 
+
+::
 
     dataFour = json.loads(''' {"valueOne": 12, "valueTwo": null}''')
 
@@ -703,7 +737,8 @@ Specifying Custom Types
 If a list is specified for the 'types' option, then you can specify a schema or multiple schemas
 that each element in the list will be tested against. This also allows you to split up your
 schema definition for ease of reading, or to share schema definitions between other schemas.
-An example: ::
+
+::
 
     schema = {
         "type": "object",
