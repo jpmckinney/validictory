@@ -5,7 +5,7 @@ Normal use of validictory is as simple as calling :func:`validictory.validate`,
 the only thing to learn is how to craft a schema.
 
 Sample Usage
---------
+-------------
 
 JSON documents and schema must first be loaded into a Python dictionary type
 before it can be validated.
@@ -468,12 +468,14 @@ For example::
 
     Custom formatting functions have the function signature ``format_func(validator, fieldname, value, format_option):``. 
     
-    * ``validator`` is a reference to the SchemaValidator (or custom validator class if you passed one in for
-    the ``validator_cls`` argument in ``validictory.validate``).
+    * ``validator`` is a reference to the SchemaValidator (or custom validator class if you passed one in for the ``validator_cls`` argument in ``validictory.validate``).
+
     * ``fieldname`` is the name of the field whose value you are validating in the JSON.
+
     * ``value`` is the actual value that you are validating
-    * ``format_option`` is the name of the format string that was provided in the JSON, useful if you have one format
-    function for multiple format strings.
+
+    * ``format_option`` is the name of the format string that was provided in the JSON, useful if you have one format function for multiple format strings.
+
 
     Here is an example of writing a custom format function to validate `UUIDs <http://docs.python.org/3/library/uuid.html/>`_ 
 
@@ -574,7 +576,10 @@ Examples
 Using a Schema
 ..............
 
-The schema can be either a deserialized JSON document or a literal python object::
+The schema can be either a deserialized JSON document or a literal python object
+
+::
+
     data = json.loads(''' {"age": 23, "name": "Steven"} ''')
 
     # json string
@@ -590,7 +595,7 @@ The schema can be either a deserialized JSON document or a literal python object
 
 
 Validating Using Builtin Types
-..............
+...............................
 
 ::
 
