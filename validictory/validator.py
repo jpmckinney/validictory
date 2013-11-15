@@ -109,10 +109,15 @@ class SchemaValidator(object):
     def __init__(self, format_validators=None, required_by_default=True,
                  blank_by_default=False, disallow_unknown_properties=False,
                  apply_default_to_data=False):
-        if format_validators is None:
-            format_validators = DEFAULT_FORMAT_VALIDATORS.copy()
 
-        self._format_validators = format_validators
+        # add the default format validators
+        for key, value in DEFAULT_FORMAT_VALIDATORS:
+            self.register_format_validator(key, value)
+
+        # register any custom format validators if they were provided
+        if format_validators:
+            for key, value in format_validators:
+                self.register_format_validator(key, value)
         self.required_by_default = required_by_default
         self.blank_by_default = blank_by_default
         self.disallow_unknown_properties = disallow_unknown_properties

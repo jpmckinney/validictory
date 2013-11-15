@@ -169,7 +169,6 @@ Schema Options
         "properties": {
 
             "one": {
-
                 "type": "array"
             },
             "two": {
