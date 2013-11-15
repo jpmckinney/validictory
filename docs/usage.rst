@@ -107,7 +107,6 @@ Schema Options
     validictory.validate(data, schema)
 
 ``patternProperties``
-
     Define a set of patterns that validate against subschemas. 
 
     Similarly to how ``properties`` works, any properties in the data that have
@@ -147,7 +146,6 @@ Schema Options
     }
 
 ``additionalProperties``
-
     Schema for all additional properties not included in properties.
 
     Can be ``False`` to disallow any additional properties not in
@@ -595,6 +593,7 @@ Validating Using Builtin Types
 ..............
 
 ::
+
     data = json.loads('''
 
         {
@@ -682,6 +681,7 @@ Validating Nested Containers
 ............................
 
 ::
+
     data = json.loads('''
         { 
             "results": {
