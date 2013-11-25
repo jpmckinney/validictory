@@ -110,13 +110,15 @@ class SchemaValidator(object):
                  blank_by_default=False, disallow_unknown_properties=False,
                  apply_default_to_data=False):
 
+        self._format_validators = {}
+
         # add the default format validators
-        for key, value in DEFAULT_FORMAT_VALIDATORS:
+        for key, value in DEFAULT_FORMAT_VALIDATORS.items():
             self.register_format_validator(key, value)
 
         # register any custom format validators if they were provided
         if format_validators:
-            for key, value in format_validators:
+            for key, value in format_validators.items():
                 self.register_format_validator(key, value)
         self.required_by_default = required_by_default
         self.blank_by_default = blank_by_default
