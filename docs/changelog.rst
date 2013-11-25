@@ -1,6 +1,10 @@
 validictory changelog
 =====================
 
+0.9.3
+**2013-11-25**
+    * fix bad 0.9.2 release that didn't have a fix for invalid code from a PR
+
 0.9.2
 -----
 **2013-11-25**
