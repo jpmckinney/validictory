@@ -196,7 +196,6 @@ Schema Options
 ::
 
     # given a schema object, every list will be validated against it. 
-
     data = json.loads(''' {"results": [1, 2, 3, 4, 5]}''')
 
     schema =    {
@@ -211,8 +210,8 @@ Schema Options
     validictory.validate(data, schema)
 
     # given a list, each item in the list is matched against the schema
-    # in the order given
-
+    # at the same index. (entry 0 in the json will be matched against entry 0
+    # in the schema, etc)
     dataTwo = json.loads(''' {"results": [1, "a", false, null, 5.3]}  ''')
     schemaTwo = {
                     "properties": {
