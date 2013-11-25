@@ -533,7 +533,7 @@ For example::
         validictory.validate(data, schema, format_validators=formatdict)
         print("Successfully validated %(data)s!" % {"data": data})
     except Exception as e2:
-        print("couldn't validate =( reason: {}".format(e2))
+        print("couldn't validate =( reason: %(reason)s" % {"reason": e})
 
 
 
