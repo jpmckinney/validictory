@@ -196,7 +196,6 @@ Schema Options
 ::
 
     # given a schema object, every list will be validated against it. 
-
     data = json.loads(''' {"results": [1, 2, 3, 4, 5]}''')
 
     schema =    {
@@ -211,8 +210,8 @@ Schema Options
     validictory.validate(data, schema)
 
     # given a list, each item in the list is matched against the schema
-    # in the order given
-
+    # at the same index. (entry 0 in the json will be matched against entry 0
+    # in the schema, etc)
     dataTwo = json.loads(''' {"results": [1, "a", false, null, 5.3]}  ''')
     schemaTwo = {
                     "properties": {
@@ -476,7 +475,7 @@ For example::
     * ``format_option`` is the name of the format string that was provided in the JSON, useful if you have one format function for multiple format strings.
 
 
-    Here is an example of writing a custom format function to validate `UUIDs <http://docs.python.org/3/library/uuid.html/>`_ 
+    Here is an example of writing a custom format function to validate `UUIDs <http://docs.python.org/3/library/uuid.html/>`_: 
 
 ::
 
@@ -484,7 +483,8 @@ For example::
     import validictory
     import uuid
 
-    data = json.loads(''' {"uuidInt": 117574695023396164616661330147169357159, "uuidHex": "fad9d8cc11d64578bff327df93276964"}''')
+    data = json.loads(''' { "uuidInt": 117574695023396164616661330147169357159, 
+                            "uuidHex": "fad9d8cc11d64578bff327df93276964"}''')
 
     schema = {
         "title": "My test schema",
@@ -500,33 +500,39 @@ For example::
 
     def validate_uuid(validator, fieldname, value, format_option):
 
-        print(validator)
-        print(fieldname)
-        print(value)
-        print(format_option)
+        print("*********************")
+        print("validator:",validator)
+        print("fieldname:", fieldname)
+        print("value", value)
+        print("format_option", format_option)
+        print("*********************")
 
         if format_option == "uuid_hex":
             try:
                 uuid.UUID(hex=value)
             except Exception as e:
-                raise validictory.FieldValidationError("Could not parse UUID from hex string %(uuidstr)s, reason: %(reason)s" 
+                raise validictory.FieldValidationError("Could not parse UUID \
+                from hex string %(uuidstr)s, reason: %(reason)s" 
                     % {"uuidstr": value, "reason": e}, fieldname, value)
 
         elif format_option == "uuid_int":
             try:
                 uuid.UUID(int=value)
             except Exception as e:
-                raise validictory.FieldValidationError("Could not parse UUID from int string %(uuidstr)s, reason: %(reason)s" 
+                raise validictory.FieldValidationError("Could not parse UUID \
+                from int string %(uuidstr)s, reason: %(reason)s" 
                     % {"uuidstr": value, "reason": e}, fieldname, value)
         else:
-            raise validictory.FieldValidationError("Invalid format option for 'validate_uuid': %(format)s" % format_option, 
+            raise validictory.FieldValidationError("Invalid format option for \
+            'validate_uuid': %(format)s" % format_option, 
                 fieldName, value)
 
     try:
         formatdict = {"uuid_hex": validate_uuid, "uuid_int": validate_uuid}
         validictory.validate(data, schema, format_validators=formatdict)
+        print("Successfully validated %(data)s!" % {"data": data})
     except Exception as e2:
-        print("couldn't validate =( reason: {}".format(e2))
+        print("couldn't validate =( reason: %(reason)s" % {"reason": e})
 
 
 
