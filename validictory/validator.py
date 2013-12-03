@@ -42,7 +42,7 @@ def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
         try:
             datetime.strptime(value, dateformat_string)
-        except ValueError:
+        except:
             raise FieldValidationError(
                 "Value %(value)r of field '%(fieldname)s' is not in "
                 "'%(format_option)s' format" % locals(), fieldname, value)

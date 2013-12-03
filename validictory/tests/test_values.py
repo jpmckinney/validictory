@@ -127,6 +127,11 @@ class TestFormat(TestCase):
         self.assertRaises(ValueError, validictory.validate, data,
                           self.schema_datetime)
 
+    def test_format_datetime_bad_type(self):
+        data = 3
+        self.assertRaises(ValueError, validictory.validate, data,
+                          self.schema_datetime)
+
     def test_format_date_fail(self):
         data = "whatever"
         self.assertRaises(ValueError, validictory.validate, data,
