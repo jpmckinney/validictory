@@ -360,7 +360,10 @@ class SchemaValidator(object):
         value = x.get(fieldname)
         if isinstance(additionalProperties, (dict, bool)):
             properties = schema.get("properties")
-            patterns = schema["patternProperties"].keys() if 'patternProperties' in schema else []
+            if 'patternProperties' in schema:
+                patterns = schema["patternProperties"].keys()
+            else:
+                patterns = []
             if properties is None:
                 properties = {}
             if value is None:
@@ -577,6 +580,21 @@ class SchemaValidator(object):
                     "field '%(fieldname)s'",
                     x.get(fieldname), fieldname, disallow=disallow)
 
+    def validate_default(self, x, fieldname, schema, default=None):
+        if self.apply_default_to_data and 'default' in schema:
+            try:
+                self.validate_type(
+                    x={'_ds': schema['default']},
+                    fieldname='_ds',
+                    schema=schema,
+                    fieldtype=schema['type'] if 'type' in schema else None
+                )
+            except FieldValidationError as exc:
+                raise SchemaError(exc)
+
+            if not fieldname in x:
+                x[fieldname] = schema['default']
+
     def validate(self, data, schema):
         '''
         Validates a piece of json data against the provided json-schema.
@@ -608,28 +626,19 @@ class SchemaValidator(object):
             if 'blank' not in schema:
                 newschema['blank'] = self.blank_by_default
 
+            ignored_keys = ['id', 'exclusiveMinimum', 'exclusiveMaximum']
             for schemaprop in newschema:
 
-                validatorname = "validate_" + schemaprop
+                if schemaprop.startswith('$') or schemaprop in ignored_keys:
+                    continue
 
+                validatorname = "validate_" + schemaprop
                 validator = getattr(self, validatorname, None)
                 if validator:
-                    validator(data, fieldname, schema,
-                              newschema.get(schemaprop))
+                    validator(data, fieldname, schema, newschema[schemaprop])
 
-            if self.apply_default_to_data and 'default' in schema:
-                try:
-                    self.validate_type(
-                        x={'_ds': schema['default']},
-                        fieldname='_ds',
-                        schema=schema,
-                        fieldtype=schema['type'] if 'type' in schema else None
-                    )
-                except FieldValidationError as exc:
-                    raise SchemaError(exc)
-
-                if not fieldname in data:
-                    data[fieldname] = schema['default']
+                else:
+                    raise SchemaError('Unknown attribute "%s"' % schemaprop)
 
         return data
 
