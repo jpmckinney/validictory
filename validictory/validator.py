@@ -532,7 +532,7 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if value is not None:
-            if hasattr(options, '__call__'):
+            if callable(options):
                 options = options(x)
             if not isinstance(options, Container):
                 raise SchemaError("Enumeration %r for field '%s' must be a "
