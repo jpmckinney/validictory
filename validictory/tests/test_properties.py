@@ -126,7 +126,7 @@ class TestAdditionalProperties(TestCase):
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
-        #failures
+        # failures
         for x in [1.2, "bad", {"test": "blah"}, [32, 49], None, True]:
             self.assertRaises(ValueError, validictory.validate, {"prop": x},
                               schema)
@@ -151,7 +151,7 @@ class TestAdditionalProperties(TestCase):
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
-        #failures
+        # failures
         for x in [{"test": "blah"}, [32, 49], None, True]:
             data = {
                 "prop1": 123,
@@ -212,7 +212,7 @@ class TestAdditionalProperties(TestCase):
             except ValueError as e:
                 self.fail("Unexpected failure: %s" % e)
 
-        #failures
+        # failures
         for data in [['foo', 'bar'], None, True, {'roses': 'red'}]:
             self.assertRaises(ValueError, validictory.validate, data, schema)
 

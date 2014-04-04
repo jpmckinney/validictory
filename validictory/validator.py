@@ -253,8 +253,7 @@ class SchemaValidator(object):
             value = x.get(fieldname)
             if isinstance(value, (list, tuple)):
                 if isinstance(items, (list, tuple)):
-                    if (not 'additionalItems' in schema and
-                            len(items) != len(value)):
+                    if 'additionalItems' not in schema and len(items) != len(value):
                         self._error("Length of list %(value)r for field "
                                     "'%(fieldname)s' is not equal to length "
                                     "of schema list", value, fieldname)
@@ -283,9 +282,8 @@ class SchemaValidator(object):
                             old_error = str(e).replace("field '_data'",
                                                        'list item')
                             raise type(e)("Failed to validate field '%s' list "
-                                          "schema: %s" %
-                                          (fieldname, old_error), fieldname,
-                                          e.value)
+                                          "schema: %s" % (fieldname, old_error),
+                                          fieldname, e.value)
                 else:
                     raise SchemaError("Properties definition of field '%s' is "
                                       "not a list or an object" % fieldname)
@@ -630,7 +628,7 @@ class SchemaValidator(object):
                 except FieldValidationError as exc:
                     raise SchemaError(exc)
 
-                if not fieldname in data:
+                if fieldname not in data:
                     data[fieldname] = schema['default']
 
         return data
