@@ -103,9 +103,10 @@ class SchemaValidator(object):
 
     def __init__(self, format_validators=None, required_by_default=True,
                  blank_by_default=False, disallow_unknown_properties=False,
-                 apply_default_to_data=False):
+                 apply_default_to_data=False, fail_fast=True):
 
         self._format_validators = {}
+        self._errors = []
 
         # add the default format validators
         for key, value in DEFAULT_FORMAT_VALIDATORS.items():
@@ -119,6 +120,7 @@ class SchemaValidator(object):
         self.blank_by_default = blank_by_default
         self.disallow_unknown_properties = disallow_unknown_properties
         self.apply_default_to_data = apply_default_to_data
+        self.fail_fast = fail_fast
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -151,7 +153,11 @@ class SchemaValidator(object):
         params['value'] = value
         params['fieldname'] = fieldname
         message = desc % params
-        raise FieldValidationError(message, fieldname, value)
+        err = FieldValidationError(message, fieldname, value)
+        if self.fail_fast:
+            raise err
+        else:
+            self._errors.append(err)
 
     def _validate_unknown_properties(self, schema, data, fieldname):
         schema_properties = set(schema)
@@ -249,7 +255,8 @@ class SchemaValidator(object):
                     else:
                         for itemIndex in range(len(items)):
                             try:
-                                self.validate(value[itemIndex], items[itemIndex])
+                                self.__validate("_data", {"_data": value[itemIndex]},
+                                                items[itemIndex])
                             except FieldValidationError as e:
                                 raise type(e)("Failed to validate field '%s' list schema: %s" %
                                               (fieldname, e), fieldname, e.value)
@@ -259,14 +266,7 @@ class SchemaValidator(object):
                             self._validate_unknown_properties(items['properties'], eachItem,
                                                               fieldname)
 
-                        try:
-                            self._validate(eachItem, items)
-                        except FieldValidationError as e:
-                            # a bit of a hack: replace reference to _data
-                            # with 'list item' so error messages make sense
-                            old_error = str(e).replace("field '_data'", 'list item')
-                            raise type(e)("Failed to validate field '%s' list schema: %s" %
-                                          (fieldname, old_error), fieldname, e.value)
+                        self.__validate("[list item]", {"[list item]": eachItem}, items)
                 else:
                     raise SchemaError("Properties definition of field '%s' is "
                                       "not a list or an object" % fieldname)
@@ -298,7 +298,7 @@ class SchemaValidator(object):
         for pattern, schema in patternproperties.items():
             for key, value in value_obj.items():
                 if re.match(pattern, key):
-                    self.validate(value, schema)
+                    self.__validate("_data", {"_data": value}, schema)
 
     def validate_additionalItems(self, x, fieldname, schema, additionalItems=False):
         value = x.get(fieldname)
@@ -316,7 +316,7 @@ class SchemaValidator(object):
 
         remaining = value[len(schema['items']):]
         if len(remaining) > 0:
-            self._validate(remaining, {'items': additionalItems})
+            self.__validate("_data", {"_data": remaining}, {"items": additionalItems})
 
     def validate_additionalProperties(self, x, fieldname, schema, additionalProperties=None):
         '''
@@ -551,9 +551,6 @@ class SchemaValidator(object):
         '''
         Validates a piece of json data against the provided json-schema.
         '''
-        self._validate(data, schema)
-
-    def _validate(self, data, schema):
         self.__validate("_data", {"_data": data}, schema)
 
     def __validate(self, fieldname, data, schema):
