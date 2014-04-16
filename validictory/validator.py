@@ -578,11 +578,6 @@ class SchemaValidator(object):
 
             newschema = copy.copy(schema)
 
-            if 'optional' in schema:
-                raise SchemaError('The "optional" attribute has been replaced by "required"')
-            if 'requires' in schema:
-                raise SchemaError('The "requires" attribute has been replaced by "dependencies"')
-
             if 'required' not in schema:
                 newschema['required'] = self.required_by_default
             if 'blank' not in schema:
