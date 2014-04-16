@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from validictory.validator import (SchemaValidator, FieldValidationError,
+from validictory.validator import (SchemaValidator, FieldValidationError, MultipleValidationError,
                                    ValidationError, SchemaError)
 
-__all__ = ['validate', 'SchemaValidator', 'FieldValidationError',
+__all__ = ['validate', 'SchemaValidator', 'FieldValidationError', 'MultipleValidationError',
            'ValidationError', 'SchemaError']
 __version__ = '0.9.3'
 
@@ -11,7 +11,7 @@ __version__ = '0.9.3'
 def validate(data, schema, validator_cls=SchemaValidator,
              format_validators=None, required_by_default=True,
              blank_by_default=False, disallow_unknown_properties=False,
-             apply_default_to_data=False):
+             apply_default_to_data=False, fail_fast=True):
     '''
     Validates a parsed json document against the provided schema. If an
     error is found a :class:`ValidationError` is raised.
@@ -32,7 +32,7 @@ def validate(data, schema, validator_cls=SchemaValidator,
         data in case the schema definition includes a "default" property
     '''
     v = validator_cls(format_validators, required_by_default, blank_by_default,
-                      disallow_unknown_properties, apply_default_to_data)
+                      disallow_unknown_properties, apply_default_to_data, fail_fast)
     return v.validate(data, schema)
 
 if __name__ == '__main__':

@@ -38,6 +38,14 @@ class FieldValidationError(ValidationError):
         self.value = value
 
 
+class MultipleValidationError(ValidationError):
+    def __init__(self, errors):
+        msg = "{} validation errors:\n{}".format(len(errors),
+                                                 '\n'.join(str(e) for e in errors))
+        super(MultipleValidationError, self).__init__(msg)
+        self.errors = errors
+
+
 def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
         try:
@@ -552,6 +560,8 @@ class SchemaValidator(object):
         Validates a piece of json data against the provided json-schema.
         '''
         self.__validate("_data", {"_data": data}, schema)
+        if self._errors:
+            raise MultipleValidationError(self._errors)
 
     def __validate(self, fieldname, data, schema):
 
