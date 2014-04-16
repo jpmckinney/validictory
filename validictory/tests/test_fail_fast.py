@@ -51,3 +51,27 @@ class TestFailFast(TestCase):
             validictory.validate(data, schema, fail_fast=False)
         except validictory.MultipleValidationError as mve:
             assert len(mve.errors) == 3
+
+    def test_multi_error_with_format(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "date": {"type": "string", "format": "date"},
+                "time": {"type": "string", "format": "time"}
+            },
+        }
+        data = {"date": "2011-02-99", "time": "30:00:00"}
+
+        # ensure it raises an error
+        self.assertRaises(validictory.ValidationError, validictory.validate,
+                          data, schema, fail_fast=True)
+
+        # ensure it raises a MultiError
+        self.assertRaises(validictory.MultipleValidationError, validictory.validate,
+                          data, schema, fail_fast=False)
+
+        # ensure that the MultiError has 2 errors
+        try:
+            validictory.validate(data, schema, fail_fast=False)
+        except validictory.MultipleValidationError as mve:
+            assert len(mve.errors) == 2

@@ -457,7 +457,13 @@ class SchemaValidator(object):
         format_validator = self._format_validators.get(format_option, None)
 
         if format_validator and value:
-            format_validator(self, fieldname, value, format_option)
+            try:
+                format_validator(self, fieldname, value, format_option)
+            except FieldValidationError as fve:
+                if self.fail_fast:
+                    raise
+                else:
+                    self._errors.append(fve)
 
         # TODO: warn about unsupported format ?
 
