@@ -608,5 +608,3 @@ class SchemaValidator(object):
                     data[fieldname] = schema['default']
 
         return data
-
-__all__ = ['SchemaValidator', 'FieldValidationError']
