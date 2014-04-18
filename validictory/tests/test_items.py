@@ -1,4 +1,5 @@
 from unittest import TestCase
+import pytest
 
 import validictory
 
@@ -101,7 +102,7 @@ class TestAdditionalItems(TestCase):
 
     def test_additionalItems_false_additional_items_fail(self):
         data = [12482, "Yes, more strings", False, "I don't belong here"]
-        self.assertRaises(ValueError, validictory.validate, data, self.schema1)
+        pytest.raises(ValueError, validictory.validate, data, self.schema1)
 
     def test_additionalItems_pass(self):
         data = [12482, "Yes, more strings", False, ["I'm"],
@@ -130,6 +131,5 @@ class TestAdditionalItems(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
     def test_additionalItems_multischema_fail(self):
-        data = [12482, "Yes, more strings", False, 13.37, True,
-                "I'm not allowed"]
-        self.assertRaises(ValueError, validictory.validate, data, self.schema4)
+        data = [12482, "Yes, more strings", False, 13.37, True, "I'm not allowed"]
+        pytest.raises(ValueError, validictory.validate, data, self.schema4)
