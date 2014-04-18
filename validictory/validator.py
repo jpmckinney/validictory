@@ -473,11 +473,10 @@ class SchemaValidator(object):
         regular expression.
         '''
         value = x.get(fieldname)
-        if isinstance(value, _str_type):
-            if not re.match(pattern, value):
-                self._error("Value %(value)r for field '%(fieldname)s' does "
-                            "not match regular expression '%(pattern)s'",
-                            value, fieldname, pattern=pattern)
+        if isinstance(value, _str_type) and not re.match(pattern, value):
+            self._error("Value %(value)r for field '%(fieldname)s' does "
+                        "not match regular expression '%(pattern)s'",
+                        value, fieldname, pattern=pattern)
 
     def validate_uniqueItems(self, x, fieldname, schema, uniqueItems=False):
         '''
