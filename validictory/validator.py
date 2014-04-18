@@ -27,6 +27,7 @@ class FieldValidationError(ValidationError):
     validation error that refers to a specific field Includes `fieldname` and `value` attributes.
     """
     def __init__(self, message, fieldname, value):
+        message = "Value {!r} for field '{}' {}".format(value, fieldname, message)
         super(FieldValidationError, self).__init__(message)
         self.fieldname = fieldname
         self.value = value
@@ -34,8 +35,7 @@ class FieldValidationError(ValidationError):
 
 class MultipleValidationError(ValidationError):
     def __init__(self, errors):
-        msg = "{} validation errors:\n{}".format(len(errors),
-                                                 '\n'.join(str(e) for e in errors))
+        msg = "{} validation errors:\n{}".format(len(errors), '\n'.join(str(e) for e in errors))
         super(MultipleValidationError, self).__init__(msg)
         self.errors = errors
 
@@ -45,9 +45,8 @@ def _generate_datetime_validator(format_option, dateformat_string):
         try:
             datetime.strptime(value, dateformat_string)
         except:
-            msg = "Value {value!r} of field '{fieldname}' is not in '{format_option}' format"
-            raise FieldValidationError(msg.format(value=value, fieldname=fieldname,
-                                                  format_option=format_option), fieldname, value)
+            msg = "is not in '{format_option}' format"
+            raise FieldValidationError(msg.format(format_option=format_option), fieldname, value)
 
     return validate_format_datetime
 
@@ -58,8 +57,8 @@ validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
     if not isinstance(value, _int_types + (float, Decimal)) or value <= 0:
-        msg = "Value {value!r} of field '{fieldname}' is not a positive number"
-        raise FieldValidationError(msg.format(value=value, fieldname=fieldname), fieldname, value)
+        msg = "is not a positive number"
+        raise FieldValidationError(msg, fieldname, value)
 
 
 def validate_format_ip_address(validator, fieldname, value, format_option):
@@ -70,8 +69,7 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
     except:
         ip = False
     if not ip:
-        msg = "Value {value!r} of field '{fieldname}' is not a ip-address".format(
-            value=value, fieldname=fieldname)
+        msg = "is not a ip-address"
         raise FieldValidationError(msg, fieldname, value)
 
 
@@ -191,8 +189,7 @@ class SchemaValidator(object):
                     except ValidationError as err:
                         errorlist.append(err)
                 if not datavalid:
-                    self._error("Value {value!r} for field '{fieldname}' doesn't match any "
-                                "of {numsubtypes} subtypes in {fieldtype}; "
+                    self._error("doesn't match any of {numsubtypes} subtypes in {fieldtype}; "
                                 "errorlist = {errorlist!r}",
                                 value, fieldname, numsubtypes=len(fieldtype), fieldtype=fieldtype,
                                 errorlist=errorlist)
@@ -208,8 +205,8 @@ class SchemaValidator(object):
                     raise SchemaError("Field type '{}' is not supported.".format(fieldtype))
 
                 if not type_checker(value):
-                    self._error("Value {value!r} for field '{fieldname}' is not of type "
-                                "{fieldtype}", value, fieldname, fieldtype=fieldtype)
+                    self._error("is not of type {fieldtype}", value, fieldname,
+                                fieldtype=fieldtype)
 
     def validate_properties(self, x, fieldname, schema, path, properties=None):
         ''' Validates properties of a JSON object by processing the object's schema recursively '''
@@ -236,8 +233,7 @@ class SchemaValidator(object):
             if isinstance(value, (list, tuple)):
                 if isinstance(items, (list, tuple)):
                     if 'additionalItems' not in schema and len(items) != len(value):
-                        self._error("Length of list {value!r} for field '{fieldname}' is not "
-                                    "equal to length of schema list", value, fieldname)
+                        self._error("is not of same length as schema list", value, fieldname)
                     else:
                         for itemIndex in range(len(items)):
                             try:
@@ -262,13 +258,13 @@ class SchemaValidator(object):
         # Make sure the field is present
         if fieldname not in x and required:
             self._error("Required field '{fieldname}' is missing", None, fieldname)
+            # TODO: ^^^^^^^^^^^^^^^^
 
     def validate_blank(self, x, fieldname, schema, path, blank=False):
         ''' Validates that the given field is not blank if blank=False '''
         value = x.get(fieldname)
         if isinstance(value, _str_type) and not blank and not value:
-            self._error("Value {value!r} for field '{fieldname}' cannot be blank'", value,
-                        fieldname)
+            self._error("cannot be blank'", value, fieldname)
 
     def validate_patternProperties(self, x, fieldname, schema, path, patternproperties=None):
 
@@ -292,8 +288,7 @@ class SchemaValidator(object):
             if additionalItems or 'items' not in schema:
                 return
             elif len(value) != len(schema['items']):
-                self._error("Length of list {value!r} for field '{fieldname}' is not equal to "
-                            "length of schema list", value, fieldname)
+                self._error("is not of same length as schema list", value, fieldname)
 
         remaining = value[len(schema['items']):]
         if len(remaining) > 0:
@@ -332,6 +327,7 @@ class SchemaValidator(object):
                         self._error("additional property '{prop}' not defined by 'properties' or "
                                     "'patternProperties' are not allowed in field '{fieldname}'",
                                     None, fieldname, prop=eachProperty)
+                        # TODO ^^^^^^^^^^^^^^
                     self.__validate(eachProperty, value, additionalProperties, path)
         else:
             raise SchemaError("additionalProperties schema definition for "
@@ -348,6 +344,7 @@ class SchemaValidator(object):
                     if dependency not in x:
                         self._error("Field '{dependency}' is required by field '{fieldname}'",
                                     None, fieldname, dependency=dependency)
+                        # TODO^^^^^^^^^^^^^^^^^^^^
             elif isinstance(dependencies, dict):
                 # NOTE: the version 3 spec is really unclear on what this means
                 # based on the meta-schema I'm assuming that it should check
@@ -370,8 +367,8 @@ class SchemaValidator(object):
                 if (type(value) in (int, float) and
                     (not exclusive and value < minimum) or
                         (exclusive and value <= minimum)):
-                    self._error("Value {value!r} for field '{fieldname}' is less than minimum "
-                                "value: {minimum}", value, fieldname, minimum=minimum)
+                    self._error("is less than minimum value: {minimum}", value, fieldname,
+                                minimum=minimum)
 
     def validate_maximum(self, x, fieldname, schema, path, maximum=None):
         '''
@@ -386,8 +383,8 @@ class SchemaValidator(object):
                 if (type(value) in (int, float) and
                     (not exclusive and value > maximum) or
                         (exclusive and value >= maximum)):
-                    self._error("Value {value!r} for field '{fieldname}' is greater than maximum "
-                                "value: {maximum}", value, fieldname, maximum=maximum)
+                    self._error("is greater than maximum value: {maximum}", value, fieldname,
+                                maximum=maximum)
 
     def validate_maxLength(self, x, fieldname, schema, path, length=None):
         '''
@@ -396,8 +393,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, (_str_type, list, tuple)) and len(value) > length:
-            self._error("Length of value {value!r} for field '{fieldname}' must be less than or "
-                        "equal to {length}", value, fieldname, length=length)
+            self._error("must have length less than or equal to {length}", value, fieldname,
+                        length=length)
 
     def validate_minLength(self, x, fieldname, schema, path, length=None):
         '''
@@ -405,8 +402,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, (_str_type, list, tuple)) and len(value) < length:
-            self._error("Length of value {value!r} for field '{fieldname}' must be greater than "
-                        "or equal to {length}", value, fieldname, length=length)
+            self._error("must have length greater than or equal to {length}", value, fieldname,
+                        length=length)
 
     validate_minItems = validate_minLength
     validate_maxItems = validate_maxLength
@@ -436,8 +433,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, _str_type) and not re.match(pattern, value):
-            self._error("Value {value!r} for field '{fieldname}' does not match "
-                        "regular expression '{pattern}'", value, fieldname, pattern=pattern)
+            self._error("does not match regular expression '{pattern}'", value, fieldname,
+                        pattern=pattern)
 
     def validate_uniqueItems(self, x, fieldname, schema, path, uniqueItems=False):
         '''
@@ -465,8 +462,7 @@ class SchemaValidator(object):
                 container, add = hashables, hashables.add
 
             if value in container:
-                self._error("Value {value!r} for field '{fieldname}' is not unique",
-                            value, fieldname)
+                self._error("is not unique", value, fieldname)
             else:
                 add(value)
 
@@ -482,8 +478,8 @@ class SchemaValidator(object):
                 raise SchemaError("Enumeration {!r} for field '{}' must be a container".format(
                                   options, fieldname))
             if value not in options:
-                self._error("Value {value!r} for field '{fieldname}' is not in the enumeration: "
-                            "{options!r}", value, fieldname, options=options)
+                self._error("is not in the enumeration: {options!r}", value, fieldname,
+                            options=options)
 
     def validate_title(self, x, fieldname, schema, path, title=None):
         if not isinstance(title, (_str_type, type(None))):
@@ -503,8 +499,8 @@ class SchemaValidator(object):
             raise SchemaError("'{!r}' <- divisibleBy can not be 0".format(schema))
 
         if value % divisibleBy != 0:
-            self._error("Value {value!r} field '{fieldname}' is not divisible by '{divisibleBy}'.",
-                        x.get(fieldname), fieldname, divisibleBy=divisibleBy)
+            self._error("is not divisible by '{divisibleBy}'.", x.get(fieldname), fieldname,
+                        divisibleBy=divisibleBy)
 
     def validate_disallow(self, x, fieldname, schema, path, disallow=None):
         '''
@@ -514,8 +510,8 @@ class SchemaValidator(object):
             self.validate_type(x, fieldname, schema, path, disallow)
         except ValidationError:
             return
-        self._error("Value {value!r} of type {disallow} is disallowed for field '{fieldname}'",
-                    x.get(fieldname), fieldname, disallow=disallow)
+        self._error("is disallowed for field '{fieldname}'", x.get(fieldname), fieldname,
+                    disallow=disallow)
 
     def validate(self, data, schema):
         '''
