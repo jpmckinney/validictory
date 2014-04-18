@@ -51,8 +51,9 @@ def _generate_datetime_validator(format_option, dateformat_string):
         try:
             datetime.strptime(value, dateformat_string)
         except:
-            raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is not in "
-                                       "'%(format_option)s' format" % locals(), fieldname, value)
+            msg = "Value {value!r} of field '{fieldname}' is not in '{format_option}' format"
+            raise FieldValidationError(msg.format(value=value, fieldname=fieldname,
+                                                  format_option=format_option), fieldname, value)
 
     return validate_format_datetime
 
@@ -62,25 +63,22 @@ validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
-    if not isinstance(value, _int_types + (float, Decimal)):
-        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is not a number" %
-                                   locals(), fieldname, value)
-
-    if value <= 0:
-        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' "
-                                   " is not a positive number" % locals(), fieldname, value)
+    if not isinstance(value, _int_types + (float, Decimal)) or value <= 0:
+        msg = "Value {value!r} of field '{fieldname}' is not a positive number"
+        raise FieldValidationError(msg.format(value=value, fieldname=fieldname), fieldname, value)
 
 
 def validate_format_ip_address(validator, fieldname, value, format_option):
     try:
-        socket.inet_aton(value)
         # Make sure we expect "X.X.X.X" as socket.inet_aton() converts "1" to "0.0.0.1"
+        socket.inet_aton(value)
         ip = len(value.split('.')) == 4
     except:
         ip = False
     if not ip:
-        raise FieldValidationError("Value %(value)r of field '%(fieldname)s' is not a ip-address" %
-                                   locals(), fieldname, value)
+        msg = "Value {value!r} of field '{fieldname}' is not a ip-address".format(
+            value=value, fieldname=fieldname)
+        raise FieldValidationError(msg, fieldname, value)
 
 
 DEFAULT_FORMAT_VALIDATORS = {
@@ -171,12 +169,9 @@ class SchemaValidator(object):
         data_properties = set(data)
         delta = data_properties - schema_properties
         if delta:
-            unknowns = ''
-            for x in delta:
-                unknowns += '"%s", ' % x
-            unknowns = unknowns.rstrip(", ")
-            raise SchemaError('Unknown properties for field ' '"%(fieldname)s": %(unknowns)s' %
-                              locals())
+            unknowns = ', '.join(['"{}"'.format(x) for x in delta])
+            raise SchemaError('Unknown properties for field "{fieldname}": {unknowns}'.format(
+                fieldname=fieldname, unknowns=unknowns))
 
     def validate_type(self, x, fieldname, schema, fieldtype=None):
         '''
@@ -217,9 +212,9 @@ class SchemaValidator(object):
                     raise e
             else:
                 try:
-                    type_checker = getattr(self, 'validate_type_%s' % fieldtype)
+                    type_checker = getattr(self, 'validate_type_' + fieldtype)
                 except AttributeError:
-                    raise SchemaError("Field type '%s' is not supported." % fieldtype)
+                    raise SchemaError("Field type '{}' is not supported.".format(fieldtype))
 
                 if not type_checker(value):
                     self._error("Value {value!r} for field '{fieldname}' is not of type "
@@ -241,8 +236,8 @@ class SchemaValidator(object):
                     for eachProp in properties:
                         self.__validate(eachProp, value, properties.get(eachProp))
                 else:
-                    raise SchemaError("Properties definition of field '%s' is not an object" %
-                                      fieldname)
+                    raise SchemaError("Properties definition of field '{}' is not an object"
+                                      .format(fieldname))
 
     def validate_items(self, x, fieldname, schema, items=None):
         '''
@@ -272,8 +267,8 @@ class SchemaValidator(object):
 
                         self.__validate("[list item]", {"[list item]": eachItem}, items)
                 else:
-                    raise SchemaError("Properties definition of field '%s' is "
-                                      "not a list or an object" % fieldname)
+                    raise SchemaError("Properties definition of field '{}' is "
+                                      "not a list or an object".format(fieldname))
 
     def validate_required(self, x, fieldname, schema, required):
         '''
@@ -357,7 +352,7 @@ class SchemaValidator(object):
                     self.__validate(eachProperty, value, additionalProperties)
         else:
             raise SchemaError("additionalProperties schema definition for "
-                              "field '%s' is not an object" % fieldname)
+                              "field '{}' is not an object".format(fieldname))
 
     def validate_dependencies(self, x, fieldname, schema, dependencies=None):
         if x.get(fieldname) is not None:
@@ -507,19 +502,19 @@ class SchemaValidator(object):
             if callable(options):
                 options = options(x)
             if not isinstance(options, Container):
-                raise SchemaError("Enumeration %r for field '%s' must be a container",
-                                  (options, fieldname))
+                raise SchemaError("Enumeration {!r} for field '{}' must be a container".format(
+                                  options, fieldname))
             if value not in options:
                 self._error("Value {value!r} for field '{fieldname}' is not in the enumeration: "
                             "{options!r}", value, fieldname, options=options)
 
     def validate_title(self, x, fieldname, schema, title=None):
         if not isinstance(title, (_str_type, type(None))):
-            raise SchemaError("The title for field '%s' must be a string" % fieldname)
+            raise SchemaError("The title for field '{}' must be a string".format(fieldname))
 
     def validate_description(self, x, fieldname, schema, description=None):
         if not isinstance(description, (_str_type, type(None))):
-            raise SchemaError("The description for field '%s' must be a string" % fieldname)
+            raise SchemaError("The description for field '{}' must be a string".format(fieldname))
 
     def validate_divisibleBy(self, x, fieldname, schema, divisibleBy=None):
         value = x.get(fieldname)
@@ -528,7 +523,7 @@ class SchemaValidator(object):
             return
 
         if divisibleBy == 0:
-            raise SchemaError("'%r' <- divisibleBy can not be 0" % schema)
+            raise SchemaError("'{!r}' <- divisibleBy can not be 0".format(schema))
 
         if value % divisibleBy != 0:
             self._error("Value {value!r} field '{fieldname}' is not divisible by '{divisibleBy}'.",
