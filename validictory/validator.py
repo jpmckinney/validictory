@@ -24,13 +24,29 @@ class ValidationError(ValueError):
 
 class FieldValidationError(ValidationError):
     """
-    validation error that refers to a specific field Includes `fieldname` and `value` attributes.
+    Validation error that refers to a specific field and has `fieldname` and `value` attributes.
     """
     def __init__(self, message, fieldname, value):
         message = "Value {!r} for field '{}' {}".format(value, fieldname, message)
         super(FieldValidationError, self).__init__(message)
         self.fieldname = fieldname
         self.value = value
+
+
+class DependencyValidationError(ValidationError):
+    """
+    Validation error that refers to a missing dependency
+    """
+    def __init__(self, message):
+        super(DependencyValidationError, self).__init__(message)
+
+
+class RequiredFieldValidationError(ValidationError):
+    """
+    Validation error that refers to a missing field
+    """
+    def __init__(self, message):
+        super(RequiredFieldValidationError, self).__init__(message)
 
 
 class MultipleValidationError(ValidationError):
@@ -146,11 +162,18 @@ class SchemaValidator(object):
     def validate_type_any(self, val):
         return True
 
-    def _error(self, desc, value, fieldname, **params):
+    def _error(self, desc, value, fieldname, exctype=FieldValidationError, **params):
         params['value'] = value
         params['fieldname'] = fieldname
         message = desc.format(**params)
-        err = FieldValidationError(message, fieldname, value)
+
+        if exctype == FieldValidationError:
+            err = FieldValidationError(message, fieldname, value)
+        elif exctype == DependencyValidationError:
+            err = DependencyValidationError(message)
+        elif exctype == RequiredFieldValidationError:
+            err = RequiredFieldValidationError(message)
+
         if self.fail_fast:
             raise err
         else:
@@ -257,8 +280,8 @@ class SchemaValidator(object):
         ''' Validates that the given field is present if required is True '''
         # Make sure the field is present
         if fieldname not in x and required:
-            self._error("Required field '{fieldname}' is missing", None, fieldname)
-            # TODO: ^^^^^^^^^^^^^^^^
+            self._error("Required field '{fieldname}' is missing", None, fieldname,
+                        exctype=RequiredFieldValidationError)
 
     def validate_blank(self, x, fieldname, schema, path, blank=False):
         ''' Validates that the given field is not blank if blank=False '''
@@ -323,11 +346,10 @@ class SchemaValidator(object):
                         any(re.match(p, eachProperty) for p in patterns)):
                     # If additionalProperties is the boolean value False
                     # then we don't accept any additional properties.
-                    if isinstance(additionalProperties, bool) and not additionalProperties:
-                        self._error("additional property '{prop}' not defined by 'properties' or "
-                                    "'patternProperties' are not allowed in field '{fieldname}'",
-                                    None, fieldname, prop=eachProperty)
-                        # TODO ^^^^^^^^^^^^^^
+                    if additionalProperties is False:
+                        self._error("contains additional property '{prop}' not defined by "
+                                    "'properties' or 'patternProperties' and additionalProperties "
+                                    " is False", value, fieldname, prop=eachProperty)
                     self.__validate(eachProperty, value, additionalProperties, path)
         else:
             raise SchemaError("additionalProperties schema definition for "
@@ -343,8 +365,8 @@ class SchemaValidator(object):
                 for dependency in dependencies:
                     if dependency not in x:
                         self._error("Field '{dependency}' is required by field '{fieldname}'",
-                                    None, fieldname, dependency=dependency)
-                        # TODO^^^^^^^^^^^^^^^^^^^^
+                                    None, fieldname, dependency=dependency,
+                                    exctype=DependencyValidationError)
             elif isinstance(dependencies, dict):
                 # NOTE: the version 3 spec is really unclear on what this means
                 # based on the meta-schema I'm assuming that it should check
@@ -352,7 +374,7 @@ class SchemaValidator(object):
                 for k, v in dependencies.items():
                     if k in x and v not in x:
                         self._error("Field '{k}' is required by field '{v}'", None, fieldname,
-                                    k=k, v=v)
+                                    k=k, v=v, exctype=DependencyValidationError)
             else:
                 raise SchemaError("'dependencies' must be a string, list of strings, or dict")
 
