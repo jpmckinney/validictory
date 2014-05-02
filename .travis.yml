@@ -3,7 +3,10 @@ python:
     - "2.7"
     - "3.3"
     - "3.4"
-script: python setup.py test
+install: pip install pytest pytest-cov coveralls --use-mirrors
+script: py.test
+after_success:
+    - coveralls
 notifications:
     email:
         - jturk@sunlightfoundation.com
