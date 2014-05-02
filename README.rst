@@ -2,6 +2,9 @@
 validictory
 ===========
 
+.. image:: https://travis-ci.org/sunlightlabs/validictory.svg?branch=master :target: https://travis-ci.org/sunlightlabs/validictory
+.. image:: https://coveralls.io/repos/sunlightlabs/validictory/badge.png :target: https://coveralls.io/r/sunlightlabs/validictory
+
 A general purpose Python data validator.
 
 Works with Python 2.6+ and Python 3.2+
