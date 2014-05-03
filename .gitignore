@@ -3,3 +3,5 @@
 dist
 build
 .tox
+.coverage
+htmlcov
