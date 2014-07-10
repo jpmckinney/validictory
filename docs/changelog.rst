@@ -1,9 +1,16 @@
 validictory changelog
 =====================
 
-0.9.4
------
+1.0.0a1
+-------
+**2014-07-10**
     * fix TypeError from format validators
+    * some documentation fixes
+    * enum options are callable (from James McKinney)
+    * switch to py.test
+    * internal changes to how _validate and _error work
+    * initial work on fail_fast=False
+    * initial work on descriptive field names
 
 0.9.3
 -----
