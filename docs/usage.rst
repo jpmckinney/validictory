@@ -436,7 +436,7 @@ For example::
 
 ::
 
-    data = json.loads(''' {"today": "monday", "tommrow": "something"}''')
+    data = json.loads(''' {"today": "monday", "tomorrow": "something"}''')
 
     dayList = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
     schema = {
@@ -444,7 +444,7 @@ For example::
             "today": {
                 "enum": dayList # passes
             },
-            "tommrow": {
+            "tomorrow": {
                 "enum": dayList # does not pass, 'something' is not in the enum. 
             }
         }
