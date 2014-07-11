@@ -2,8 +2,15 @@
 validictory
 ===========
 
-.. image:: https://travis-ci.org/sunlightlabs/validictory.svg?branch=master :target: https://travis-ci.org/sunlightlabs/validictory
-.. image:: https://coveralls.io/repos/sunlightlabs/validictory/badge.png :target: https://coveralls.io/r/sunlightlabs/validictory
+.. image:: https://travis-ci.org/sunlightlabs/validictory.svg?branch=master
+    :target: https://travis-ci.org/sunlightlabs/validictory
+
+.. image:: https://pypip.in/version/validictory/badge.svg
+    :target: https://pypi.python.org/pypi/validictory
+
+.. image:: https://pypip.in/format/validictory/badge.svg
+    :target: https://pypi.python.org/pypi/validictory
+
 
 A general purpose Python data validator.
 
