@@ -81,4 +81,4 @@ def test_deep_error():
         assert 'baz' in estr
         assert 'foo' in estr
         assert 'bar' in estr
-        assert '2' in estr
+        assert '1' in estr

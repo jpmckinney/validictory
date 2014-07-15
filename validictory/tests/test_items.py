@@ -58,8 +58,8 @@ class TestItems(TestCase):
         try:
             validictory.validate(data, self.schema1)
         except ValueError as e:
-            # warning should mention list item, not _data
-            assert 'list item' in str(e)
+            # warning should mention list position
+            assert '[0]' in str(e)
 
 
 class TestAdditionalItems(TestCase):
