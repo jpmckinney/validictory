@@ -61,3 +61,24 @@ class TestFieldValidationErrors(TestCase):
             self.assertEqual(e.value, "faz")
         else:
             self.fail("No Exception")
+
+
+def test_deep_error():
+    schema = {'type': 'object', 'properties':
+              {'foo': {'type': 'object', 'properties':
+                       {'bar': {'type': 'array', 'items': {'type': 'object', 'properties':
+                                {'baz': {'type': 'string', 'enum': ['a', 'b']}}
+                               }}
+                       }
+                      }
+              }
+             }
+    data = {'foo': {'bar': [{'baz': 'a'}, {'baz': 'x'}]}}
+    try:
+        validictory.validate(data, schema)
+    except validictory.FieldValidationError as e:
+        estr = str(e)
+        assert 'baz' in estr
+        assert 'foo' in estr
+        assert 'bar' in estr
+        assert '2' in estr
