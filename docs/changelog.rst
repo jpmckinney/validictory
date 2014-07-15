@@ -1,6 +1,11 @@
 validictory changelog
 =====================
 
+1.0.0a2
+-------
+**2014-07-15**
+    * ensure path to field is used in error
+
 1.0.0a1
 -------
 **2014-07-10**
