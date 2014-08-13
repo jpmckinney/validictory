@@ -5,6 +5,9 @@ validictory
 .. image:: https://travis-ci.org/sunlightlabs/validictory.svg?branch=master
     :target: https://travis-ci.org/sunlightlabs/validictory
 
+.. image:: https://coveralls.io/repos/sunlightlabs/validictory/badge.png?branch=master
+    :target: https://coveralls.io/r/sunlightlabs/validictory
+
 .. image:: https://pypip.in/version/validictory/badge.svg
     :target: https://pypi.python.org/pypi/validictory
 
