@@ -435,11 +435,11 @@ class SchemaValidator(object):
         '''
         Validates the format of primitive data types
         '''
-        value = x.get(fieldname)
+        value = x.get(fieldname, None)
 
         format_validator = self._format_validators.get(format_option, None)
 
-        if format_validator and value:
+        if format_validator and value is not None:
             try:
                 format_validator(self, fieldname, value, format_option)
             except FieldValidationError as fve:

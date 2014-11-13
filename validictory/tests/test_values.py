@@ -64,6 +64,16 @@ def validate_format_contains_spaces(validator, fieldname, value,
         "but it should" % locals(), fieldname, value)
 
 
+def validate_format_dict_not_empty(validator, fieldname, value,
+                               format_option):
+    if len(value.keys()) > 0:
+        return
+
+    raise validictory.FieldValidationError(
+        "Value %(value)r of field '%(fieldname)s' should not be an empty"
+        "dict" % locals(), fieldname, value)
+
+
 class TestFormat(TestCase):
 
     schema_datetime = {"format": "date-time"}
@@ -72,6 +82,7 @@ class TestFormat(TestCase):
     schema_utcmillisec = {"format": "utc-millisec"}
     schema_ip = {"format": "ip-address"}
     schema_spaces = {"format": "spaces"}
+    schema_non_empty_dict = {"type": "object", "format": "non-empty-dict"}
 
     def test_format_datetime_pass(self):
         data = "2011-01-13T10:56:53Z"
@@ -223,6 +234,15 @@ class TestFormat(TestCase):
         # validator registered, but data does not conform
         self.assertRaises(ValueError, validator.validate, data,
                           self.schema_spaces)
+
+    def test_format_non_empty_fail(self):
+        data = {}
+
+        validator = validictory.SchemaValidator(
+            {'non-empty-dict': validate_format_dict_not_empty})
+
+        self.assertRaises(ValueError, validator.validate, data,
+                          self.schema_non_empty_dict)
 
 
 class TestUniqueItems(TestCase):
