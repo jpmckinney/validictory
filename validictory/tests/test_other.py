@@ -64,15 +64,12 @@ class TestFieldValidationErrors(TestCase):
 
 
 def test_deep_error():
-    schema = {'type': 'object', 'properties':
-              {'foo': {'type': 'object', 'properties':
-                       {'bar': {'type': 'array', 'items': {'type': 'object', 'properties':
-                                {'baz': {'type': 'string', 'enum': ['a', 'b']}}
-                               }}
-                       }
-                      }
-              }
-             }
+    schema = {'type': 'object', 'properties': {'foo': {'type': 'object', 'properties':
+                                                       {'bar': {'type': 'array', 'items':
+                                                                {'type': 'object', 'properties':
+                                                                 {'baz':
+                                                                  {'type': 'string',
+                                                                   'enum': ['a', 'b']}}}}}}}}
     data = {'foo': {'bar': [{'baz': 'a'}, {'baz': 'x'}]}}
     try:
         validictory.validate(data, schema)
