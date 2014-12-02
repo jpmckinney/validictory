@@ -455,7 +455,7 @@ class SchemaValidator(object):
         Validates that the given field, if a string, matches the given regular expression.
         '''
         value = x.get(fieldname)
-        if isinstance(value, _str_type) and not re.match(pattern, value):
+        if isinstance(value, _str_type) and (isinstance(pattern, _str_type) and not re.match(pattern, value) or not isinstance(pattern, _str_type) and not pattern.match(value)):
             self._error("does not match regular expression '{pattern}'", value, fieldname,
                         pattern=pattern, path=path)
 
