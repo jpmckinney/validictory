@@ -5,7 +5,7 @@
 from unittest import TestCase
 import re
 import validictory
-
+import regex
 
 class TestEnum(TestCase):
     schema = {"enum": ["test", True, 123, ["???"]]}
@@ -31,12 +31,22 @@ class TestPattern(TestCase):
     # match simplified regular expression for an e-mail address
     schema = {"pattern":
               "^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$"}
+    regex_schema = {"pattern":
+                    regex.compile("^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$")}
 
     def test_pattern_pass(self):
         data = "my.email01@gmail.com"
 
         try:
             validictory.validate(data, self.schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_regex_pass(self):
+        data = "my.email01@gmail.com"
+
+        try:
+            validictory.validate(data, self.regex_schema)
         except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
