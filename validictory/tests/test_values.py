@@ -3,7 +3,7 @@
 """
 
 from unittest import TestCase
-
+import re
 import validictory
 
 
@@ -52,6 +52,19 @@ class TestPattern(TestCase):
         data = "whatever"
 
         self.assertRaises(ValueError, validictory.validate, data, self.schema)
+
+    def test_regex_compiled(self):
+        data = "my.email01@gmail.com"
+        re_schema = {'pattern': re.compile(
+            "^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$")}
+
+        try:
+            validictory.validate(data, re_schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+        data = "whatever"
+        self.assertRaises(ValueError, validictory.validate, data, re_schema)
 
 
 def validate_format_contains_spaces(validator, fieldname, value,
