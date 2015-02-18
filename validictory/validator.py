@@ -501,8 +501,9 @@ class SchemaValidator(object):
                 raise SchemaError("Enumeration {!r} for field '{}' must be a container".format(
                                   options, fieldname))
             if value not in options:
-                self._error("is not in the enumeration: {options!r}", value, fieldname,
-                            options=options, path=path)
+                if not(value == '' and schema.get('blank', self.blank_by_default)):
+                    self._error("is not in the enumeration: {options!r}", value, fieldname,
+                                options=options, path=path)
 
     def validate_title(self, x, fieldname, schema, path, title=None):
         if not isinstance(title, (_str_type, type(None))):
