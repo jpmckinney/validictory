@@ -20,6 +20,15 @@ class TestEnum(TestCase):
         except ValueError as e:
             self.fail("Unexpected failure: %s" % e)
 
+    def test_enum_blank(self):
+        blank_schema = {"enum": ("test", True, 123, ["???"]), "blank": True}
+        data = ["test", True, 123, ["???"], ""]
+        try:
+            for item in data:
+                validictory.validate(item, blank_schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
     def test_enum_fail(self):
         data = "unknown"
 
