@@ -559,13 +559,7 @@ class SchemaValidator(object):
             if 'blank' not in schema:
                 newschema['blank'] = self.blank_by_default
 
-            # iterate over schema and call all validators
-            for schemaprop in newschema:
-                validatorname = "validate_" + schemaprop
-                validator = getattr(self, validatorname, None)
-                if validator:
-                    validator(data, fieldname, schema, path, newschema.get(schemaprop))
-
+            # add default values first before checking for required fields
             if self.apply_default_to_data and 'default' in schema:
                 try:
                     self.validate_type(x={'_ds': schema['default']}, fieldname='_ds',
@@ -577,5 +571,12 @@ class SchemaValidator(object):
 
                 if fieldname not in data:
                     data[fieldname] = schema['default']
+
+            # iterate over schema and call all validators
+            for schemaprop in newschema:
+                validatorname = "validate_" + schemaprop
+                validator = getattr(self, validatorname, None)
+                if validator:
+                    validator(data, fieldname, schema, path, newschema.get(schemaprop))
 
         return data
