@@ -30,6 +30,8 @@ def validate(data, schema, validator_cls=SchemaValidator,
         disallow properties not listed in the schema definition
     :param apply_default_to_data: defaults to False, set to True to modify the
         data in case the schema definition includes a "default" property
+    :param fail_fast: defaults to True, set to False if you prefer to get
+        all validation errors back instead of only the first one
     '''
     v = validator_cls(format_validators, required_by_default, blank_by_default,
                       disallow_unknown_properties, apply_default_to_data, fail_fast)
