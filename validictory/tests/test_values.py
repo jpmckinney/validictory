@@ -87,7 +87,7 @@ def validate_format_contains_spaces(validator, fieldname, value,
 
 
 def validate_format_dict_not_empty(validator, fieldname, value,
-                               format_option):
+                                   format_option):
     if len(value.keys()) > 0:
         return
 

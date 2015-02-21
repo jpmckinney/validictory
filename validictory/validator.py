@@ -112,6 +112,8 @@ class SchemaValidator(object):
         disallow properties not listed in the schema definition
     :param apply_default_to_data: defaults to False, set to True to modify the
         data in case the schema definition includes a "default" property
+    :param fail_fast: defaults to True, set to False if you prefer to get
+        all validation errors back instead of only the first one
     '''
 
     def __init__(self, format_validators=None, required_by_default=True,
@@ -455,7 +457,9 @@ class SchemaValidator(object):
         Validates that the given field, if a string, matches the given regular expression.
         '''
         value = x.get(fieldname)
-        if isinstance(value, _str_type) and (isinstance(pattern, _str_type) and not re.match(pattern, value) or not isinstance(pattern, _str_type) and not pattern.match(value)):
+        if (isinstance(value, _str_type) and (isinstance(pattern, _str_type) and not
+                re.match(pattern, value) or not isinstance(pattern, _str_type) and not
+                pattern.match(value))):
             self._error("does not match regular expression '{pattern}'", value, fieldname,
                         pattern=pattern, path=path)
 
@@ -559,13 +563,7 @@ class SchemaValidator(object):
             if 'blank' not in schema:
                 newschema['blank'] = self.blank_by_default
 
-            # iterate over schema and call all validators
-            for schemaprop in newschema:
-                validatorname = "validate_" + schemaprop
-                validator = getattr(self, validatorname, None)
-                if validator:
-                    validator(data, fieldname, schema, path, newschema.get(schemaprop))
-
+            # add default values first before checking for required fields
             if self.apply_default_to_data and 'default' in schema:
                 try:
                     self.validate_type(x={'_ds': schema['default']}, fieldname='_ds',
@@ -577,5 +575,12 @@ class SchemaValidator(object):
 
                 if fieldname not in data:
                     data[fieldname] = schema['default']
+
+            # iterate over schema and call all validators
+            for schemaprop in newschema:
+                validatorname = "validate_" + schemaprop
+                validator = getattr(self, validatorname, None)
+                if validator:
+                    validator(data, fieldname, schema, path, newschema.get(schemaprop))
 
         return data

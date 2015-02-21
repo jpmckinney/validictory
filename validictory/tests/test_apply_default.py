@@ -7,7 +7,7 @@ def validate_with_apply_default_to_data(data, schema):
     return validictory.validate(
         data,
         schema,
-        required_by_default=False,
+        required_by_default=True,
         apply_default_to_data=True
     )
 
