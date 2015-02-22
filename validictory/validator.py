@@ -114,11 +114,15 @@ class SchemaValidator(object):
         data in case the schema definition includes a "default" property
     :param fail_fast: defaults to True, set to False if you prefer to get
         all validation errors back instead of only the first one
+    :param remove_unknown_properties: defaults to False, set to True to
+        filter out properties not listed in the schema definition. Only applies
+        when disallow_unknown_properties is False.
     '''
 
     def __init__(self, format_validators=None, required_by_default=True,
                  blank_by_default=False, disallow_unknown_properties=False,
-                 apply_default_to_data=False, fail_fast=True):
+                 apply_default_to_data=False, fail_fast=True,
+                 remove_unknown_properties=False):
 
         self._format_validators = {}
         self._errors = []
@@ -136,6 +140,9 @@ class SchemaValidator(object):
         self.disallow_unknown_properties = disallow_unknown_properties
         self.apply_default_to_data = apply_default_to_data
         self.fail_fast = fail_fast
+
+        # disallow_unknown_properties takes precedence over remove_unknown_properties
+        self.remove_unknown_properties = remove_unknown_properties
 
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
@@ -180,6 +187,7 @@ class SchemaValidator(object):
             self._errors.append(err)
 
     def _validate_unknown_properties(self, schema, data, fieldname):
+        """Raise a SchemaError when unknown fields are found."""
         schema_properties = set(schema)
         data_properties = set(data)
         delta = data_properties - schema_properties
@@ -187,6 +195,15 @@ class SchemaValidator(object):
             unknowns = ', '.join(['"{}"'.format(x) for x in delta])
             raise SchemaError('Unknown properties for field "{fieldname}": {unknowns}'.format(
                 fieldname=fieldname, unknowns=unknowns))
+
+    def _remove_unknown_properties(self, schema, data, fieldname):
+        """Remove the unknown fields from the data."""
+        schema_properties = set(schema)
+        data_properties = set(data)
+        unknown_fields = data_properties - schema_properties
+
+        for unknown_field in unknown_fields:
+            del data[unknown_field]
 
     def validate_type(self, x, fieldname, schema, path, fieldtype=None):
         ''' Validates that the fieldtype specified is correct for the given data '''
@@ -240,10 +257,12 @@ class SchemaValidator(object):
 
                     if self.disallow_unknown_properties:
                         self._validate_unknown_properties(properties, value, fieldname)
+                    elif self.remove_unknown_properties:
+                        self._remove_unknown_properties(properties, value, fieldname)
 
-                    for eachProp in properties:
-                        self.__validate(eachProp, value, properties.get(eachProp),
-                                        path + '.' + eachProp)
+                    for property in properties:
+                        self.__validate(property, value, properties.get(property),
+                                        path + '.' + property)
                 else:
                     raise SchemaError("Properties definition of field '{}' is not an object"
                                       .format(fieldname))
@@ -272,6 +291,9 @@ class SchemaValidator(object):
                         if self.disallow_unknown_properties and 'properties' in items:
                             self._validate_unknown_properties(items['properties'], item,
                                                               fieldname)
+                        elif self.remove_unknown_properties and 'properties' in items:
+                            self._remove_unknown_properties(items['properties'], item,
+                                                            fieldname)
 
                         self.__validate("[list item]", {"[list item]": item}, items,
                                         '{}[{}]'.format(path, index))
