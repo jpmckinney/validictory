@@ -14,6 +14,10 @@ validictory
 .. image:: https://pypip.in/format/validictory/badge.svg
     :target: https://pypi.python.org/pypi/validictory
 
+.. image:: https://readthedocs.org/projects/validictory/badge/?version=latest
+    :target: https://readthedocs.org/projects/validictory/?badge=latest
+    :alt: Documentation Status
+
 
 A general purpose Python data validator.
 
