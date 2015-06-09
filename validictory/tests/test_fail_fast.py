@@ -1,5 +1,8 @@
 from unittest import TestCase
 
+import sys, os
+sys.path = [ os.path.join( os.path.dirname( __file__ ), '..' ) ] + sys.path
+
 import validictory
 
 
@@ -75,3 +78,45 @@ class TestFailFast(TestCase):
             validictory.validate(data, schema, fail_fast=False)
         except validictory.MultipleValidationError as mve:
             assert len(mve.errors) == 2
+
+    def test_no_error_with_type_list(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+                "sibling" : { "type" : ["string", "null" ] }
+            },
+        }
+        data = {"name": "john doe", "age": 42, "sibling" : None }
+
+        # this should not raise an error
+        validictory.validate( data, schema, fail_fast=True)
+
+        # and nieter should this...fixed by dc78c
+        validictory.validate( data, schema, fail_fast=False)
+
+    def test_multi_error_with_type_list(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+                "sibling" : { "type" : ["string", "null" ] }
+            },
+        }
+        data = {"name": 2, "age": "fourty-two", "sibling" : 0 }
+
+        # ensure it raises an error
+        self.assertRaises(validictory.ValidationError, validictory.validate,
+                          data, schema, fail_fast=True)
+
+        # ensure it raises a MultiError
+        self.assertRaises(validictory.MultipleValidationError, validictory.validate,
+                          data, schema, fail_fast=False)
+
+        # ensure that the MultiError has 3 errors
+        try:
+            validictory.validate(data, schema, fail_fast=False)
+        except validictory.MultipleValidationError as mve:
+            assert len(mve.errors) == 3
