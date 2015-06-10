@@ -223,7 +223,15 @@ class SchemaValidator(object):
                 errorlist = []
                 for eachtype in fieldtype:
                     try:
+                        # if fail_fast is False, _error will not rais an exception.
+                        # need to monitor the _errors list as well
+                        errors = self._errors[:]
                         self.validate_type(x, fieldname, eachtype, path, eachtype)
+                        if len(self._errors) > len(errors):
+                          # an exception was raised.
+                          # remove the error from self.errors and raise it here
+                          raise self._errors.pop()
+
                         datavalid = True
                         break
                     except ValidationError as err:
