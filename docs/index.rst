@@ -14,7 +14,7 @@ Contains code derived from `jsonschema <http://json-schema.org/implementations.h
 Obtaining validictory
 ---------------------
 
-Source is available from `GitHub <http://github.com/sunlightlabs/validictory/>`_.
+Source is available from `GitHub <http://github.com/jamesturk/validictory/>`_.
 
 The latest release is always available on `PyPI <http://pypi.python.org/pypi/validictory>`_ and can be installed via `pip <http://www.pip-installer.org/>`_.
 
