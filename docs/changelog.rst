@@ -1,6 +1,16 @@
 validictory changelog
 =====================
 
+1.0.1
+-----
+**2015-09-24**
+    * bugfix for fail_fast w/ type lists
+
+1.0.0
+-----
+**2015-01-16**
+    * stable release
+
 1.0.0a2
 -------
 **2014-07-15**
