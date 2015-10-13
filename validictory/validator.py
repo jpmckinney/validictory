@@ -31,6 +31,7 @@ class FieldValidationError(ValidationError):
         super(FieldValidationError, self).__init__(message)
         self.fieldname = fieldname
         self.value = value
+        self.path = path
 
 
 class DependencyValidationError(ValidationError):
@@ -180,6 +181,8 @@ class SchemaValidator(object):
             err = FieldValidationError(message, fieldname, value, path)
         elif exctype == DependencyValidationError or exctype == RequiredFieldValidationError:
             err = exctype(message)
+            err.fieldname = fieldname
+            err.path = path
 
         if self.fail_fast:
             raise err
