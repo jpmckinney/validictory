@@ -589,12 +589,18 @@ class SchemaValidator(object):
                 raise SchemaError("Type for field '%s' must be 'dict', got: '%s'" %
                                   (fieldname, type(schema).__name__))
 
-            newschema = copy.copy(schema)
+            add_required_rule = self.required_by_default and 'required' not in schema
+            add_not_blank_rule = not self.blank_by_default and 'blank' not in schema
 
-            if 'required' not in schema:
-                newschema['required'] = self.required_by_default
-            if 'blank' not in schema:
-                newschema['blank'] = self.blank_by_default
+            if add_required_rule or add_not_blank_rule:
+                newschema = copy.copy(schema)
+
+                if add_required_rule:
+                    newschema['required'] = self.required_by_default
+                if add_not_blank_rule:
+                    newschema['blank'] = self.blank_by_default
+            else:
+                newschema = schema
 
             # add default values first before checking for required fields
             if self.apply_default_to_data and 'default' in schema:
