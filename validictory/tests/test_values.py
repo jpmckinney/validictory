@@ -106,8 +106,16 @@ class TestFormat(TestCase):
     schema_spaces = {"format": "spaces"}
     schema_non_empty_dict = {"type": "object", "format": "non-empty-dict"}
 
-    def test_format_datetime_pass(self):
+    def test_format_datetime_without_microseconds_pass(self):
         data = "2011-01-13T10:56:53Z"
+
+        try:
+            validictory.validate(data, self.schema_datetime)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_format_datetime_with_microseconds_pass(self):
+        data = "2011-01-13T10:56:53.0438Z"
 
         try:
             validictory.validate(data, self.schema_datetime)

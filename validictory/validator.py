@@ -60,7 +60,16 @@ class MultipleValidationError(ValidationError):
 def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
         try:
-            datetime.strptime(value, dateformat_string)
+            # Additions to support date-time with microseconds without breaking existing date-time validation.
+            # Microseconds will appear specifically separated by a period, as some variable length decimal number
+            # such as  '2015-11-18T19:57:05.061Z'  instead of  '2015-11-18T19:57:05Z'  Better would be to use
+            # strict_rfc3339 vs datetime.strptime though the user needs the package installed for the import to succeed.
+            #     import strict_rfc3339
+            #     assert strict_rfc3339.validate_rfc3339(value)
+            if format_option == 'date-time' and '.' in value:
+                datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+            else:
+                datetime.strptime(value, dateformat_string)
         except:
             msg = "is not in '{format_option}' format"
             raise FieldValidationError(msg.format(format_option=format_option), fieldname, value)
