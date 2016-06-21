@@ -1,6 +1,11 @@
 validictory changelog
 =====================
 
+1.0.2
+-----
+**2016-06-21**
+    * bugfix to support microseconds in datetime validation, thanks to Christopher Graham
+
 1.0.1
 -----
 **2015-09-24**
