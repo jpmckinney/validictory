@@ -27,7 +27,7 @@ class FieldValidationError(ValidationError):
     Validation error that refers to a specific field and has `fieldname` and `value` attributes.
     """
     def __init__(self, message, fieldname, value, path=''):
-        message = "Value {!r} for field '{}' {}".format(value, path, message)
+        message = "Value {0!r} for field '{1}' {2}".format(value, path, message)
         super(FieldValidationError, self).__init__(message)
         self.fieldname = fieldname
         self.value = value
@@ -52,7 +52,7 @@ class RequiredFieldValidationError(ValidationError):
 
 class MultipleValidationError(ValidationError):
     def __init__(self, errors):
-        msg = "{} validation errors:\n{}".format(len(errors), '\n'.join(str(e) for e in errors))
+        msg = "{0} validation errors:\n{1}".format(len(errors), '\n'.join(str(e) for e in errors))
         super(MultipleValidationError, self).__init__(msg)
         self.errors = errors
 
@@ -204,7 +204,7 @@ class SchemaValidator(object):
         data_properties = set(data)
         delta = data_properties - schema_properties
         if delta:
-            unknowns = ', '.join(['"{}"'.format(x) for x in delta])
+            unknowns = ', '.join(['"{0}"'.format(x) for x in delta])
             raise SchemaError('Unknown properties for field "{fieldname}": {unknowns}'.format(
                 fieldname=fieldname, unknowns=unknowns))
 
@@ -262,7 +262,7 @@ class SchemaValidator(object):
                 try:
                     type_checker = getattr(self, 'validate_type_' + fieldtype)
                 except AttributeError:
-                    raise SchemaError("Field type '{}' is not supported.".format(fieldtype))
+                    raise SchemaError("Field type '{0}' is not supported.".format(fieldtype))
 
                 if not type_checker(value):
                     self._error("is not of type {fieldtype}", value, fieldname, path=path,
@@ -284,7 +284,7 @@ class SchemaValidator(object):
                         self.__validate(property, value, properties.get(property),
                                         path + '.' + property)
                 else:
-                    raise SchemaError("Properties definition of field '{}' is not an object"
+                    raise SchemaError("Properties definition of field '{0}' is not an object"
                                       .format(fieldname))
 
     def validate_items(self, x, fieldname, schema, path, items=None):
@@ -302,7 +302,7 @@ class SchemaValidator(object):
                         for index, item in enumerate(items):
                             try:
                                 self.__validate("_data", {"_data": value[index]}, item,
-                                                '{}[{}]'.format(path, index))
+                                                '{0}[{1}]'.format(path, index))
                             except FieldValidationError as e:
                                 raise type(e)("Failed to validate field '%s' list schema: %s" %
                                               (fieldname, e), fieldname, e.value)
@@ -316,9 +316,9 @@ class SchemaValidator(object):
                                                             fieldname)
 
                         self.__validate("[list item]", {"[list item]": item}, items,
-                                        '{}[{}]'.format(path, index))
+                                        '{0}[{1}]'.format(path, index))
                 else:
-                    raise SchemaError("Properties definition of field '{}' is "
+                    raise SchemaError("Properties definition of field '{0}' is "
                                       "not a list or an object".format(fieldname))
 
     def validate_required(self, x, fieldname, schema, path, required):
@@ -398,7 +398,7 @@ class SchemaValidator(object):
                     self.__validate(eachProperty, value, additionalProperties, path)
         else:
             raise SchemaError("additionalProperties schema definition for "
-                              "field '{}' is not an object".format(fieldname))
+                              "field '{0}' is not an object".format(fieldname))
 
     def validate_dependencies(self, x, fieldname, schema, path, dependencies=None):
         if x.get(fieldname) is not None:
@@ -544,7 +544,7 @@ class SchemaValidator(object):
             if callable(options):
                 options = options(x)
             if not isinstance(options, Container):
-                raise SchemaError("Enumeration {!r} for field '{}' must be a container".format(
+                raise SchemaError("Enumeration {0!r} for field '{1}' must be a container".format(
                                   options, fieldname))
             if value not in options:
                 if not(value == '' and schema.get('blank', self.blank_by_default)):
@@ -553,11 +553,11 @@ class SchemaValidator(object):
 
     def validate_title(self, x, fieldname, schema, path, title=None):
         if not isinstance(title, (_str_type, type(None))):
-            raise SchemaError("The title for field '{}' must be a string".format(fieldname))
+            raise SchemaError("The title for field '{0}' must be a string".format(fieldname))
 
     def validate_description(self, x, fieldname, schema, path, description=None):
         if not isinstance(description, (_str_type, type(None))):
-            raise SchemaError("The description for field '{}' must be a string".format(fieldname))
+            raise SchemaError("The description for field '{0}' must be a string".format(fieldname))
 
     def validate_divisibleBy(self, x, fieldname, schema, path, divisibleBy=None):
         value = x.get(fieldname)
@@ -566,7 +566,7 @@ class SchemaValidator(object):
             return
 
         if divisibleBy == 0:
-            raise SchemaError("'{!r}' <- divisibleBy can not be 0".format(schema))
+            raise SchemaError("'{0!r}' <- divisibleBy can not be 0".format(schema))
 
         if value % divisibleBy != 0:
             self._error("is not divisible by '{divisibleBy}'.", x.get(fieldname), fieldname,
