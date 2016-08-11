@@ -453,6 +453,26 @@ class SchemaValidator(object):
                     self._error("is greater than maximum value: {maximum}", value, fieldname,
                                 maximum=maximum, path=path)
 
+    def validate_maxProperties(self, x, fieldname, schema, path, number=None):
+        '''
+        Validates that the number of properties of the given object is less than or equal
+        to the specified number
+        '''
+        value = x.get(fieldname)
+        if isinstance(value, dict) and len(value) > number:
+            self._error("must have number of properties less than or equal to {number}", value, fieldname,
+                        number=number, path=path)
+
+    def validate_minProperties(self, x, fieldname, schema, path, number=None):
+        '''
+        Validates that the number of properties of the given object is greater than or equal
+        to the specified number
+        '''
+        value = x.get(fieldname)
+        if isinstance(value, dict) and len(value) < number:
+            self._error("must have number of properties greater than or equal to {number}", value, fieldname,
+                        number=number, path=path)
+
     def validate_maxLength(self, x, fieldname, schema, path, length=None):
         '''
         Validates that the value of the given field is shorter than or equal
