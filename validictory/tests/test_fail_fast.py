@@ -1,8 +1,5 @@
 from unittest import TestCase
 
-import sys, os
-sys.path = [ os.path.join( os.path.dirname( __file__ ), '..' ) ] + sys.path
-
 import validictory
 
 
