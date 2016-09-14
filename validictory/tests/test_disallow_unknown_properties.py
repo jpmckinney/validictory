@@ -28,7 +28,11 @@ class TestDisallowUnknownProperties(TestCase):
                     "desc": "another description",
                     "price": 999.00
                 }
-            ]
+            ],
+            "data": {
+                "name": "john doe",
+                "age": 42
+            }
         }
         self.schema_complex = {
             "type": "object",
@@ -44,6 +48,32 @@ class TestDisallowUnknownProperties(TestCase):
                             "price": {"type": "number"}
                         }
                     },
+                },
+                "data": {
+                    "type": (
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "hair": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "age": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
