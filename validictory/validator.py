@@ -246,7 +246,7 @@ class SchemaValidator(object):
 
                         datavalid = True
                         break
-                    except ValidationError as err:
+                    except (SchemaError, ValidationError) as err:
                         errorlist.append(err)
                 if not datavalid:
                     self._error("doesn't match any of {numsubtypes} subtypes in {fieldtype}; "
