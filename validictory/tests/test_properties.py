@@ -115,6 +115,73 @@ class TestPatternProperties(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
 
+class TestMinMaxProperties(TestCase):
+    def test_min_properties_pass(self):
+        schema = {
+            'minProperties': 1,
+        }
+        data = {
+            'a': 1
+        }
+        try:
+            validictory.validate(data, schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_max_properties_pass(self):
+        schema = {
+            'maxProperties': 2,
+        }
+        data = {
+            'a': 1,
+            'b': 2,
+        }
+        try:
+            validictory.validate(data, schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_min_properties_fail(self):
+        schema = {
+            'minProperties': 2,
+        }
+        data = {
+            'a': 1
+        }
+        self.assertRaises(ValueError, validictory.validate, data, schema)
+
+    def test_max_properties_fail(self):
+        schema = {
+            'maxProperties': 1,
+        }
+        data = {
+            'a': 1,
+            'b': 2,
+        }
+        self.assertRaises(ValueError, validictory.validate, data, schema)
+
+    def test_min_properties_pass_nondict(self):
+        schema = {
+            'minProperties': 2,
+        }
+        data = 123
+        try:
+            validictory.validate(data, schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+    def test_max_properties_pass_nondict(self):
+        schema = {
+            'maxProperties': 1,
+        }
+        data = 123
+        try:
+            validictory.validate(data, schema)
+        except ValueError as e:
+            self.fail("Unexpected failure: %s" % e)
+
+
+
 class TestAdditionalProperties(TestCase):
     def test_no_properties(self):
         schema = {"additionalProperties": {"type": "integer"}}
