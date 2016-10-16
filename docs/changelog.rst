@@ -3,6 +3,7 @@ validictory changelog
 
 1.1.0
 -----
+*2016-10-16**
     * added support for minProperties/maxProperties, thanks to Heiko Finzel
     * stop manipulating sys.path in tests, thanks to Hartmut Goebel
     * fix for SchemaError being raised within list, thanks to Seb James
