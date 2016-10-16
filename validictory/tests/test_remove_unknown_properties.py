@@ -56,6 +56,22 @@ class TestRemoveUnknownProperties(TestCase):
                              remove_unknown_properties=True)
         self.assertEqual(extra_data, self.data_simple)
 
+    def test_remove_unknown_properties_patternproperties(self):
+        schema = {
+            "type": "object",
+            "patternProperties": {
+                "[abc]": {"type": "boolean"},
+            },
+            "properties": {
+                "d": {"type": "boolean"},
+            }
+        }
+        orig_data = {'a': True, 'b': False, 'd': True}
+        data = deepcopy(orig_data)
+
+        validictory.validate(data, schema, remove_unknown_properties=True)
+        self.assertEqual(data, orig_data)
+
     def test_remove_unknown_properties_complex_pass(self):
         try:
             validictory.validate(self.data_complex, self.schema_complex,
