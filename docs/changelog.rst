@@ -1,6 +1,13 @@
 validictory changelog
 =====================
 
+1.1.0
+-----
+    * added support for minProperties/maxProperties, thanks to Heiko Finzel
+    * stop manipulating sys.path in tests, thanks to Hartmut Goebel
+    * fix for SchemaError being raised within list, thanks to Seb James
+    * fix remove_unknown_properties not playing nice w/ patternProperties
+
 1.0.2
 -----
 **2016-06-21**
