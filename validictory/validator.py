@@ -198,24 +198,24 @@ class SchemaValidator(object):
         else:
             self._errors.append(err)
 
-    def _validate_unknown_properties(self, schema, data, fieldname):
+    def _validate_unknown_properties(self, schema, data, fieldname, patternProperties):
         """Raise a SchemaError when unknown fields are found."""
         schema_properties = set(schema)
         data_properties = set(data)
         delta = data_properties - schema_properties
-        if delta:
+        if self.disallow_unknown_properties and delta:
             unknowns = ', '.join(['"{0}"'.format(x) for x in delta])
             raise SchemaError('Unknown properties for field "{fieldname}": {unknowns}'.format(
                 fieldname=fieldname, unknowns=unknowns))
 
-    def _remove_unknown_properties(self, schema, data, fieldname):
-        """Remove the unknown fields from the data."""
-        schema_properties = set(schema)
-        data_properties = set(data)
-        unknown_fields = data_properties - schema_properties
+        elif self.remove_unknown_properties:
+            patterns = patternProperties.keys() if patternProperties else []
 
-        for unknown_field in unknown_fields:
-            del data[unknown_field]
+            if patterns:
+                delta = [f for f in delta if not any(re.match(p, f) for p in patterns)]
+
+            for unknown_field in delta:
+                del data[unknown_field]
 
     def validate_type(self, x, fieldname, schema, path, fieldtype=None):
         ''' Validates that the fieldtype specified is correct for the given data '''
@@ -275,10 +275,9 @@ class SchemaValidator(object):
             if isinstance(value, dict):
                 if isinstance(properties, dict):
 
-                    if self.disallow_unknown_properties:
-                        self._validate_unknown_properties(properties, value, fieldname)
-                    elif self.remove_unknown_properties:
-                        self._remove_unknown_properties(properties, value, fieldname)
+                    if self.disallow_unknown_properties or self.remove_unknown_properties:
+                        self._validate_unknown_properties(properties, value, fieldname,
+                                                          schema.get('patternProperties'))
 
                     for property in properties:
                         self.__validate(property, value, properties.get(property),
@@ -308,12 +307,12 @@ class SchemaValidator(object):
                                               (fieldname, e), fieldname, e.value)
                 elif isinstance(items, dict):
                     for index, item in enumerate(value):
-                        if self.disallow_unknown_properties and 'properties' in items:
-                            self._validate_unknown_properties(items['properties'], item,
-                                                              fieldname)
-                        elif self.remove_unknown_properties and 'properties' in items:
-                            self._remove_unknown_properties(items['properties'], item,
-                                                            fieldname)
+                        if ((self.disallow_unknown_properties or
+                             self.remove_unknown_properties) and 'properties' in items):
+                            self._validate_unknown_properties(items['properties'],
+                                                              item,
+                                                              fieldname,
+                                                              schema.get('patternProperties'))
 
                         self.__validate("[list item]", {"[list item]": item}, items,
                                         '{0}[{1}]'.format(path, index))
