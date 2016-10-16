@@ -82,16 +82,16 @@ class TestFailFast(TestCase):
             "properties": {
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
-                "sibling" : { "type" : ["string", "null" ] }
+                "sibling": {"type": ["string", "null"]}
             },
         }
-        data = {"name": "john doe", "age": 42, "sibling" : None }
+        data = {"name": "john doe", "age": 42, "sibling": None}
 
         # this should not raise an error
-        validictory.validate( data, schema, fail_fast=True)
+        validictory.validate(data, schema, fail_fast=True)
 
-        # and nieter should this...fixed by dc78c
-        validictory.validate( data, schema, fail_fast=False)
+        # and neither should this...fixed by dc78c
+        validictory.validate(data, schema, fail_fast=False)
 
     def test_multi_error_with_type_list(self):
         schema = {
@@ -99,10 +99,10 @@ class TestFailFast(TestCase):
             "properties": {
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
-                "sibling" : { "type" : ["string", "null" ] }
+                "sibling": {"type": ["string", "null"]}
             },
         }
-        data = {"name": 2, "age": "fourty-two", "sibling" : 0 }
+        data = {"name": 2, "age": "fourty-two", "sibling": 0}
 
         # ensure it raises an error
         self.assertRaises(validictory.ValidationError, validictory.validate,

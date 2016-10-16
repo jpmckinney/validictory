@@ -2,14 +2,12 @@ from unittest import TestCase
 from decimal import Decimal
 import datetime
 import sys
+import validictory
 
 if sys.version_info[0] == 3:
     unicode_str = '\u2603'
 else:
     unicode_str = unicode('snowman')
-
-
-import validictory
 
 
 class TestType(TestCase):

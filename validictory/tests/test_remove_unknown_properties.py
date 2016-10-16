@@ -82,7 +82,7 @@ class TestRemoveUnknownProperties(TestCase):
     def test_remove_unknown_properties_complex_fail(self):
         extra_data = deepcopy(self.data_complex)
         newrow_invalid = {"sku": "789", "desc": "catch me if you can", "price": 1,
-                  "rice": 666}
+                          "rice": 666}
         newrow_valid = {"sku": "789", "desc": "catch me if you can", "price": 1}
 
         extra_data["rows"].append(newrow_invalid)

@@ -60,10 +60,14 @@ class MultipleValidationError(ValidationError):
 def _generate_datetime_validator(format_option, dateformat_string):
     def validate_format_datetime(validator, fieldname, value, format_option):
         try:
-            # Additions to support date-time with microseconds without breaking existing date-time validation.
-            # Microseconds will appear specifically separated by a period, as some variable length decimal number
-            # such as  '2015-11-18T19:57:05.061Z'  instead of  '2015-11-18T19:57:05Z'  Better would be to use
-            # strict_rfc3339 vs datetime.strptime though the user needs the package installed for the import to succeed.
+            # Additions to support date-time with microseconds without breaking
+            # existing date-time validation.
+            # Microseconds will appear specifically separated by a period, as
+            # some variable length decimal number
+            # such as  '2015-11-18T19:57:05.061Z' instead of
+            # '2015-11-18T19:57:05Z'  Better would be to use
+            # strict_rfc3339 vs datetime.strptime though the user needs the
+            #  package installed for the import to succeed.
             #     import strict_rfc3339
             #     assert strict_rfc3339.validate_rfc3339(value)
             if format_option == 'date-time' and '.' in value:
@@ -240,9 +244,9 @@ class SchemaValidator(object):
                         errors = self._errors[:]
                         self.validate_type(x, fieldname, eachtype, path, eachtype)
                         if len(self._errors) > len(errors):
-                          # an exception was raised.
-                          # remove the error from self.errors and raise it here
-                          raise self._errors.pop()
+                            # an exception was raised.
+                            # remove the error from self.errors and raise it here
+                            raise self._errors.pop()
 
                         datavalid = True
                         break
@@ -459,8 +463,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, dict) and len(value) > number:
-            self._error("must have number of properties less than or equal to {number}", value, fieldname,
-                        number=number, path=path)
+            self._error("must have number of properties less than or equal to {number}",
+                        value, fieldname, number=number, path=path)
 
     def validate_minProperties(self, x, fieldname, schema, path, number=None):
         '''
@@ -469,8 +473,8 @@ class SchemaValidator(object):
         '''
         value = x.get(fieldname)
         if isinstance(value, dict) and len(value) < number:
-            self._error("must have number of properties greater than or equal to {number}", value, fieldname,
-                        number=number, path=path)
+            self._error("must have number of properties greater than or equal to {number}",
+                        value, fieldname, number=number, path=path)
 
     def validate_maxLength(self, x, fieldname, schema, path, length=None):
         '''
@@ -518,9 +522,9 @@ class SchemaValidator(object):
         Validates that the given field, if a string, matches the given regular expression.
         '''
         value = x.get(fieldname)
-        if (isinstance(value, _str_type) and (isinstance(pattern, _str_type) and not
-                re.match(pattern, value) or not isinstance(pattern, _str_type) and not
-                pattern.match(value))):
+        if (isinstance(value, _str_type) and
+            (isinstance(pattern, _str_type) and not re.match(pattern, value)
+             or not isinstance(pattern, _str_type) and not pattern.match(value))):
             self._error("does not match regular expression '{pattern}'", value, fieldname,
                         pattern=pattern, path=path)
 

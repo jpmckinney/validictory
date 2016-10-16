@@ -181,7 +181,6 @@ class TestMinMaxProperties(TestCase):
             self.fail("Unexpected failure: %s" % e)
 
 
-
 class TestAdditionalProperties(TestCase):
     def test_no_properties(self):
         schema = {"additionalProperties": {"type": "integer"}}
