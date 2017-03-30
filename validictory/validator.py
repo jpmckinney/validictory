@@ -161,6 +161,11 @@ class SchemaValidator(object):
     def register_format_validator(self, format_name, format_validator_fun):
         self._format_validators[format_name] = format_validator_fun
 
+    def get_default(self, value):
+        if isinstance(value, dict) or isinstance(value, list):
+            return copy.deepcopy(value)
+        return value
+
     def validate_type_string(self, val):
         return isinstance(val, _str_type)
 
@@ -637,7 +642,7 @@ class SchemaValidator(object):
             # add default values first before checking for required fields
             if self.apply_default_to_data and 'default' in schema:
                 try:
-                    self.validate_type(x={'_ds': schema['default']}, fieldname='_ds',
+                    self.validate_type(x={'_ds': self.get_default(schema['default'])}, fieldname='_ds',
                                        schema=schema,
                                        fieldtype=schema['type'] if 'type' in schema else None,
                                        path=path)
@@ -645,7 +650,7 @@ class SchemaValidator(object):
                     raise SchemaError(exc)
 
                 if fieldname not in data:
-                    data[fieldname] = schema['default']
+                    data[fieldname] = self.get_default(schema['default'])
 
             # iterate over schema and call all validators
             for schemaprop in newschema:
