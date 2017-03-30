@@ -89,3 +89,33 @@ class TestItemDefaults(TestCase):
 
         # the original data is unchanged
         self.assertEqual(data, {'foo': 1})
+
+    def test_property_default_has_different_memory_id(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "foo": {
+                    "default": []
+                }
+            }
+        }
+
+        data = {}
+
+        validictory.validate(
+            data,
+            schema,
+            required_by_default=True,
+            apply_default_to_data=True
+        )
+
+        # correctly apply default
+        self.assertEqual({"foo":[]}, data)
+
+        # dont re-use the actual array from the schema
+        applied_default_id = id(data["foo"])
+        original_schema_id = id(schema["properties"]["foo"]["default"])
+        self.assertNotEqual(applied_default_id, original_schema_id)
+
+
+
