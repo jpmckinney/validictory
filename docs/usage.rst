@@ -1,7 +1,7 @@
 Using validictory
 =================
 
-**As of October 2017 this library is being considered for deprecation.  Please comment on `the GitHub issue <https://github.com/jamesturk/validictory/issues/114>`_ if you would like to weigh in.** 
+**As of October 2017 this library is being considered for deprecation.**  Please comment on `the GitHub issue <https://github.com/jamesturk/validictory/issues/114>`_ if you would like to weigh in.
 
 Normal use of validictory is as simple as calling :func:`validictory.validate`,
 the only thing to learn is how to craft a schema.
