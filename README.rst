@@ -34,14 +34,14 @@ Parsing a simple JSON document::
 
     >>> import validictory
     >>>
-    >>> validictory.validate("simplejson", {"type":"string"})
+    >>> validictory.validate("something", {"type":"string"})
 
 Parsing a more complex JSON document::
 
-    >>> import simplejson
+    >>> import json
     >>> import validictory
     >>>
-    >>> data = simplejson.loads('["foo", {"bar":["baz", null, 1.0, 2]}]')
+    >>> data = json.loads('["foo", {"bar":["baz", null, 1.0, 2]}]')
     >>> schema = {
     ...   "type":"array",
     ...   "items":[
@@ -67,10 +67,10 @@ Catch ValueErrors to handle validation issues::
     >>> import validictory
     >>>
     >>> try:
-    ...     validictory.validate("simplejson", {"type":"string","minLength":15})
+    ...     validictory.validate("something", {"type":"string","minLength":15})
     ... except ValueError, error:
-    ...     print error
+    ...     print(error)
     ...
-    Length of value 'simplejson' for field '_data' must be greater than or equal to 15
+    Length of value 'something' for field '_data' must be greater than or equal to 15
 
 You can read more in the official documentation at `Read the Docs <http://validictory.readthedocs.org/en/latest/>`_.
