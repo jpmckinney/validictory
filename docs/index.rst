@@ -1,6 +1,8 @@
 validictory |release|
 =====================
 
+:warning: **:warning: As of October 2017 this library is being considered for deprecation.  Please comment on https://github.com/jamesturk/validictory/issues/114 if you would like to weigh in.** 
+
 Overview
 --------
 
