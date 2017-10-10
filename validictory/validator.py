@@ -333,7 +333,7 @@ class SchemaValidator(object):
         ''' Validates that the given field is present if required is True '''
         # Make sure the field is present
         if fieldname not in x and required:
-            self._error("Required field '{fieldname}' is missing", None, fieldname, path=path,
+            self._error("Required field '{fieldname}' is missing", None, path, path=path,
                         exctype=RequiredFieldValidationError)
 
     def validate_blank(self, x, fieldname, schema, path, blank=False):
