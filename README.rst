@@ -2,7 +2,7 @@
 validictory
 ===========
 
-:warning: **:warning: **As of 2018 this library is deprecated, please consider using `jsonschema <https://pypi.python.org/pypi/jsonschema>`_ instead.**
+:warning: **:warning: As of 2018 this library is deprecated, please consider using jsonschema (https://pypi.python.org/pypi/jsonschema) instead.**
 
 
 .. image:: https://travis-ci.org/jamesturk/validictory.svg?branch=master
