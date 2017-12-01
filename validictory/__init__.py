@@ -5,7 +5,7 @@ from validictory.validator import (SchemaValidator, FieldValidationError, Multip
 
 __all__ = ['validate', 'SchemaValidator', 'FieldValidationError', 'MultipleValidationError',
            'ValidationError', 'SchemaError']
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
 
 def validate(data, schema, validator_cls=SchemaValidator,

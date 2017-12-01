@@ -1,6 +1,12 @@
 validictory changelog
 =====================
 
+1.1.2
+-----
+**2017-12-01**
+    * final release w/ deprecation notice
+    * use full path in RequiredFieldValidationError, thanks Marco Mariani
+
 1.1.1
 -----
 **2017-04-04**

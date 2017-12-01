@@ -1,7 +1,7 @@
 validictory module
 ==================
 
-**As of 2018 this library is deprecated, please consider using `jsonschema <https://pypi.python.org/pypi/jsonschema>`_ instead.**
+**As of 2018 this library is deprecated, please consider using jsonschema instead.**
 
 .. module:: validictory
 

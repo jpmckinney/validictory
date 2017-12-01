@@ -1,7 +1,7 @@
 Using validictory
 =================
 
-**As of 2018 this library is deprecated, please consider using `jsonschema <https://pypi.python.org/pypi/jsonschema>`_ instead.**
+**As of 2018 this library is deprecated, please consider using jsonschema instead.**
 
 Normal use of validictory is as simple as calling :func:`validictory.validate`,
 the only thing to learn is how to craft a schema.
