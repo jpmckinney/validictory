@@ -1,7 +1,7 @@
 validictory |release|
 =====================
 
-**As of October 2017 this library is being considered for deprecation.**  Please comment on `the GitHub issue <https://github.com/jamesturk/validictory/issues/114>`_ if you would like to weigh in.
+**As of 2018 this library is deprecated, please consider using `jsonschema <https://pypi.python.org/pypi/jsonschema>`_ instead.**
 
 Overview
 --------
