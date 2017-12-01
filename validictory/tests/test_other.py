@@ -63,6 +63,18 @@ class TestFieldValidationErrors(TestCase):
             self.fail("No Exception")
 
 
+def test_deep_required_error():
+    schema = {'type': 'object', 'properties': {'foo': {'type': 'object',
+              'properties': {'bar': {'type': 'integer', 'required': 'true'}}}}}
+    data = {'foo': {'baz': 3}}
+    try:
+        validictory.validate(data, schema)
+    except validictory.validator.RequiredFieldValidationError as e:
+        estr = str(e)
+        assert 'foo' in estr
+        assert 'bar' in estr
+
+
 def test_deep_error():
     schema = {'type': 'object', 'properties': {'foo': {'type': 'object', 'properties':
                                                        {'bar': {'type': 'array', 'items':
