@@ -69,7 +69,7 @@ def _generate_datetime_validator(format_option, dateformat_string):
                 datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
             else:
                 datetime.strptime(value, dateformat_string)
-        except:
+        except ValueError:
             msg = "is not in '{format_option}' format"
             raise FieldValidationError(msg.format(format_option=format_option), fieldname, value)
 
@@ -92,7 +92,7 @@ def validate_format_ip_address(validator, fieldname, value, format_option):
         # Make sure we expect "X.X.X.X" as socket.inet_aton() converts "1" to "0.0.0.1"
         socket.inet_aton(value)
         ip = len(value.split('.')) == 4
-    except:
+    except OSError:
         ip = False
     if not ip:
         msg = "is not a ip-address"
@@ -172,7 +172,7 @@ class SchemaValidator:
         return type(val) in (int, float, Decimal,)
 
     def validate_type_boolean(self, val):
-        return type(val) == bool
+        return type(val) is bool
 
     def validate_type_object(self, val):
         return isinstance(val, Mapping) or (hasattr(val, 'keys') and hasattr(val, 'items'))
