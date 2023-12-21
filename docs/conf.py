@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # validictory documentation build configuration file, created by
 # sphinx-quickstart on Wed Mar  9 12:09:00 2011.
@@ -40,8 +39,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'validictory'
-copyright = u'2014, James Turk'
+project = 'validictory'
+copyright = '2014, James Turk'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -178,8 +177,8 @@ htmlhelp_basename = 'validictorydoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'validictory.tex', u'validictory Documentation',
-   u'James Turk', 'manual'),
+  ('index', 'validictory.tex', 'validictory Documentation',
+   'James Turk', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -211,6 +210,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'validictory', u'validictory Documentation',
-     [u'James Turk'], 1)
+    ('index', 'validictory', 'validictory Documentation',
+     ['James Turk'], 1)
 ]

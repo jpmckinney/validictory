@@ -47,14 +47,14 @@ if __name__ == '__main__':
     import json
     if len(sys.argv) == 2:
         if sys.argv[1] == "--help":
-            raise SystemExit("%s SCHEMAFILE [INFILE]" % (sys.argv[0],))
+            raise SystemExit("{} SCHEMAFILE [INFILE]".format(sys.argv[0]))
         schemafile = open(sys.argv[1], 'rb')
         infile = sys.stdin
     elif len(sys.argv) == 3:
         schemafile = open(sys.argv[1], 'rb')
         infile = open(sys.argv[2], 'rb')
     else:
-        raise SystemExit("%s SCHEMAFILE [INFILE]" % (sys.argv[0],))
+        raise SystemExit("{} SCHEMAFILE [INFILE]".format(sys.argv[0]))
     try:
         obj = json.load(infile)
         schema = json.load(schemafile)

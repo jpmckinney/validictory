@@ -39,7 +39,7 @@ class TestPattern(TestCase):
 
     # match simplified regular expression for an e-mail address
     schema = {"pattern":
-              "^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$"}
+              r"^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$"}
 
     def test_pattern_pass(self):
         data = "my.email01@gmail.com"
@@ -65,7 +65,7 @@ class TestPattern(TestCase):
     def test_regex_compiled(self):
         data = "my.email01@gmail.com"
         re_schema = {'pattern': re.compile(
-            "^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$")}
+            r"^[A-Za-z0-9][A-Za-z0-9\.]*@([A-Za-z0-9]+\.)+[A-Za-z0-9]+$")}
 
         try:
             validictory.validate(data, re_schema)
