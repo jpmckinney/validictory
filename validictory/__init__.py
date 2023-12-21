@@ -21,7 +21,7 @@ def validate(data, schema, validator_cls=SchemaValidator,
 
     :param data:  python data to validate
     :param schema: python dictionary representing the schema (see
-        `schema format`_)
+        :ref:`schema-format`)
     :param validator_cls: optional validator class (default is
         :class:`SchemaValidator`)
     :param format_validators: optional dictionary of custom format validators

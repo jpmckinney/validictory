@@ -58,6 +58,8 @@ Catch ValueErrors to handle validation issues::
 For more example usage of all schema options check out the tests within 
 ``validictory/tests``.
 
+.. _schema-format:
+
 Schema Options
 --------------
 
