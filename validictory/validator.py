@@ -18,6 +18,7 @@ class FieldValidationError(ValidationError):
     """
     Validation error that refers to a specific field and has `fieldname` and `value` attributes.
     """
+
     def __init__(self, message, fieldname, value, path=''):
         message = f"Value {value!r} for field '{path}' {message}"
         super().__init__(message)
@@ -30,6 +31,7 @@ class DependencyValidationError(ValidationError):
     """
     Validation error that refers to a missing dependency
     """
+
     def __init__(self, message):
         super().__init__(message)
 
@@ -38,6 +40,7 @@ class RequiredFieldValidationError(ValidationError):
     """
     Validation error that refers to a missing field
     """
+
     def __init__(self, message):
         super().__init__(message)
 
@@ -71,6 +74,7 @@ def _generate_datetime_validator(format_option, dateformat_string):
             raise FieldValidationError(msg.format(format_option=format_option), fieldname, value)
 
     return validate_format_datetime
+
 
 validate_format_date_time = _generate_datetime_validator('date-time', '%Y-%m-%dT%H:%M:%SZ')
 validate_format_date = _generate_datetime_validator('date', '%Y-%m-%d')
@@ -567,7 +571,7 @@ class SchemaValidator:
                 raise SchemaError("Enumeration {!r} for field '{}' must be a container".format(
                                   options, fieldname))
             if value not in options:
-                if not(value == '' and schema.get('blank', self.blank_by_default)):
+                if not (value == '' and schema.get('blank', self.blank_by_default)):
                     self._error("is not in the enumeration: {options!r}", value, fieldname,
                                 options=options, path=path)
 

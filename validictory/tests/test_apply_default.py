@@ -110,12 +110,9 @@ class TestItemDefaults(TestCase):
         )
 
         # correctly apply default
-        self.assertEqual({"foo":[]}, data)
+        self.assertEqual({"foo": []}, data)
 
         # dont re-use the actual array from the schema
         applied_default_id = id(data["foo"])
         original_schema_id = id(schema["properties"]["foo"]["default"])
         self.assertNotEqual(applied_default_id, original_schema_id)
-
-
-

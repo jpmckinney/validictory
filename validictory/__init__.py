@@ -42,6 +42,7 @@ def validate(data, schema, validator_cls=SchemaValidator,
                       remove_unknown_properties)
     return v.validate(data, schema)
 
+
 if __name__ == '__main__':
     import json
     import sys
