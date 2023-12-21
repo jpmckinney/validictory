@@ -1,17 +1,9 @@
 import copy
 import re
 import socket
-import sys
 from collections.abc import Container, Mapping
 from datetime import datetime
 from decimal import Decimal
-
-if sys.version_info[0] == 3:
-    _str_type = str
-    _int_types = (int,)
-else:
-    _str_type = basestring
-    _int_types = (int, long)
 
 
 class SchemaError(ValueError):
@@ -86,7 +78,7 @@ validate_format_time = _generate_datetime_validator('time', '%H:%M:%S')
 
 
 def validate_format_utc_millisec(validator, fieldname, value, format_option):
-    if not isinstance(value, _int_types + (float, Decimal)) or value <= 0:
+    if not isinstance(value, (int, float, Decimal)) or value <= 0:
         msg = "is not a positive number"
         raise FieldValidationError(msg, fieldname, value)
 
@@ -167,13 +159,13 @@ class SchemaValidator:
         return value
 
     def validate_type_string(self, val):
-        return isinstance(val, _str_type)
+        return isinstance(val, str)
 
     def validate_type_integer(self, val):
-        return type(val) in _int_types
+        return type(val) is int
 
     def validate_type_number(self, val):
-        return type(val) in _int_types + (float, Decimal,)
+        return type(val) in (int, float, Decimal,)
 
     def validate_type_boolean(self, val):
         return type(val) == bool
@@ -339,7 +331,7 @@ class SchemaValidator:
     def validate_blank(self, x, fieldname, schema, path, blank=False):
         ''' Validates that the given field is not blank if blank=False '''
         value = x.get(fieldname)
-        if isinstance(value, _str_type) and not blank and not value:
+        if isinstance(value, str) and not blank and not value:
             self._error("cannot be blank'", value, fieldname, path=path)
 
     def validate_patternProperties(self, x, fieldname, schema, path, patternproperties=None):
@@ -412,7 +404,7 @@ class SchemaValidator:
         if x.get(fieldname) is not None:
 
             # handle cases where dependencies is a string or list of strings
-            if isinstance(dependencies, _str_type):
+            if isinstance(dependencies, str):
                 dependencies = [dependencies]
             if isinstance(dependencies, (list, tuple)):
                 for dependency in dependencies:
@@ -487,7 +479,7 @@ class SchemaValidator:
         to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (_str_type, list, tuple)) and len(value) > length:
+        if isinstance(value, (str, list, tuple)) and len(value) > length:
             self._error("must have length less than or equal to {length}", value, fieldname,
                         length=length, path=path)
 
@@ -496,7 +488,7 @@ class SchemaValidator:
         Validates that the value of the given field is longer than or equal to the specified length
         '''
         value = x.get(fieldname)
-        if isinstance(value, (_str_type, list, tuple)) and len(value) < length:
+        if isinstance(value, (str, list, tuple)) and len(value) < length:
             self._error("must have length greater than or equal to {length}", value, fieldname,
                         length=length, path=path)
 
@@ -527,9 +519,9 @@ class SchemaValidator:
         Validates that the given field, if a string, matches the given regular expression.
         '''
         value = x.get(fieldname)
-        if (isinstance(value, _str_type) and
-            (isinstance(pattern, _str_type) and not re.match(pattern, value)
-             or not isinstance(pattern, _str_type) and not pattern.match(value))):
+        if (isinstance(value, str) and
+            (isinstance(pattern, str) and not re.match(pattern, value)
+             or not isinstance(pattern, str) and not pattern.match(value))):
             self._error("does not match regular expression '{pattern}'", value, fieldname,
                         pattern=pattern, path=path)
 
@@ -580,11 +572,11 @@ class SchemaValidator:
                                 options=options, path=path)
 
     def validate_title(self, x, fieldname, schema, path, title=None):
-        if not isinstance(title, (_str_type, type(None))):
+        if not isinstance(title, (str, type(None))):
             raise SchemaError(f"The title for field '{fieldname}' must be a string")
 
     def validate_description(self, x, fieldname, schema, path, description=None):
-        if not isinstance(description, (_str_type, type(None))):
+        if not isinstance(description, (str, type(None))):
             raise SchemaError(f"The description for field '{fieldname}' must be a string")
 
     def validate_divisibleBy(self, x, fieldname, schema, path, divisibleBy=None):
