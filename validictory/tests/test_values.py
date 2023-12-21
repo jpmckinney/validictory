@@ -2,8 +2,9 @@
     Tests that test the value of individual items
 """
 
-from unittest import TestCase
 import re
+from unittest import TestCase
+
 import validictory
 
 

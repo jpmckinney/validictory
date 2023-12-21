@@ -1,7 +1,7 @@
+from copy import deepcopy
 from unittest import TestCase
 
 import validictory
-from copy import deepcopy
 
 
 class TestRemoveUnknownProperties(TestCase):

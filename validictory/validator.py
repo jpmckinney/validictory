@@ -1,10 +1,10 @@
-import re
-import sys
 import copy
+import re
 import socket
+import sys
+from collections.abc import Container, Mapping
 from datetime import datetime
 from decimal import Decimal
-from collections.abc import Mapping, Container
 
 if sys.version_info[0] == 3:
     _str_type = str

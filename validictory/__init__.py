@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from validictory.validator import (SchemaValidator, FieldValidationError, MultipleValidationError,
-                                   ValidationError, SchemaError)
+from validictory.validator import (FieldValidationError, MultipleValidationError, SchemaError, SchemaValidator,
+                                   ValidationError)
 
 __all__ = ['validate', 'SchemaValidator', 'FieldValidationError', 'MultipleValidationError',
            'ValidationError', 'SchemaError']
@@ -43,8 +43,8 @@ def validate(data, schema, validator_cls=SchemaValidator,
     return v.validate(data, schema)
 
 if __name__ == '__main__':
-    import sys
     import json
+    import sys
     if len(sys.argv) == 2:
         if sys.argv[1] == "--help":
             raise SystemExit("{} SCHEMAFILE [INFILE]".format(sys.argv[0]))

@@ -1,7 +1,8 @@
-from unittest import TestCase
-from decimal import Decimal
 import datetime
 import sys
+from decimal import Decimal
+from unittest import TestCase
+
 import validictory
 
 if sys.version_info[0] == 3:

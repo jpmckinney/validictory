@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 import pytest
 
 import validictory
