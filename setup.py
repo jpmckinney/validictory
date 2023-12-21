@@ -35,5 +35,4 @@ setup(name='validictory',
               'pytest',
               'pytest-cov',
           ]
-      }
-)
+      })
