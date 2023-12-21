@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from validictory.validator import (FieldValidationError, MultipleValidationError, SchemaError, SchemaValidator,
-                                   ValidationError)
+from validictory.validator import (FieldValidationError, MultipleValidationError, SchemaError,
+                                   SchemaValidator, ValidationError)
 
 __all__ = ['validate', 'SchemaValidator', 'FieldValidationError', 'MultipleValidationError',
            'ValidationError', 'SchemaError']

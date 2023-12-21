@@ -638,7 +638,8 @@ class SchemaValidator:
             # add default values first before checking for required fields
             if self.apply_default_to_data and 'default' in schema:
                 try:
-                    self.validate_type(x={'_ds': self.get_default(schema['default'])}, fieldname='_ds',
+                    self.validate_type(x={'_ds': self.get_default(schema['default'])},
+                                       fieldname='_ds',
                                        schema=schema,
                                        fieldtype=schema['type'] if 'type' in schema else None,
                                        path=path)
