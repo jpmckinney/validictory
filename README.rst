@@ -21,8 +21,6 @@ validictory
 
 A general purpose Python data validator.
 
-Works with Python 2.7 and Python 3.3+
-
 Schema format based on JSON Schema Proposal (http://json-schema.org)
 
 Contains code derived from jsonschema, by Ian Lewis and Yusuke Muraoka.

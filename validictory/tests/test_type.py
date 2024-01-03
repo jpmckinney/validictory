@@ -1,4 +1,5 @@
 import datetime
+from collections import UserDict
 from decimal import Decimal
 from unittest import TestCase
 
@@ -62,14 +63,6 @@ class TestType(TestCase):
     def test_UserDict_is_object(self):
         # A UserDict (and similar classes) are not dicts, but they're dict-like
         # and should be treated as objects
-
-        try:
-            # Python 2
-            from UserDict import UserDict
-        except ImportError:
-            # Python 3
-            from collections import UserDict
-
         valids = [UserDict({"a": "b"})]
         invalids = []
         self._test_type('object', valids, invalids)
