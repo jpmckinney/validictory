@@ -1,6 +1,16 @@
 validictory changelog
 =====================
 
+1.1.3
+-----
+**Unreleased**
+
+    * Add support for recent Python versions.
+
+        * `"Remove deprecated aliases to Collections Abstract Base Classes from the collections module. <https://docs.python.org/3/whatsnew/3.10.html#removed>`__
+
+    * Drop support for end-of-life Python versions.
+
 1.1.2
 -----
 **2017-12-01**

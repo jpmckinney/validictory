@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 project = 'validictory'
 copyright = '2014, James Turk'
-version = '1.1.2'
+version = '1.1.3'
 release = version
 
 # -- General configuration ---------------------------------------------------
